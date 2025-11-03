@@ -9,18 +9,31 @@ from rest_framework.decorators import action
 from . import serializers
 
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
+from drf_spectacular.utils import extend_schema, extend_schema_view
 
+@extend_schema_view(
+    list=extend_schema(description='Get a list of all users'),
+    retrieve=extend_schema(description='Get details of a specific user'),
+    create=extend_schema(description='Create a new user'),
+    update=extend_schema(description='Update an existing user'),
+    destroy=extend_schema(description='Delete an user')
+)
 class UserViewSet(viewsets.ModelViewSet):
     queryset : List = User.objects.all()
     serializer_class : rest_serializers.ModelSerializer = serializers.UserModelSerializer
-    authentication_classes = [TokenAuthentication] 
 
+    # Decide which endpoints need you to be authenticated
     def get_permissions(self):
-        if self.action == "auth":  # per action
-            self.permission_classes = [IsAuthenticated] # set the permission
-        return super().get_permissions()
+        if self.action in ["auth", "update", "partial_update", "destroy"]:
+            return [IsAuthenticated()]
+        return [AllowAny()]
+
+    def get_authentication_classes(self):
+        if self.action in ["auth", "update", "partial_update", "destroy"]:
+            return [TokenAuthentication]
+        return []  # No authentication required for create
     
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -29,7 +42,11 @@ class UserViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(username__icontains=searchpattern)
         return queryset
     
-    
+    @extend_schema(
+        description="User login endpoint",
+        request=serializers.UserLoginSerializer,
+        responses={201: serializers.UserModelSerializer},
+    )
     @action(detail=False, methods=['post'])
     def login(self, request):
         """User sign in."""
@@ -44,11 +61,15 @@ class UserViewSet(viewsets.ModelViewSet):
             'user': serializers.UserModelSerializer(user).data,
             'access_token': token
         }
-        return Response(data, status=status.HTTP_201_CREATED)
+        return Response(data, status=status.HTTP_200_OK)
     
+    @extend_schema(
+        description="Get the currently authenticated user",
+        responses={200: serializers.UserModelSerializer}
+    )
     @action(detail=False, methods=['get'])
     def auth(self, request):
         #only authed users can access this
         user: User = request.user
         data = serializers.UserModelSerializer(user).data
-        return Response(data, status=status.HTTP_201_CREATED)
+        return Response(data, status=status.HTTP_200_OK)

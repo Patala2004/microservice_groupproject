@@ -29,7 +29,7 @@ class UserLoginSerializer(serializers.Serializer):
 
     # Required fields
     username = serializers.CharField(min_length=3, max_length=64)
-    password = serializers.CharField(min_length=8, max_length=64)
+    password = serializers.CharField(min_length=8, max_length=64, write_only=True)
 
     # Verify the data
     def validate(self, data):
