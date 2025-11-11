@@ -1,5 +1,5 @@
 from typing import List
-from .models import User
+from .models import User, Campus
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets, status
@@ -73,3 +73,12 @@ class UserViewSet(viewsets.ModelViewSet):
         user: User = request.user
         data = serializers.UserModelSerializer(user).data
         return Response(data, status=status.HTTP_200_OK)
+
+
+@extend_schema_view(
+    list=extend_schema(description='Get a list of all defined campuses'),
+    retrieve=extend_schema(description='Get details of one specific campus')
+)
+class CampusViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Campus.objects.all()
+    serializer_class : rest_serializers.ModelSerializer = serializers.CampusModelSerializer
