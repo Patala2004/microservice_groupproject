@@ -1,52 +1,50 @@
 package microservices.groupproject.post_api.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import lombok.*;
 
 @Entity
 @Table(name = "posts")
 @AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class Post {
-    
-    public Post() {
-        // Default constructor required by JPA
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "a title is required")
+    @Column(nullable = false)
     private String title;
 
-    @Column(length = 10000)
+    @NotBlank(message = "content is required")
+    @Column(length = 10000, nullable = false)
     private String content;
 
-    public Post(String title, String content) {
-        this.title = title;
-        this.content = content;
-    }
+    @Column(nullable = false)
+    @NotNull(message = "Post type is required")
+    @Enumerated(EnumType.STRING)
+    private PostType type;
 
-    public Long getId() {
-        return id;
-    }
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "location_id", nullable = true)
+    private Location location;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @NotNull
+    @Column(nullable = false)
+    @Positive(message = "user id of poster must be positive")
+    private Long poster; // Userid of poster user
 
-    public String getTitle() {
-        return title;
-    }
+    @ElementCollection
+    private List<Long> joinedUsers = new ArrayList<>();
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
+    @Column(length = 500)
+    private String imageUrl;
 }
