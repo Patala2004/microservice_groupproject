@@ -1,51 +1,49 @@
 version: "3.8"
 
 services:
-  postgres:
+  post_pg:
     image: postgres:15
     container_name: post_api_db
     environment:
       POSTGRES_DB: postdb
       POSTGRES_USER: postuser
       POSTGRES_PASSWORD: password
-    ports:
-      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
-      - app_network
+      - postapp_network
 
-  app:
+  postapp:
     build: ./post-api/.
     container_name: post_api_app
     depends_on:
-      - postgres
+      - post_pg
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postdb
+      SPRING_DATASOURCE_URL: jdbc:postgresql://post_pg:5432/postdb
       SPRING_DATASOURCE_USERNAME: postuser
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
     volumes:
       - ./post-api/uploads:/app/uploads # Same upload folder as nginx
     networks:
-      - app_network
+      - postapp_network
 
-  nginx:
+  post-nginx:
     image: nginx:latest
     container_name: post_api_nginx
     depends_on:
-      - app
+      - postapp
     ports:
-      - "8080:80"
+      - "8082:80"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./post-api/uploads:/usr/share/nginx/html/uploads # Same upload folder as spring app
     networks:
-      - app_network
+      - postapp_network
 
 volumes:
   pgdata:
 
 networks:
-  app_network:
+  postapp_network:
     driver: bridge
