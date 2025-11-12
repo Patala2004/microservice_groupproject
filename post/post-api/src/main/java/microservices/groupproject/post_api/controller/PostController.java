@@ -18,8 +18,9 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/posts")
+@RequestMapping("/post/api/posts")
 @Tag(name = "Posts", description = "Posts API")
+@CrossOrigin
 public class PostController {
 
     private final PostRepository repository;
