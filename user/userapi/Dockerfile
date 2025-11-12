@@ -20,3 +20,6 @@ WORKDIR /home/app/
 
 # copy project
 COPY . .
+
+# Generate static files for admin / api interface
+RUN python manage.py collectstatic --noinput
