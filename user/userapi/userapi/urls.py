@@ -3,10 +3,10 @@ from django.urls import path, include
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/', include('userapp.urls')),
+    path('user/admin/', admin.site.urls),
+    path('user/api/', include('userapp.urls')),
     
     # Swagger UI endpoints
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('user/api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('user/api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
 ]
