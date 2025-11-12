@@ -94,7 +94,7 @@ DATABASES = {
         'NAME': 'userdb',
         'USER': 'pguser',
         'PASSWORD': 'password',
-        'HOST': 'db',
+        'HOST': 'userapi_db',
         'PORT': '5432'
     }
 }
