@@ -16,5 +16,6 @@ public class UserInteraction {
     private int userId;
     private int[] tags;
     private Date timestamp;
+    private String type;
 
 }

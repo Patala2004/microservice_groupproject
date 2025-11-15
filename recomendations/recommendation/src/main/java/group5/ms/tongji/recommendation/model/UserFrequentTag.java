@@ -4,7 +4,9 @@ import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Date;
 
@@ -12,13 +14,17 @@ import java.util.Date;
 @Table(name = "userTags")
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserFrequentTags {
+@Getter
+@Setter
+public class UserFrequentTag {
 
     @EmbeddedId
-    private UserTag userTag;
+    private UserTagKey userTag;
 
     private float weight;
 
     private Date timestamp;
+
+    private int frequency;
 
 }
