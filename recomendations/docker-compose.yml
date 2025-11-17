@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  rec_pg:
+    image: postgres:15
+    container_name: rec_db
+    environment:
+      POSTGRES_DB: recdb
+      POSTGRES_USER: recuser
+      POSTGRES_PASSWORD: password
+    volumes:
+      - recpgdata:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+    networks:
+      - recapp_network
+
+  recapp:
+    build:
+      context: ./recommendation
+      args:
+        - DOCKER_BUILD_FLAGS=--progress=plain
+    container_name: rec_app
+    depends_on:
+      - rec_pg
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://rec_pg:5432/recdb
+      SPRING_DATASOURCE_USERNAME: recuser
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    networks:
+      - recapp_network
+    ports:
+      - "8085:8085"
+
+
+volumes:
+  recpgdata:
+
+networks:
+  recapp_network:
+    driver: bridge

@@ -5,4 +5,5 @@ public enum InteractionTypes {
     JOIN,
     POST,
     SEARCH,
+    REGISTER
 }

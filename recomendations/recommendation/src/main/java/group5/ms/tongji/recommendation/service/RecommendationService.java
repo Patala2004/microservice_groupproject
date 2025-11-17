@@ -32,7 +32,9 @@ public class RecommendationService {
                 UserFrequentTag newFrequentTag = new UserFrequentTag(userTag, 0.1f, timestamp, 1);
                 userFrequentTags.put(tag, newFrequentTag);
             }
-            updateWeight(userFrequentTags.get(tag), iteractionType);
+            UserFrequentTag userFrequentTag = userFrequentTags.get(tag);
+            updateWeight(userFrequentTag, iteractionType);
+            userFrequentTag.setTimestamp(timestamp);
         }
         recommendationRepository.saveAll(userFrequentTags.values());
     }
@@ -49,12 +51,16 @@ public class RecommendationService {
             float forgetRate = -0.0231f; //30 days bajará un 50%
             float timeDiff = (timestamp.getTime() - u.getTimestamp().getTime())/(1000f * 60f * 60f * 24f);
             float decay = (float) Math.pow(Math.E, forgetRate*timeDiff);
-            u.setWeight(u.getWeight() * decay);
+            float decayedWeight = u.getWeight()*decay;
+            if(decayedWeight>0.05f)
+                u.setWeight(u.getWeight() * decay);
+            else
+                u.setWeight(0.05f);
         }
     }
 
     private HashMap<Integer, UserFrequentTag> obtainUserFrequentTagInfo(int userId) {
-        List<UserFrequentTag> userFrequentTags = recommendationRepository.findByUserId(userId);
+        List<UserFrequentTag> userFrequentTags = recommendationRepository.findByUserTag_UserId(userId);
         HashMap<Integer, UserFrequentTag> tagWeight = new HashMap<>();
         for(UserFrequentTag u : userFrequentTags) {
             tagWeight.put(u.getUserTag().getTagId(), u);
@@ -100,12 +106,16 @@ public class RecommendationService {
     }
 
     private HashMap<Integer, Float> obtainUserFrequentTagWeight(int userId) {
-        List<UserFrequentTag> userFrequentTags = recommendationRepository.findByUserId(userId);
+        List<UserFrequentTag> userFrequentTags = recommendationRepository.findByUserTag_UserId(userId);
         HashMap<Integer, Float> tagWeight = new HashMap<>();
         for(UserFrequentTag u : userFrequentTags) {
             tagWeight.put(u.getUserTag().getTagId(), u.getWeight());
         }
         return tagWeight;
+    }
+
+    public List<UserFrequentTag> getUserFrequentTags(int userId) {
+        return recommendationRepository.findByUserTag_UserId(userId);
     }
 
     @AllArgsConstructor

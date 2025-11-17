@@ -5,9 +5,10 @@ import java.util.Map;
 public class InteractionTypesWeights {
 
     public static final Map<InteractionTypes, Float> WEIGHTS = Map.of(
-            InteractionTypes.CLICK, 0.15f,
+            InteractionTypes.CLICK, 0.125f,
             InteractionTypes.POST, 0.30f,
             InteractionTypes.JOIN, 0.40f,
-            InteractionTypes.SEARCH, 0.40f
+            InteractionTypes.SEARCH, 0.55f,
+            InteractionTypes.REGISTER, 0.5f
     );
 }
