@@ -1,0 +1,8 @@
+version: "3.8"
+
+services:
+  postapp:
+    build: ./api-gateway/.
+    container_name: api_gateway_app
+    ports:
+      - "8000:8000"
