@@ -3,6 +3,7 @@ package group5.ms.tongji.recommendation.service;
 import group5.ms.tongji.recommendation.domain.InteractionTypes;
 import group5.ms.tongji.recommendation.domain.InteractionTypesWeights;
 import group5.ms.tongji.recommendation.dto.RecommendableItem;
+import group5.ms.tongji.recommendation.exceptions.NotFoundException;
 import group5.ms.tongji.recommendation.model.UserFrequentTag;
 import group5.ms.tongji.recommendation.model.UserTagKey;
 import group5.ms.tongji.recommendation.repository.RecommendationRepository;
@@ -73,6 +74,8 @@ public class RecommendationService {
     //--------------------------------------------------------------------------------------------------
     public int[] getRecommendedPosts(int userId, int limit) {
         HashMap<Integer, Float> userTags = obtainUserFrequentTagWeight(userId);
+        if(userTags.isEmpty())
+            throw new NotFoundException("User", userId);
         RecommendableItem[] recommendables = postServiceClient.getPostsTags(userTags.keySet());
         return selectBestMatches(userTags,limit,recommendables);
     }
