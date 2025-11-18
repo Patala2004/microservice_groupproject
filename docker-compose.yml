@@ -33,7 +33,21 @@ services:
     extends:
       file: post/docker-compose.yml
       service: post-nginx
-  
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    networks:
+      - userapp_network
+    volumes:
+      - ./frontend:/app
+    environment:
+      - NODE_ENV=development
+    command: ["npm", "run", "dev"]
 
 networks:
   postapp_network:
