@@ -4,6 +4,7 @@ import { UserProvider } from "./Context/UserContext";
 import Header from "./pages/Header/Header";
 import LandingPage from "@/pages/LandingPage/LandingPage.tsx";
 import ConnexionPage from "./pages/LandingPage/ConnexionPage/ConnexionPage";
+import SignUpPage from "@/pages/LandingPage/SignUpPage/SignUpPage.tsx";
 
 function App() {
     return (
@@ -21,6 +22,7 @@ function App() {
                             <Routes>
                                 <Route path="/" element={<LandingPage />} />
                                 <Route path="/connexion" element={<ConnexionPage />} />
+                                <Route path="/signup" element={<SignUpPage/>} />
                             </Routes>
                         </main>
                     </div>

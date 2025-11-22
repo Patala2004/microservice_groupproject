@@ -68,7 +68,7 @@ const ConnexionForm = () => {
                 />
             </div>
 
-            <div className="flex flex-row items-center justify-between w-2/3">
+            <div className="flex flex-row items-center">
                 <span className="mb-2 text-sm text-blue-700 hover:underline cursor-pointer"
                       onClick={() => navigate("/signup")}
                 >

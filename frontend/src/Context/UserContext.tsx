@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import {toast} from "sonner";
 
 
-enum LanguageEnum {
+export enum LanguageEnum {
     EN = "en",
     CN = "cn",
 }
