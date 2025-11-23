@@ -4,8 +4,8 @@ import { Separator } from "@/components/ui/separator.tsx";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { LanguageEnum } from "@/Context/UserContext.tsx";
-import axios from "axios";
 import InputTextField from "@/components/own/InputTextField.tsx";
+import api from "@/lib/api/axios.ts";
 
 const SignupForm = () => {
     const [username, setUsername] = useState<string>('');
@@ -41,6 +41,7 @@ const SignupForm = () => {
 
         // Validate phone number format
         if (!phoneRegex.test(phone)) {
+            console.log(phone.length);
             toast.error("Phone number must be 11 digits.");
             return;
         }
@@ -58,7 +59,7 @@ const SignupForm = () => {
         }
 
         try {
-            const {data} = await axios.post('user/api/users', {
+            const {data} = await api.post('user/api/users', {
                     username,
                     password,
                     name,
@@ -69,7 +70,7 @@ const SignupForm = () => {
                     preferedLanguage
                 }, {
                     headers: {
-                        'Content-Type': 'multipart/form-data'
+                        'Content-Type': 'application/json'
                     }
                 }
             )
@@ -184,7 +185,6 @@ const SignupForm = () => {
                     </span>
                 </div>
 
-                {/* Bouton */}
                 <Button
                     className="
                         w-3/4
