@@ -4,7 +4,8 @@ import { UserProvider } from "./Context/UserContext";
 import Header from "./pages/Header/Header";
 import LandingPage from "@/pages/LandingPage/LandingPage.tsx";
 import ConnexionPage from "./pages/LandingPage/ConnexionPage/ConnexionPage";
-import SignUpPage from "@/pages/LandingPage/SignUpPage/SignUpPage.tsx";
+import SignupPage from "@/pages/LandingPage/SignUpPage/SignUpPage.tsx";
+import ProtectedLayout from "./pages/Utils/ProtectedLayout";
 
 function App() {
   return (
@@ -17,18 +18,19 @@ function App() {
           position="top-center"
         />
 
-        {/* Shell global */}
         <div className="min-h-screen w-full bg-background text-foreground no-scrollbar">
           <div className="flex flex-col min-h-screen no-scrollbar">
             <Header />
-
             <main className="flex-grow flex">
-              {/* Container centré pour les pages */}
               <div className="w-full flex flex-col no-scrollbar">
                 <Routes>
                   <Route path="/" element={<LandingPage />} />
                   <Route path="/connexion" element={<ConnexionPage />} />
-                  {/* Tu pourras ajouter d'autres routes ici (signup, dashboard, etc.) */}
+                  <Route path="/signup" element={<SignupPage />} />
+
+                  <Route element={<ProtectedLayout />}>
+                    <Route path="/test-protected" element={<div> salut</div>} />
+                  </Route>
                 </Routes>
               </div>
             </main>

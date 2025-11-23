@@ -17,7 +17,7 @@ const InputTextField = ({
   setter,
   disabled,
   valueToDisplay,
-  displayAsterisk = true,
+  displayAsterisk = false,
   password = false,
   showPassword,
   toggleShowPassword,
@@ -30,10 +30,9 @@ const InputTextField = ({
 
   return (
     <div className="flex flex-col gap-1.5 mb-4">
-      {/* Label */}
       <label
         htmlFor={inputId}
-        className="flex items-center justify-between text-xs font-medium tracking-wide text-neutral-600 dark:text-neutral-100"
+        className="flex items-center justify-between text-base font-medium tracking-wide text-white dark:text-neutral-100"
       >
         <span>{label}</span>
         {displayAsterisk && (

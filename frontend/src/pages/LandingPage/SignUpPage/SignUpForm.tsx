@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { toast } from "sonner";
-import {useNavigate} from "react-router-dom";
-import {LanguageEnum} from "@/Context/UserContext.tsx";
+import { useNavigate } from "react-router-dom";
+import { LanguageEnum } from "@/Context/UserContext.tsx";
 import axios from "axios";
 import InputTextField from "@/components/own/InputTextField.tsx";
 
@@ -19,7 +19,7 @@ const SignupForm = () => {
     const [weXinId, setWeXinId] = useState<string>('');
     const [campus, setCampus] = useState<number>(0);
     const [preferedLanguage, setPreferedLanguage] = useState<LanguageEnum>(LanguageEnum.EN);
-    
+
     const navigate = useNavigate();
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -64,7 +64,7 @@ const SignupForm = () => {
                     name,
                     email,
                     phone_number: phone,
-                    weixinId: weXinId ,
+                    weixinId: weXinId,
                     campus,
                     preferedLanguage
                 }, {
@@ -74,7 +74,7 @@ const SignupForm = () => {
                 }
             )
             console.log(data);
-            
+
             if(data.success){
                 toast.success("Signup successful! You can now log in.");
                 // Redirect to the login page
@@ -88,8 +88,7 @@ const SignupForm = () => {
             toast.error("An error occurred during signup, please try again.");
         }
     };
-    
-    
+
     const cleanStates = () => {
         setName('');
         setUsername('');
@@ -103,45 +102,106 @@ const SignupForm = () => {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center px-4 w-1/3 border-2 border-black rounded-lg p-2">
-            <span className="text-3xl font-bold mb-4">Inscription</span>
-            <Separator orientation="horizontal"/>
-            <div className="w-full my-4">
-                <InputTextField label="Name" setter={setName} valueToDisplay="Your name"/>
-                <InputTextField label="Email" setter={setEmail} valueToDisplay="Your email"/>
-                <InputTextField
-                    label="Password"
-                    setter={setPassword}
-                    password={true}
-                    showPassword={!visiblePassword}
-                    toggleShowPassword={() => setVisiblePassword(!visiblePassword)}
-                    valueToDisplay="Your password"
-                />
-                <InputTextField
-                    label="Confirmation of Password"
-                    setter={setConfirmPassword}
-                    password={true}
-                    showPassword={visibleConfirmPassword}
-                    toggleShowPassword={() => setVisibleConfirmPassword(!visibleConfirmPassword)}
-                    valueToDisplay="Confirmation of your password"
-                />
-                <InputTextField label="Phone number" setter={setPhone} valueToDisplay="Your phone number"/>
-                <InputTextField
-                    label="WeChat-WeXin ID"
-                    setter={setWeXinId}
-                    valueToDisplay="Your WeChat-WeXin ID"
-                />
-            </div>
-
-            <span className="mb-2 text-sm text-blue-700 hover:underline cursor-pointer"
-                  onClick={() => navigate("/connexion")}
+        <div className="w-full flex justify-center">
+            <div className="
+                w-full max-w-xl
+                bg-gradient-to-br from-neutral-600 via-neutral-950 to-black 
+                border border-neutral-800 
+                rounded-2xl 
+                shadow-xl shadow-black/40 
+                px-8 py-7
+                flex flex-col items-center
+                backdrop-blur
+            "
             >
-                Already registered? Log in here
-            </span>
+                <div className="w-full flex flex-col items-center mb-4">
+                    <span className="text-4xl font-bold tracking-tight bg-gradient-to-r 
+                          from-rose-600 via-red-600 to-orange-500 bg-clip-text text-transparent">
+                        Inscription
+                    </span>
+                    <p className="mt-2 text-lg text-neutral-200 text-center">
+                        Create your account to access the platform.
+                    </p>
+                </div>
 
-            <Button className="w-full bg-[#8B0000] hover:bg-[#ab3f3e]" onClick={handleSignup}>
-                Sign Up
-            </Button>
+                <Separator className="my-3 bg-neutral-400" />
+
+                <div className="w-full space-y-4 my-4">
+                    <InputTextField
+                        label="Name"
+                        setter={setName}
+                        valueToDisplay="Your name"
+                    />
+                    <InputTextField
+                        label="Username"
+                        setter={setUsername}
+                        valueToDisplay="Your username"
+                    />
+                    <InputTextField
+                        label="Email"
+                        setter={setEmail}
+                        valueToDisplay="Your email"
+                    />
+                    <InputTextField
+                        label="Password"
+                        setter={setPassword}
+                        password={true}
+                        showPassword={visiblePassword}
+                        valueToDisplay="Your password"
+                        toggleShowPassword={() => setVisiblePassword((prev) => !prev)}
+                    />
+                    <InputTextField
+                        label="Confirm Password"
+                        setter={setConfirmPassword}
+                        password={true}
+                        showPassword={visibleConfirmPassword}
+                        valueToDisplay="Confirm your password"
+                        toggleShowPassword={() => setVisibleConfirmPassword((prev) => !prev)}
+                    />
+                    <InputTextField
+                        label="Phone number"
+                        setter={setPhone}
+                        valueToDisplay="Your phone number"
+                    />
+                    <InputTextField
+                        label="WeChat ID"
+                        setter={setWeXinId}
+                        valueToDisplay="Your WeChat ID"
+                    />
+                </div>
+
+                <div className="w-full flex justify-center mb-4">
+                    <span
+                        className="
+                            text-xs sm:text-base 
+                            text-sky-400 hover:text-sky-300 
+                            hover:underline cursor-pointer 
+                            transition-colors
+                        "
+                        onClick={() => navigate("/connexion")}
+                    >
+                        Already have an account ? <strong>Log in here.</strong>
+                    </span>
+                </div>
+
+                {/* Bouton */}
+                <Button
+                    className="
+                        w-3/4
+                        h-11 
+                        rounded-xl 
+                        text-base font-bold
+                        bg-gradient-to-r from-rose-600 via-red-600 to-orange-500 
+                        hover:from-rose-500 hover:via-red-500 hover:to-orange-400
+                        text-white
+                        duration-150 
+                        shadow-lg shadow-red-900/40 
+                        hover:-translate-y-[1px] hover:shadow-red-900/60"
+                    onClick={handleSignup}
+                >
+                    Sign Up
+                </Button>
+            </div>
         </div>
     );
 };

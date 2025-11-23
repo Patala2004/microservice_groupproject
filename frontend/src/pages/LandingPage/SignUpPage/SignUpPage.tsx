@@ -1,10 +1,12 @@
 import SignupForm from "@/pages/LandingPage/SignUpPage/SignUpForm.tsx";
 
-
 const SignupPage = () => {
     return (
-        <div className="flex flex-col items-center justify-center h-full w-full">
-            <SignupForm/>
+        <div className="min-h-screen w-full flex items-center justify-center px-4 ">
+            <div className="absolute inset-0 -z-20 bg-gradient-to-br from-[#c7c6c1] to-orange-400" />
+            <div className="w-full flex justify-center items-center">
+                <SignupForm />
+            </div>
         </div>
     )
 }

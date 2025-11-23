@@ -24,9 +24,7 @@ const ConnexionForm = () => {
         { username, password },
         {
           headers: {
-            // Si ton backend attend du JSON, préfère :
-            // "Content-Type": "application/json"
-            "Content-Type": "multipart/form-data",
+            "Content-Type":"application/json",
           },
         }
       );
@@ -36,8 +34,6 @@ const ConnexionForm = () => {
       if (data.success) {
         localStorage.setItem("access_token", data.access_token);
         toast.success(`Welcome back ${data.user.name}`);
-
-        // Redirection vers le dashboard (ou autre page)
         navigate("/dashboard");
       } else {
         toast.error(data.message || "An error occurred during login");
@@ -50,11 +46,9 @@ const ConnexionForm = () => {
 
   return (
     <div className="w-full flex justify-center">
-      {/* Card avec effet moderne + gradient */}
-      <div
-        className="
-                    w-full max-w-md 
-                    bg-gradient-to-br from-neutral-900 via-neutral-950 to-black 
+      <div className="
+                    w-full max-w-xl
+                    bg-gradient-to-br from-neutral-600 via-neutral-950 to-black 
                     border border-neutral-800 
                     rounded-2xl 
                     shadow-xl shadow-black/40 
@@ -63,22 +57,18 @@ const ConnexionForm = () => {
                     backdrop-blur
                 "
       >
-        {/* Header */}
         <div className="w-full flex flex-col items-center mb-4">
-          <span className="text-xs tracking-[0.2em] uppercase text-neutral-400 mb-1">
-            Welcome back
-          </span>
-          <span className="text-3xl font-semibold tracking-tight text-white">
+          <span className="text-4xl font-bold tracking-tight bg-gradient-to-r 
+                          from-rose-600 via-red-600 to-orange-500 bg-clip-text text-transparent">
             Connexion
           </span>
-          <p className="mt-2 text-sm text-neutral-400 text-center">
-            Connect to your account to access your dashboard.
+          <p className="mt-2 text-lg text-neutral-200 text-center">
+            Connect to your account to access the platform.
           </p>
         </div>
 
-        <Separator className="my-3 bg-neutral-800" />
+        <Separator className="my-3 bg-neutral-400" />
 
-        {/* Champs */}
         <div className="w-full space-y-4 my-4">
           <InputTextField
             label="Username"
@@ -95,8 +85,7 @@ const ConnexionForm = () => {
           />
         </div>
 
-        {/* Lien inscription */}
-        <div className="w-full flex justify-end mb-4">
+        <div className="w-full flex justify-center mb-4">
           <span
             className="
                             text-xs sm:text-sm 
@@ -106,24 +95,22 @@ const ConnexionForm = () => {
                         "
             onClick={() => navigate("/signup")}
           >
-            No account? Sign up here.
+            No account ? <strong>Sign up here.</strong>
           </span>
         </div>
 
-        {/* Bouton */}
         <Button
           className="
-                        w-full 
+                        w-3/4
                         h-11 
                         rounded-xl 
-                        text-sm font-medium 
+                        text-base font-bold
                         bg-gradient-to-r from-rose-600 via-red-600 to-orange-500 
                         hover:from-rose-500 hover:via-red-500 hover:to-orange-400
-                        transition-transform transition-shadow 
+                        text-white
                         duration-150 
                         shadow-lg shadow-red-900/40 
-                        hover:-translate-y-[1px] hover:shadow-red-900/60
-                    "
+                        hover:-translate-y-[1px] hover:shadow-red-900/60"
           onClick={handleConnexion}
         >
           Connexion
