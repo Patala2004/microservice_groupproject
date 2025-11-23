@@ -33,7 +33,13 @@ services:
     extends:
       file: post/docker-compose.yml
       service: post-nginx
-  
+
+  frontend:
+    extends:
+      file: frontend/docker-compose.yml
+      service: frontend
+    networks:
+      - userapp_network
 
 networks:
   postapp_network:
