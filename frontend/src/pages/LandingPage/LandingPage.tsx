@@ -1,9 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import SeparatorWithText from "@/pages/Utils/SeparatorWithText.tsx";
+import { useTranslation } from "react-i18next";
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden">
@@ -11,15 +13,15 @@ const LandingPage = () => {
       <div className="w-full max-w-3xl flex flex-col items-center text-center gap-10">
         <div className="space-y-4">
           <h1 className="text-6xl sm:text-6xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
-            Welcome to{" "}
+            {t("landing.welcome-to")}&nbsp;
             <span className="bg-gradient-to-r from-rose-600 via-red-600 to-orange-500 bg-clip-text text-transparent">
-              EduPost
+                {t("app_name")}
             </span>
           </h1>
 
           <p className="text-xl text-neutral-800 dark:text-neutral-300">
-            You want to post or announce something to other students ? <strong>Join us now.</strong> <br />
-            This platform is designed to facilitate communication and sharing among students.
+            {t("landing.tagline")} <strong>{t("landing.join-us-now")}</strong> <br />
+            {t("landing.description")}
           </p>
         </div>
 
@@ -41,13 +43,13 @@ const LandingPage = () => {
                 variant="gradient-fire"
                 size="main-button"
             >
-              Create an account
+                {t("landing.create_account_btn")}
             </Button>
             
-            <SeparatorWithText text={"Or"} />
+            <SeparatorWithText text={t("or")} />
             
             <Button variant="outline-soft-red" size="secondary-button" onClick={() => navigate("/signin")}>
-              Login
+                {t("landing.login_btn")}
             </Button>
           </div>
         </div>

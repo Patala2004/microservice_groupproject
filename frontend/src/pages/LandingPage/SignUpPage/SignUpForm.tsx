@@ -6,6 +6,7 @@ import { LanguageEnum } from "@/Context/userTypes.tsx";
 import InputTextField from "@/components/own/InputTextField.tsx";
 import api from "@/lib/api/axios.ts";
 import { Card } from "@/components/ui/card";
+import {useTranslation} from "react-i18next";
 
 const SignupForm = () => {
     const [username, setUsername] = useState<string>('');
@@ -21,6 +22,7 @@ const SignupForm = () => {
     const [preferedLanguage, setPreferedLanguage] = useState<LanguageEnum>(LanguageEnum.EN);
 
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^[0-9]{11}$/; // chinese phone number format
@@ -29,32 +31,32 @@ const SignupForm = () => {
     const handleSignup = async () => {
         // Check if required fields are filled
         if (!username || !name || !email || !password || !confirmPassword || !phone || !weXinId) {
-            toast.error("All fields are required.");
+            toast.error(t('errors.all_fields_required'));
             return;
         }
 
         // Validate email format
         if (!emailRegex.test(email)) {
-            toast.error("Invalid email format.");
+            toast.error(t('errors.invalid_email'));
             return;
         }
 
         // Validate phone number format
         if (!phoneRegex.test(phone)) {
             console.log(phone.length);
-            toast.error("Phone number must be 11 digits.");
+            toast.error(t('errors.invalid_phone'));
             return;
         }
 
         // Validate password strength
         if (!passwordRegex.test(password)) {
-            toast.error("Password must be at least 8 characters long and contain at least one digit.");
+            toast.error(t('errors.weak_password'));
             return;
         }
 
         // Check if passwords match
         if (password !== confirmPassword) {
-            toast.error("Passwords do not match.");
+            toast.error(t('errors.passwords_do_not_match'));
             return;
         }
 
@@ -77,15 +79,15 @@ const SignupForm = () => {
             console.log(data);
 
             if(data.success){
-                toast.success("Signup successful! You can now log in.");
+                toast.success(t('success.signup_successful'));
                 navigate("/signin");
                 cleanStates();
             }else{
-                toast.error(data.message || "An error occurred during signup, please try again.");
+                toast.error(data.message || t('errors.generic_signup_error'));
             }
         } catch (error) {
             console.error("An error occurred during signup:", error);
-            toast.error("An error occurred during signup, please try again.");
+            toast.error(t('errors.generic_signup_error'));
         }
     };
 
@@ -107,63 +109,63 @@ const SignupForm = () => {
                 <div className="w-full flex flex-col items-center mb-4">
                     <span className="text-4xl font-bold tracking-tight bg-gradient-to-r 
                           from-rose-600 via-red-600 to-orange-500 bg-clip-text text-transparent">
-                        Inscription
+                        {t("signup.title")}
                     </span>
                     <p className="mt-2 text-lg text-neutral-200 text-center">
-                        Create your account to access the <strong>platform</strong>.
+                        {t('signup.subtitle')} <strong>{t('signup.plateform')}</strong>
                     </p>
                 </div>
-                
+
                 <div className="w-full space-y-4 mt-2 mb-4">
                     <InputTextField
-                        label="Name"
+                        label={t('signup.name')}
                         setter={setName}
-                        valueToDisplay="Your name"
+                        valueToDisplay={t('signup.placeholder_name')}
                     />
                     <InputTextField
-                        label="Username"
+                        label={t('signup.username')}
                         setter={setUsername}
-                        valueToDisplay="Your username"
+                        valueToDisplay={t('signup.placeholder_username')}
                     />
                     <InputTextField
-                        label="Email"
+                        label={t('signup.email')}
                         setter={setEmail}
-                        valueToDisplay="Your email"
+                        valueToDisplay={t('signup.placeholder_email')}
                     />
                     <InputTextField
-                        label="Password"
+                        label={t('signup.password')}
                         setter={setPassword}
                         password={true}
                         showPassword={visiblePassword}
-                        valueToDisplay="Your password"
+                        valueToDisplay={t('signup.placeholder_password')}
                         toggleShowPassword={() => setVisiblePassword((prev) => !prev)}
                     />
                     <InputTextField
-                        label="Confirm Password"
+                        label={t('signup.confirm_password')}
                         setter={setConfirmPassword}
                         password={true}
                         showPassword={visibleConfirmPassword}
-                        valueToDisplay="Confirm your password"
+                        valueToDisplay={t('signup.placeholder_confirm_password')}
                         toggleShowPassword={() => setVisibleConfirmPassword((prev) => !prev)}
                     />
                     <InputTextField
-                        label="Phone number"
+                        label={t('signup.phone_number')}
                         setter={setPhone}
-                        valueToDisplay="Your phone number"
+                        valueToDisplay={t('signup.placeholder_phone')}
                     />
                     <InputTextField
-                        label="WeChat ID"
+                        label={t('signup.wechat_id')}
                         setter={setWeXinId}
-                        valueToDisplay="Your WeChat ID"
+                        valueToDisplay={t('signup.placeholder_wechat_id')}
                     />
                 </div>
 
                 <Button
-                    variant="gradient-fire" 
+                    variant="gradient-fire"
                     size="full-width"
                     onClick={handleSignup}
                 >
-                    Create the account
+                    {t('signup.submit_btn')}
                 </Button>
 
                 <div className="w-full flex justify-end mt-5 mb-1">
@@ -176,7 +178,7 @@ const SignupForm = () => {
                         "
                         onClick={() => navigate("/signin")}
                     >
-                        Already have an account ? <strong>Log in here.</strong>
+                        {t('signup.login_link_prefix')} <strong>{t('signup.login_link')}</strong>
                     </span>
                 </div>
             </Card>
