@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import SeparatorWithText from "@/pages/Utils/SeparatorWithText.tsx";
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -34,44 +35,19 @@ const LandingPage = () => {
             backdrop-blur-xl
           "
         >
-          <div className="flex flex-col gap-4 w-full">
+          <div className="flex flex-col w-full">
             <Button
-              onClick={() => navigate("/connexion")}
-              className="
-                w-full
-                h-12
-                rounded-xl
-                text-white
-                bg-gradient-to-r from-rose-600 via-red-600 to-orange-500
-                hover:from-rose-500 hover:via-red-500 hover:to-orange-400
-                text-xl font-bold
-                shadow-lg shadow-red-900/40
-                hover:shadow-red-900/60
-                transition-all
-                hover:-translate-y-[2px]
-              "
+                onClick={() => navigate("/signup")}
+                variant="gradient-fire"
+                size="main-button"
             >
-              Login
+              Create an account
             </Button>
-
-            <Button
-              onClick={() => navigate("/signup")}
-              variant="outline"
-              className="
-                w-full
-                bg-white
-                h-12
-                rounded-xl
-                border-red-600/40
-                text-xl font-semibold
-                text-red-700 dark:text-red-400
-                hover:bg-gray-300
-                hover:-translate-y-[2px]
-                hover:text-red-800 
-                transition-all
-              "
-            >
-              Sign Up
+            
+            <SeparatorWithText text={"Or"} />
+            
+            <Button variant="outline-soft-red" size="secondary-button" onClick={() => navigate("/signin")}>
+              Login
             </Button>
           </div>
         </div>

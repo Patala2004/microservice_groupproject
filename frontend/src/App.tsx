@@ -3,9 +3,9 @@ import { Toaster } from "@/components/ui/sonner.tsx";
 import { UserProvider } from "./Context/UserContext";
 import Header from "./pages/Header/Header";
 import LandingPage from "@/pages/LandingPage/LandingPage.tsx";
-import ConnexionPage from "./pages/LandingPage/ConnexionPage/ConnexionPage";
 import SignupPage from "@/pages/LandingPage/SignUpPage/SignUpPage.tsx";
 import ProtectedLayout from "./pages/Utils/ProtectedLayout";
+import SigninPage from "@/pages/LandingPage/ConnexionPage/SignInPage.tsx";
 
 function App() {
   return (
@@ -25,7 +25,7 @@ function App() {
               <div className="w-full flex flex-col no-scrollbar">
                 <Routes>
                   <Route path="/" element={<LandingPage />} />
-                  <Route path="/connexion" element={<ConnexionPage />} />
+                  <Route path="/signin" element={<SigninPage />} />
                   <Route path="/signup" element={<SignupPage />} />
 
                   <Route element={<ProtectedLayout />}>

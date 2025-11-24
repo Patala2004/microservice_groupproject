@@ -54,7 +54,7 @@ const InputTextField = ({
             border border-neutral-300/80 dark:border-neutral-700
             bg-white/80 dark:bg-neutral-900/70
             text-sm text-neutral-900 dark:text-neutral-100
-            placeholder:text-neutral-400 dark:placeholder:text-neutral-500
+            placeholder:text-neutral-600 dark:placeholder:text-neutral-500
             pr-10
             shadow-sm
             focus-visible:outline-none
@@ -62,7 +62,6 @@ const InputTextField = ({
             focus-visible:ring-[#8B0000]
             focus-visible:border-[#8B0000]
             focus-visible:shadow-md
-            transition-colors transition-shadow
             disabled:cursor-not-allowed disabled:opacity-60
           "
         />
