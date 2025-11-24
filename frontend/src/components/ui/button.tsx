@@ -33,7 +33,6 @@ const buttonVariants = cva(
                     "bg-white border-red-600/40 text-red-700 dark:text-red-400 font-semibold " +
                     "hover:bg-gray-300 hover:text-red-800 " +
                     "hover:-translate-y-[2px] shadow-sm rounded-xl",
-
                 "profile-button":
                     "flex items-center gap-2 h-auto text-sm font-medium " +
                     "px-3 py-1 !rounded-full " +
@@ -50,7 +49,7 @@ const buttonVariants = cva(
 
                 "main-button": "h-12 text-xl w-full px-6 has-[>svg]:px-4 rounded-xl",
                 "secondary-button":
-                    "h-10 text-lg w-full px-5 has-[>svg]:px-3.5 rounded-lg",
+                    "h-10 text-lg w-full px-5 has-[>svg]:px-3.5 rounded-xl",
                 "full-width": "w-full h-12 text-xl px-5 mt-2 has-[>svg]:px-3.5 rounded-xl",
 
             },

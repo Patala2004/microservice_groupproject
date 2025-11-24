@@ -6,11 +6,18 @@ const resources = {
         translation: {
             app_name: "EduPost",
 
+            language: {
+                english: "EN",
+                chinese: "中文",
+            },
+
+            or: "OR",
+
             landing: {
-                welcome: "Welcome to EduPost",
-                tagline: "You want to post or announce something to other students? Join us now.",
+                'welcome-to': "Welcome to",
+                tagline: "You want to post or announce something to other students?",
+                'join-us-now': "Join us now.",
                 description: "This platform is designed to facilitate communication and sharing among students.",
-                or: "OR",
 
                 create_account_btn: "Create an account",
                 login_btn: "Login",
@@ -18,7 +25,8 @@ const resources = {
 
             signup: {
                 title: "Inscription",
-                subtitle: "Create your account to access the platform.",
+                subtitle: "Create your account to access the",
+                plateform: "platform.",
 
                 name: "Name",
                 username: "Username",
@@ -44,7 +52,8 @@ const resources = {
 
             login: {
                 title: "Connection",
-                subtitle: "Connect to your account to access the platform.",
+                subtitle: "Connect to your account to access the",
+                plateform: "platform.",
                 
                 username: "Username",
                 password: "Password",
@@ -54,17 +63,39 @@ const resources = {
                 signup_link_prefix: "No account?",
                 signup_link: "Sign up here.",
             },
+
+            errors: {
+                all_fields_required: "All fields are required.",
+                invalid_email: "Invalid email format.",
+                invalid_phone: "Phone number must be 11 digits.",
+                weak_password: "Password must be at least 8 characters long and contain at least one digit.",
+                passwords_do_not_match: "Passwords do not match.",
+                generic_signup_error: "An error occurred during signup, please try again.",
+                generic_login_error: "An error occurred during login, please try again.",
+                login_fields_required: "All fields are required to login.",
+            },
+            success: {
+                signup_successful: "Signup successful! You can now log in.",
+                welcome_back: "Welcome back",
+            }
         }
     },
     cn: {
         translation: {
             app_name: "学苑贴",
 
+            language: {
+                english: "EN",
+                chinese: "中文",
+            },
+
+            or: "或",
+
             landing: {
-                welcome: "欢迎来到 学苑贴",
-                tagline: "想向其他学生发布或宣布些什么？立即加入我们。",
+                'welcome-to': "欢迎来到",
+                tagline: "想向其他学生发布或宣布些什么？",
+                'join-us-now': "现在就加入我们吧。",
                 description: "本平台旨在促进学生之间的交流和分享。",
-                or: "或",
 
                 create_account_btn: "创建账号",
                 login_btn: "登录",
@@ -72,7 +103,8 @@ const resources = {
 
             signup: {
                 title: "注册",
-                subtitle: "创建您的账户以访问平台。",
+                subtitle: "创建您的账户以访问",
+                plateform: "平台。",
 
                 name: "姓名",
                 username: "用户名",
@@ -98,7 +130,8 @@ const resources = {
 
             login: {
                 title: "登录",
-                subtitle: "连接您的账户以访问平台。",
+                subtitle: "登录您的账户以访问",
+                plateform: "平台。",
 
                 username: "用户名",
                 password: "密码",
@@ -108,6 +141,21 @@ const resources = {
                 signup_link_prefix: "没有账户?",
                 signup_link: "在此注册。",
             },
+
+            errors: {
+                all_fields_required: "所有字段都是必需的。",
+                invalid_email: "电子邮件格式无效。",
+                invalid_phone: "电话号码必须是11位数字。",
+                weak_password: "密码必须至少8个字符长，并包含至少一位数字。",
+                passwords_do_not_match: "密码不匹配。",
+                generic_signup_error: "注册过程中发生错误，请重试。",
+                generic_login_error: "登录过程中发生错误，请重试。",
+                login_fields_required: "所有字段都是必需的，才能登录。",
+            },
+            success: {
+                signup_successful: "注册成功！您现在可以登录了。",
+                welcome_back: "欢迎回来",
+            }
         }
     }
 };
@@ -121,9 +169,7 @@ i18n
         interpolation: {
             escapeValue: false
         },
-        // Fallback locale if a specific key is missing
         fallbackLng: "en",
-        // Use 'translation' as the default namespace
         ns: ["translation"],
         defaultNS: "translation"
     });

@@ -1,12 +1,9 @@
-import {
-    createContext,
-    useContext,
-    useState
-} from "react";
-import { toast } from "sonner";
-import type { NavigateFunction } from "react-router-dom";
-import type { User } from "@/Context/userTypes.tsx";
-import { LanguageEnum } from "@/Context/userTypes.tsx";
+import {createContext, useContext, useEffect, useState} from "react";
+import {toast} from "sonner";
+import type {NavigateFunction} from "react-router-dom";
+import {LanguageEnum, type User} from "@/Context/userTypes.tsx";
+import i18n from "i18next";
+
 
 interface UserContextType {
     user: User | null;
@@ -43,7 +40,6 @@ const getInitialLanguage = (): LanguageEnum => {
                 return parsed.preferedLanguage;
             }
         } catch {
-            // ignore
         }
     }
 
@@ -61,6 +57,13 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         () => getInitialLanguage()
     );
 
+    useEffect(() => {
+        if (i18n.language !== language) {
+            i18n.changeLanguage(language);
+        }
+    }, [language]);
+
+
     const isLoggedIn = true;
 
     const login = (userData: User, token: string, refreshToken: string) => {
@@ -70,6 +73,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         localStorage.setItem("language", userData.preferedLanguage);
         setUser(userData);
         setLanguageState(userData.preferedLanguage);
+        i18n.changeLanguage(userData.preferedLanguage);
     };
 
     const logout = () => {
@@ -82,6 +86,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const setLanguage = (lang: LanguageEnum) => {
         setLanguageState(lang);
         localStorage.setItem("language", lang);
+
+        // Important: Changer la langue I18n immédiatement lors du changement manuel
+        i18n.changeLanguage(lang);
 
         if (user) {
             const updatedUser: User = { ...user, preferedLanguage: lang };
@@ -150,7 +157,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
             if (!newToken) return null;
 
-            const retried = await fetch(input, {
+            return await fetch(input, {
                 ...init,
                 headers: {
                     ...(init?.headers || {}),
@@ -158,8 +165,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
                     "Content-Type": "application/json",
                 },
             });
-
-            return retried;
         }
 
         return response;

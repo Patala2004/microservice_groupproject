@@ -3,10 +3,12 @@ import { School } from "lucide-react";
 import { useUser } from "@/Context/UserContext.tsx";
 import { LanguageEnum } from "@/Context/userTypes.tsx";
 import {Button} from "@/components/ui/button.tsx";
+import {useTranslation} from "react-i18next";
 
 const Header = () => {
   const navigate = useNavigate();
   const { user, isLoggedIn, language, setLanguage } = useUser();
+  const { t } = useTranslation();
 
   const handleToggleLanguage = () => {
     const next =
@@ -21,6 +23,8 @@ const Header = () => {
   const avatarLetter =
     user?.name?.[0]?.toUpperCase() || user?.username?.[0]?.toUpperCase() || "?";
 
+  const currentLanguageKey = language === LanguageEnum.EN ? 'language.english' : 'language.chinese';
+
   return (
     <header
       className="
@@ -33,7 +37,6 @@ const Header = () => {
       "
     >
       <div className="mx-auto px-6 h-16 flex items-center justify-between">
-        {/* Logo + titre */}
         <div
           className="
             flex items-center gap-3
@@ -55,7 +58,7 @@ const Header = () => {
           </div>
 
           <span className="text-2xl font-extrabold tracking-tight text-neutral-900 dark:text-neutral-100">
-            EduPost
+            {t('app_name')}
           </span>
         </div>
 
@@ -66,7 +69,7 @@ const Header = () => {
                 onClick={handleToggleLanguage}
                 variant="gradient-fire"
               >
-                {language === LanguageEnum.EN ? "EN" : "中文"}
+                {t(currentLanguageKey)}
               </Button>
 
               <Button
@@ -91,7 +94,7 @@ const Header = () => {
             </>
           ) : (
             <Button  variant="outline-soft-red">
-              Login
+              {t('landing.login_btn')}
             </Button>
           )}
         </div>
