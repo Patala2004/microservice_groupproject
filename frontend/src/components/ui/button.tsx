@@ -33,6 +33,14 @@ const buttonVariants = cva(
                     "bg-white border-red-600/40 text-red-700 dark:text-red-400 font-semibold " +
                     "hover:bg-gray-300 hover:text-red-800 " +
                     "hover:-translate-y-[2px] shadow-sm rounded-xl",
+
+                "profile-button":
+                    "flex items-center gap-2 h-auto text-sm font-medium " +
+                    "px-3 py-1 !rounded-full " +
+                    "bg-neutral-100 dark:bg-neutral-900 " +
+                    "border border-neutral-200 dark:border-neutral-800 " +
+                    "hover:bg-neutral-200 dark:hover:bg-neutral-800 " +
+                    "shadow-sm",
             },
             size: {
                 default: "h-9 px-4 py-2 has-[>svg]:px-3 rounded-md",
@@ -40,10 +48,11 @@ const buttonVariants = cva(
                 lg: "h-10 px-6 has-[>svg]:px-4 rounded-md",
                 icon: "size-9 rounded-md",
 
-                "main-button": "h-12 text-xl w-9/10 px-6 has-[>svg]:px-4",
+                "main-button": "h-12 text-xl w-full px-6 has-[>svg]:px-4 rounded-xl",
                 "secondary-button":
-                    "h-10 text-xl w-9/10 px-5 has-[>svg]:px-3.5",
-                "full-width": "w-full 10 text-xl h-12 px-5 mt-2 has-[>svg]:px-3.5",
+                    "h-10 text-lg w-full px-5 has-[>svg]:px-3.5 rounded-lg",
+                "full-width": "w-full h-12 text-xl px-5 mt-2 has-[>svg]:px-3.5 rounded-xl",
+
             },
         },
         defaultVariants: {

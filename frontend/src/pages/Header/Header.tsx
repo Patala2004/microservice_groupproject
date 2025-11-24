@@ -1,9 +1,26 @@
 import { useNavigate } from "react-router-dom";
 import { School } from "lucide-react";
+import { useUser } from "@/Context/UserContext.tsx";
+import { LanguageEnum } from "@/Context/userTypes.tsx";
+import {Button} from "@/components/ui/button.tsx";
 
 const Header = () => {
   const navigate = useNavigate();
-  
+  const { user, isLoggedIn, language, setLanguage } = useUser();
+
+  const handleToggleLanguage = () => {
+    const next =
+      language === LanguageEnum.EN ? LanguageEnum.CN : LanguageEnum.EN;
+    setLanguage(next);
+  };
+
+  const handleProfileClick = () => {
+    navigate("/user");
+  };
+
+  const avatarLetter =
+    user?.name?.[0]?.toUpperCase() || user?.username?.[0]?.toUpperCase() || "?";
+
   return (
     <header
       className="
@@ -16,6 +33,7 @@ const Header = () => {
       "
     >
       <div className="mx-auto px-6 h-16 flex items-center justify-between">
+        {/* Logo + titre */}
         <div
           className="
             flex items-center gap-3
@@ -42,21 +60,40 @@ const Header = () => {
         </div>
 
         <div className="flex items-center gap-4">
-          <button
-            onClick={() => navigate("/signin")}
-            className="
-              px-4 py-2 rounded-xl
-              text-base font-bold
-              text-white
-              bg-gradient-to-r from-rose-600 via-red-600 to-orange-500
-              hover:from-rose-500 hover:via-red-500 hover:to-orange-400
-              shadow-md shadow-red-900/30
-              hover:shadow-red-900/50
-              transition-all
-            "
-          >
-            Login
-          </button>
+          {isLoggedIn ? (
+            <>
+              <Button
+                onClick={handleToggleLanguage}
+                variant="gradient-fire"
+              >
+                {language === LanguageEnum.EN ? "EN" : "中文"}
+              </Button>
+
+              <Button
+                onClick={handleProfileClick}
+                variant="profile-button"
+              >
+                <div
+                  className="
+                    w-8 h-8 rounded-full
+                    bg-gradient-to-br from-rose-600 via-red-600 to-orange-500
+                    flex items-center justify-center
+                    text-white text-sm font-bold
+                    shrink-0
+                  "
+                >
+                  {avatarLetter}
+                </div>
+                <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                  {"testUsername"}
+                </span>
+              </Button>
+            </>
+          ) : (
+            <Button  variant="outline-soft-red">
+              Login
+            </Button>
+          )}
         </div>
       </div>
     </header>
