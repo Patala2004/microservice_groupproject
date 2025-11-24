@@ -6,6 +6,7 @@ import LandingPage from "@/pages/LandingPage/LandingPage.tsx";
 import ConnexionPage from "./pages/LandingPage/ConnexionPage/ConnexionPage";
 import SignupPage from "@/pages/LandingPage/SignUpPage/SignUpPage.tsx";
 import ProtectedLayout from "./pages/Utils/ProtectedLayout";
+import Home from "@/pages/Home/Home.tsx";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
                   <Route path="/" element={<LandingPage />} />
                   <Route path="/connexion" element={<ConnexionPage />} />
                   <Route path="/signup" element={<SignupPage />} />
+                  <Route path="/home" element={<Home />} />
 
                   <Route element={<ProtectedLayout />}>
                     <Route path="/test-protected" element={<div> salut</div>} />

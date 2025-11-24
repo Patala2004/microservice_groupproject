@@ -1,51 +1,75 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import {toast} from "sonner";
-
-
-export enum LanguageEnum {
-    EN = "en",
-    CN = "cn",
-}
-
-interface User {
-    username: string;
-    password: string;
-    name: string;
-    weixinId: string;
-    email: string;
-    phone_number: string;
-    campus: number;
-    preferedLanguage:LanguageEnum;
-}
+import {
+    createContext,
+    useContext,
+    useState
+} from "react";
+import { toast } from "sonner";
+import type { NavigateFunction } from "react-router-dom";
+import type { User } from "@/Context/userTypes.tsx";
+import { LanguageEnum } from "@/Context/userTypes.tsx";
 
 interface UserContextType {
     user: User | null;
+    isLoggedIn: boolean;
+    language: LanguageEnum;
+    setLanguage: (lang: LanguageEnum) => void;
     login: (userData: User, token: string, refreshToken: string) => void;
     logout: () => void;
     authFetch: (
         input: RequestInfo,
         init?: RequestInit,
-        navigate?: any
+        navigate?: NavigateFunction
     ) => Promise<Response | null>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-    const [user, setUser] = useState<User | null>(null);
+const getInitialUser = (): User | null => {
+    const storedUser = localStorage.getItem("user");
+    if (!storedUser) return null;
+    try {
+        return JSON.parse(storedUser) as User;
+    } catch {
+        return null;
+    }
+};
 
-    useEffect(() => {
-        const storedUser = localStorage.getItem("user");
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
+const getInitialLanguage = (): LanguageEnum => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+        try {
+            const parsed = JSON.parse(storedUser) as User;
+            if (parsed.preferedLanguage) {
+                return parsed.preferedLanguage;
+            }
+        } catch {
+            // ignore
         }
-    }, []);
+    }
+
+    const storedLang = localStorage.getItem("language") as LanguageEnum | null;
+    if (storedLang === LanguageEnum.EN || storedLang === LanguageEnum.CN) {
+        return storedLang;
+    }
+
+    return LanguageEnum.EN;
+};
+
+export const UserProvider = ({ children }: { children: React.ReactNode }) => {
+    const [user, setUser] = useState<User | null>(() => getInitialUser());
+    const [language, setLanguageState] = useState<LanguageEnum>(
+        () => getInitialLanguage()
+    );
+
+    const isLoggedIn = true;
 
     const login = (userData: User, token: string, refreshToken: string) => {
         localStorage.setItem("token", token);
         localStorage.setItem("refreshToken", refreshToken);
         localStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem("language", userData.preferedLanguage);
         setUser(userData);
+        setLanguageState(userData.preferedLanguage);
     };
 
     const logout = () => {
@@ -55,39 +79,50 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(null);
     };
 
-    const verifyToken = async (navigate?: any): Promise<string | null> => {
-        // We use two tokens, the access token and the refresh token,
-        // to allow the user to stay connected even if the first token has expired.
-        // The access token has a shorter validity period, but if it becomes invalid,
-        // we can use the refresh token to obtain a new access token.
-        // This way, we can keep the user logged in without requiring them to log in again each time the token expires.
+    const setLanguage = (lang: LanguageEnum) => {
+        setLanguageState(lang);
+        localStorage.setItem("language", lang);
+
+        if (user) {
+            const updatedUser: User = { ...user, preferedLanguage: lang };
+            setUser(updatedUser);
+            localStorage.setItem("user", JSON.stringify(updatedUser));
+        }
+    };
+
+    const verifyToken = async (
+        navigate?: NavigateFunction
+    ): Promise<string | null> => {
         const VITE_API_URL = import.meta.env.VITE_API_URL;
 
         try {
             const req = await fetch(`${VITE_API_URL}/api/Token/refresh`, {
                 method: "POST",
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+                    Authorization: `Bearer ${localStorage.getItem(
+                        "refreshToken"
+                    )}`,
                 },
             });
 
-            // If the status is not 200, it means the refresh token is invalid or expired
             if (req.status !== 200) {
-                // If the refresh token is invalid, we redirect the user to the login page
                 logout();
-                toast.error("Votre session a expiré, veuillez vous reconnecter.");
+                toast.error(
+                    "Votre session a expiré, veuillez vous reconnecter."
+                );
                 if (navigate) navigate("/");
                 return null;
             }
 
-            // If the refresh token is valid, we update the tokens in local storage
-            const tokens = await req.json(); // get the new two tokens
+            const tokens = await req.json();
             localStorage.setItem("token", tokens.token);
             localStorage.setItem("refreshToken", tokens.refreshToken);
             return tokens.token;
-        } catch (error) {
+        } catch {
             logout();
-            toast.error("Une erreur s'est produite lors de la vérification de votre connection, veuillez vous reconnecter.");
+            toast.error(
+                "Une erreur s'est produite lors de la vérification de votre connexion, veuillez vous reconnecter."
+            );
             if (navigate) navigate("/");
             return null;
         }
@@ -96,16 +131,10 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const authFetch = async (
         input: RequestInfo,
         init?: RequestInit,
-        navigate?: any
+        navigate?: NavigateFunction
     ): Promise<Response | null> => {
-        // authFetch is a custom function that replaces fetch()
-        // It automatically handles token-related errors (401 or 403)
-        // If the token is expired, it tries to get a new one via verifyToken()
-        // Then it retries the original request with the new token
-
-        // Adds the access token to the Authorization header
         const token = localStorage.getItem("token");
-        const withAuth = {
+        const withAuth: RequestInit = {
             ...init,
             headers: {
                 ...(init?.headers || {}),
@@ -114,9 +143,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
             },
         };
 
-        let response = await fetch(input, withAuth);
+        const response = await fetch(input, withAuth);
 
-        // If the response is 401 or 403, it means the token is invalid or expired
         if (response.status === 401 || response.status === 403) {
             const newToken = await verifyToken(navigate);
 
@@ -141,6 +169,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         <UserContext.Provider
             value={{
                 user,
+                isLoggedIn,
+                language,
+                setLanguage,
                 login,
                 logout,
                 authFetch,

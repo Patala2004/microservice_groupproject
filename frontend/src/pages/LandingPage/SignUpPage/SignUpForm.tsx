@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { LanguageEnum } from "@/Context/UserContext.tsx";
+import { LanguageEnum } from "@/Context/userTypes.tsx";
 import InputTextField from "@/components/own/InputTextField.tsx";
 import api from "@/lib/api/axios.ts";
 
