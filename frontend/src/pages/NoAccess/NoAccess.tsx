@@ -36,7 +36,7 @@ const NoAccess = () => {
                 >
                     <div className="flex flex-col gap-4 w-full">
                         <Button
-                            onClick={() => navigate("/connexion")}
+                            onClick={() => navigate("/signin")}
                             className="
                 w-full
                 h-12
