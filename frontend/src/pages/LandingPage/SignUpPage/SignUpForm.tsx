@@ -18,7 +18,7 @@ const SignupForm = () => {
     const [visibleConfirmPassword, setVisibleConfirmPassword] = useState<boolean>(false);
     const [phone, setPhone] = useState<string>('');
     const [weXinId, setWeXinId] = useState<string>('');
-    const [campus, setCampus] = useState<number>(0);
+    const [campus, setCampus] = useState<number>(1);
     const [preferedLanguage, setPreferedLanguage] = useState<LanguageEnum>(LanguageEnum.EN);
 
     const navigate = useNavigate();
@@ -61,7 +61,7 @@ const SignupForm = () => {
         }
 
         try {
-            const {data} = await api.post('user/api/users', {
+            const response = await api.post('user/api/users/', {
                     username,
                     password,
                     name,
@@ -76,14 +76,13 @@ const SignupForm = () => {
                     }
                 }
             )
-            console.log(data);
-
-            if(data.success){
+            
+            if(response.status === 201 || response.status === 200){
                 toast.success(t('success.signup_successful'));
                 navigate("/signin");
                 cleanStates();
-            }else{
-                toast.error(data.message || t('errors.generic_signup_error'));
+            } else {
+                toast.error(t('errors.generic_signup_error'));
             }
         } catch (error) {
             console.error("An error occurred during signup:", error);
