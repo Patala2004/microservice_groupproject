@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
 import { useUser } from "@/Context/UserContext.tsx";
+import api from "@/lib/api/axios.ts";
 
 const SignInForm = () => {
   const [username, setUsername] = useState<string>("");
@@ -24,20 +25,20 @@ const SignInForm = () => {
     }
 
     try {
-      const { data } = await axios.post(
-          "user/api/users/login",
+      const response = await api.post(
+          "user/api/users/login/",
           { username, password },
           {
             headers: {
-              "Content-Type":"application/json",
+              "Content-Type": "application/json",
             },
           }
       );
 
-      console.log(data);
+      const data = response.data;
 
-      if (data.success) {
-        login(data.user, data.token, data.refreshToken);
+      if (response.status === 200) {
+        login(data.user, data.access_token, "");
 
         toast.success(`${t('success.welcome_back')} ${data.user.name}`);
         navigate("/dashboard");
@@ -46,7 +47,18 @@ const SignInForm = () => {
       }
     } catch (error) {
       console.error("An error occurred during login:", error);
-      toast.error(t('errors.generic_login_error'));
+
+      if (axios.isAxiosError(error) && error.response) {
+        if (error.response.status === 400) {
+          toast.error(t('errors.invalid_credentials'));
+        } else if (error.response.status === 406) {
+          toast.error(t('errors.account_inactive'));
+        } else {
+          toast.error(t('errors.generic_login_error'));
+        }
+      } else {
+        toast.error(t('errors.generic_login_error'));
+      }
     }
   };
 

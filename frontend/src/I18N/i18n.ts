@@ -30,7 +30,7 @@ const resources = {
 
                 name: "Name",
                 username: "Username",
-                email: "EMail",
+                email: "Email",
                 password: "Password",
                 confirm_password: "Confirm Password",
                 phone_number: "Phone Number",
@@ -54,7 +54,7 @@ const resources = {
                 title: "Connection",
                 subtitle: "Connect to your account to access the",
                 plateform: "platform.",
-                
+
                 username: "Username",
                 password: "Password",
 
@@ -73,6 +73,8 @@ const resources = {
                 generic_signup_error: "An error occurred during signup, please try again.",
                 generic_login_error: "An error occurred during login, please try again.",
                 login_fields_required: "All fields are required to login.",
+                invalid_credentials: "Invalid username or password.", // NOUVEAU
+                account_inactive: "Your account is inactive. Please contact support.", // NOUVEAU
             },
             success: {
                 signup_successful: "Signup successful! You can now log in.",
@@ -151,6 +153,8 @@ const resources = {
                 generic_signup_error: "注册过程中发生错误，请重试。",
                 generic_login_error: "登录过程中发生错误，请重试。",
                 login_fields_required: "所有字段都是必需的，才能登录。",
+                invalid_credentials: "用户名或密码无效。", // NOUVEAU
+                account_inactive: "您的账户处于非活动状态。请联系支持人员。", // NOUVEAU
             },
             success: {
                 signup_successful: "注册成功！您现在可以登录了。",
@@ -164,7 +168,7 @@ i18n
     .use(initReactI18next)
     .init({
         resources,
-        lng: "en", // Default language
+        lng: "en",
 
         interpolation: {
             escapeValue: false
