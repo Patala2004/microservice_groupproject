@@ -1,0 +1,6 @@
+services:
+  tag:
+    build: ./tag/.
+    container_name: tag_service
+    ports:
+      - "8087:8000"
