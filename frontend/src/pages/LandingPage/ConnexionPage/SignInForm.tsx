@@ -35,24 +35,28 @@ const SignInForm = () => {
           }
       );
 
-      const data = response.data;
+      const responseBody = response.data;
+      const authData = responseBody.data;
 
-      if (response.status === 200) {
-        login(data.user, data.access_token, "");
+      if (response.status === 200 && authData && authData.user) {
+        login(authData.user, authData.access_token, "");
 
-        toast.success(`${t('success.welcome_back')} ${data.user.name}`);
+        toast.success(`${t('success.welcome_back')} ${authData.user.name}`);
         navigate("/dashboard");
       } else {
-        toast.error(data.message || t('errors.generic_login_error'));
+        toast.error(responseBody.message || t('errors.generic_login_error'));
       }
     } catch (error) {
       console.error("An error occurred during login:", error);
 
       if (axios.isAxiosError(error) && error.response) {
+        const errorData = error.response.data;
+        const errorMessage = errorData?.message;
+
         if (error.response.status === 400) {
-          toast.error(t('errors.invalid_credentials'));
+          toast.error(errorMessage || t('errors.invalid_credentials'));
         } else if (error.response.status === 406) {
-          toast.error(t('errors.account_inactive'));
+          toast.error(errorMessage || t('errors.account_inactive'));
         } else {
           toast.error(t('errors.generic_login_error'));
         }

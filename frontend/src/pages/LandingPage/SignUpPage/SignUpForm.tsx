@@ -7,6 +7,7 @@ import InputTextField from "@/components/own/InputTextField.tsx";
 import api from "@/lib/api/axios.ts";
 import { Card } from "@/components/ui/card";
 import {useTranslation} from "react-i18next";
+import axios from "axios";
 
 const SignupForm = () => {
     const [username, setUsername] = useState<string>('');
@@ -29,32 +30,27 @@ const SignupForm = () => {
     const passwordRegex = /^(?=.*[0-9]).{8,}$/; // Min 8 characters + 1 digit
 
     const handleSignup = async () => {
-        // Check if required fields are filled
         if (!username || !name || !email || !password || !confirmPassword || !phone || !weXinId) {
             toast.error(t('errors.all_fields_required'));
             return;
         }
 
-        // Validate email format
         if (!emailRegex.test(email)) {
             toast.error(t('errors.invalid_email'));
             return;
         }
 
-        // Validate phone number format
         if (!phoneRegex.test(phone)) {
             console.log(phone.length);
             toast.error(t('errors.invalid_phone'));
             return;
         }
 
-        // Validate password strength
         if (!passwordRegex.test(password)) {
             toast.error(t('errors.weak_password'));
             return;
         }
 
-        // Check if passwords match
         if (password !== confirmPassword) {
             toast.error(t('errors.passwords_do_not_match'));
             return;
@@ -75,9 +71,9 @@ const SignupForm = () => {
                         'Content-Type': 'application/json'
                     }
                 }
-            )
-            
-            if(response.status === 201 || response.status === 200){
+            );
+
+            if (response.status === 201) {
                 toast.success(t('success.signup_successful'));
                 navigate("/signin");
                 cleanStates();
@@ -86,7 +82,22 @@ const SignupForm = () => {
             }
         } catch (error) {
             console.error("An error occurred during signup:", error);
-            toast.error(t('errors.generic_signup_error'));
+
+            if (axios.isAxiosError(error) && error.response) {
+                const errorData = error.response.data;
+                const errorMessage = errorData?.message;
+
+                if (error.response.status === 400) {
+                    const validationErrors = Object.values(errorData).flat().join(' ; ');
+                    toast.error(validationErrors || errorMessage || t('errors.generic_signup_error'));
+                } else if (error.response.status === 409) {
+                    toast.error(errorMessage || t('errors.generic_signup_error'));
+                } else {
+                    toast.error(t('errors.generic_signup_error'));
+                }
+            } else {
+                toast.error(t('errors.generic_signup_error'));
+            }
         }
     };
 

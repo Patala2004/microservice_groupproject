@@ -13,6 +13,18 @@ const resources = {
 
             or: "OR",
 
+            header : {
+                'profile': "Profile",
+                'logout': "Logout",
+            },
+
+            no_access: {
+                title: "Access Denied",
+                subtitle: "You need to be authenticated to access this page.",
+                description: "This platform requires user authentication to ensure secure access to your personal content.",
+                login_prompt: "Please log in first.",
+            },
+
             landing: {
                 'welcome-to': "Welcome to",
                 tagline: "You want to post or announce something to other students?",
@@ -73,8 +85,8 @@ const resources = {
                 generic_signup_error: "An error occurred during signup, please try again.",
                 generic_login_error: "An error occurred during login, please try again.",
                 login_fields_required: "All fields are required to login.",
-                invalid_credentials: "Invalid username or password.", // NOUVEAU
-                account_inactive: "Your account is inactive. Please contact support.", // NOUVEAU
+                invalid_credentials: "Invalid username or password.",
+                account_inactive: "Your account is inactive. Please contact support.",
             },
             success: {
                 signup_successful: "Signup successful! You can now log in.",
@@ -92,6 +104,18 @@ const resources = {
             },
 
             or: "或",
+
+            header : {
+                'profile': "个人资料",
+                'logout': "登出",
+            },
+
+            no_access: {
+                title: "禁止访问",
+                subtitle: "您需要登录才能访问此页面。",
+                description: "本平台要求用户进行身份验证，以确保安全访问您的个人内容。",
+                login_prompt: "请先登录。",
+            },
 
             landing: {
                 'welcome-to': "欢迎来到",
@@ -153,8 +177,8 @@ const resources = {
                 generic_signup_error: "注册过程中发生错误，请重试。",
                 generic_login_error: "登录过程中发生错误，请重试。",
                 login_fields_required: "所有字段都是必需的，才能登录。",
-                invalid_credentials: "用户名或密码无效。", // NOUVEAU
-                account_inactive: "您的账户处于非活动状态。请联系支持人员。", // NOUVEAU
+                invalid_credentials: "用户名或密码无效。",
+                account_inactive: "您的账户处于非活动状态。请联系支持人员。",
             },
             success: {
                 signup_successful: "注册成功！您现在可以登录了。",

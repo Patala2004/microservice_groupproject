@@ -40,6 +40,10 @@ const buttonVariants = cva(
                     "border border-neutral-200 dark:border-neutral-800 " +
                     "hover:bg-neutral-200 dark:hover:bg-neutral-800 " +
                     "shadow-sm",
+                "logout":
+                    "text-white bg-red-800 hover:bg-red-700 font-bold " +
+                    "shadow-lg shadow-red-900/40 hover:shadow-red-900/60 " +
+                    "hover:-translate-y-[2px] rounded-xl",
             },
             size: {
                 default: "h-9 px-4 py-2 has-[>svg]:px-3 rounded-md",
