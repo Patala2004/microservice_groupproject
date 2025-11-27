@@ -19,11 +19,11 @@ function App() {
           position="top-center"
         />
 
-        <div className="min-h-screen w-full bg-background text-foreground no-scrollbar">
-          <div className="flex flex-col min-h-screen no-scrollbar">
+        <div className="min-h-screen w-full bg-background text-foreground">
+          <div className="flex flex-col min-h-screen">
             <Header />
             <main className="flex-grow flex">
-              <div className="w-full flex flex-col no-scrollbar">
+              <div className="w-full flex flex-col">
                 <Routes>
                   <Route path="/" element={<LandingPage />} />
                   <Route path="/signin" element={<SigninPage />} />

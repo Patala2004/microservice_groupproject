@@ -40,6 +40,7 @@ const getInitialLanguage = (): LanguageEnum => {
                 return parsed.preferedLanguage;
             }
         } catch {
+            // Ignore parsing errors
         }
     }
 
@@ -63,8 +64,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }, [language]);
 
-
-    const isLoggedIn = true;
+    const isLoggedIn = true;    //temporary bypass login check
 
     const login = (userData: User, token: string, refreshToken: string) => {
         localStorage.setItem("token", token);
