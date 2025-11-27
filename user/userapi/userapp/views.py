@@ -51,15 +51,39 @@ class UserViewSet(viewsets.ModelViewSet):
     def login(self, request):
         """User sign in."""
         serializer = serializers.UserLoginSerializer(data=request.data)
-        user_query: List = User.objects.filter(username=request.data["username"])
-        if(user_query and not user_query[0].is_active):
-           return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
         
-        serializer.is_valid(raise_exception=True)
+        # Check if serializer is valid
+        if not serializer.is_valid():
+            # Check if it's a credentials error (non_field_errors)
+            if 'non_field_errors' in serializer.errors:
+                return Response({
+                    'success': False,
+                    'message': serializer.errors['non_field_errors'][0]
+                }, status=status.HTTP_400_BAD_REQUEST)
+            
+            return Response({
+                'success': False,
+                'message': 'Validation error',
+                'errors': serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Check if user exists and is active
+        user_query: List = User.objects.filter(username=serializer.validated_data['username'])
+        if user_query and not user_query[0].is_active:
+            return Response({
+                'success': False,
+                'message': 'User account is inactive.'
+            }, status=status.HTTP_403_FORBIDDEN)
+        
+        # If all validations pass, create token and return success
         user, token = serializer.save()
         data = {
-            'user': serializers.UserModelSerializer(user).data,
-            'access_token': token
+            'success': True,
+            'message': 'Logged in successfully.',
+            'data': {
+                'user': serializers.UserModelSerializer(user).data,
+                'access_token': token
+            }
         }
         return Response(data, status=status.HTTP_200_OK)
     

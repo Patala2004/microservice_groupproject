@@ -1,8 +1,8 @@
 import {createContext, useContext, useEffect, useState} from "react";
-import {toast} from "sonner";
-import type {NavigateFunction} from "react-router-dom";
 import {LanguageEnum, type User} from "@/Context/userTypes.tsx";
 import i18n from "i18next";
+import axios, {type AxiosResponse} from "axios";
+import api from "@/lib/api/axios.ts";
 
 
 interface UserContextType {
@@ -13,10 +13,9 @@ interface UserContextType {
     login: (userData: User, token: string, refreshToken: string) => void;
     logout: () => void;
     authFetch: (
-        input: RequestInfo,
-        init?: RequestInit,
-        navigate?: NavigateFunction
-    ) => Promise<Response | null>;
+        input: string
+    ) => Promise<AxiosResponse | null>;
+    checkAuth: () => Promise<boolean>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -54,6 +53,7 @@ const getInitialLanguage = (): LanguageEnum => {
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(() => getInitialUser());
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => !!getInitialUser());
     const [language, setLanguageState] = useState<LanguageEnum>(
         () => getInitialLanguage()
     );
@@ -74,6 +74,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(userData);
         setLanguageState(userData.preferedLanguage);
         i18n.changeLanguage(userData.preferedLanguage);
+        setIsLoggedIn(true);
     };
 
     const logout = () => {
@@ -81,13 +82,13 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("user");
         setUser(null);
+        setIsLoggedIn(false);
     };
 
     const setLanguage = (lang: LanguageEnum) => {
         setLanguageState(lang);
         localStorage.setItem("language", lang);
 
-        // Important: Changer la langue I18n immédiatement lors du changement manuel
         i18n.changeLanguage(lang);
 
         if (user) {
@@ -97,77 +98,51 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
-    const verifyToken = async (
-        navigate?: NavigateFunction
-    ): Promise<string | null> => {
-        const VITE_API_URL = import.meta.env.VITE_API_URL;
-
+    const authFetch = async (
+        input: string
+    ): Promise<AxiosResponse | null> => {
         try {
-            const req = await fetch(`${VITE_API_URL}/api/Token/refresh`, {
-                method: "POST",
+            return await api.get(input, {
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem(
-                        "refreshToken"
-                    )}`,
+                    "Content-Type": "application/json",
                 },
             });
-
-            if (req.status !== 200) {
-                logout();
-                toast.error(
-                    "Votre session a expiré, veuillez vous reconnecter."
-                );
-                if (navigate) navigate("/");
-                return null;
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                return error.response;
             }
-
-            const tokens = await req.json();
-            localStorage.setItem("token", tokens.token);
-            localStorage.setItem("refreshToken", tokens.refreshToken);
-            return tokens.token;
-        } catch {
-            logout();
-            toast.error(
-                "Une erreur s'est produite lors de la vérification de votre connexion, veuillez vous reconnecter."
-            );
-            if (navigate) navigate("/");
             return null;
         }
     };
 
-    const authFetch = async (
-        input: RequestInfo,
-        init?: RequestInit,
-        navigate?: NavigateFunction
-    ): Promise<Response | null> => {
-        const token = localStorage.getItem("token");
-        const withAuth: RequestInit = {
-            ...init,
-            headers: {
-                ...(init?.headers || {}),
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-        };
-
-        const response = await fetch(input, withAuth);
-
-        if (response.status === 401 || response.status === 403) {
-            const newToken = await verifyToken(navigate);
-
-            if (!newToken) return null;
-
-            return await fetch(input, {
-                ...init,
-                headers: {
-                    ...(init?.headers || {}),
-                    Authorization: `Bearer ${newToken}`,
-                    "Content-Type": "application/json",
-                },
-            });
+    const checkAuth = async (): Promise<boolean> => {
+        if (!localStorage.getItem("token")) {
+            if (isLoggedIn) logout();
+            return false;
         }
 
-        return response;
+        try {
+            const response = await authFetch("user/api/users/auth/");
+
+            if (response && response.status === 200) {
+                let userData = response.data;
+                if (userData) {
+                    if (!user || user.id !== userData.id) {
+                        login(
+                            userData as User,
+                            localStorage.getItem("token") || '',
+                            localStorage.getItem("refreshToken") || ''
+                        );
+                    }
+                    return true;
+                }
+            }
+            logout();
+            return false;
+        } catch (e) {
+            logout();
+            return false;
+        }
     };
 
     return (
@@ -180,6 +155,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
                 login,
                 logout,
                 authFetch,
+                checkAuth,
             }}
         >
             {children}
