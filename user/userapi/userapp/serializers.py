@@ -30,8 +30,18 @@ class UserModelSerializer(serializers.ModelSerializer):
 class UserLoginSerializer(serializers.Serializer):
 
     # Required fields
-    username = serializers.CharField(min_length=3, max_length=64)
-    password = serializers.CharField(min_length=8, max_length=64, write_only=True)
+    username = serializers.CharField(min_length=3, max_length=64, required=True, error_messages={
+        'required': 'The username field is required.',
+        'blank': 'The username field cannot be blank.',
+        'min_length': 'Username must be at least 3 characters long.',
+        'max_length': 'Username must not exceed 64 characters.'
+    })
+    password = serializers.CharField(min_length=8, max_length=64, write_only=True, required=True, error_messages={
+        'required': 'The password field is required.',
+        'blank': 'The password field cannot be blank.',
+        'min_length': 'Password must be at least 8 characters long.',
+        'max_length': 'Password must not exceed 64 characters.'
+    })
 
     # Verify the data
     def validate(self, data):
@@ -39,7 +49,7 @@ class UserLoginSerializer(serializers.Serializer):
         # authenticate recieves the credentials, if valid returns the user object
         user = authenticate(username=data['username'], password=data['password'])
         if not user:
-            raise serializers.ValidationError('The credentials are invalid')
+            raise serializers.ValidationError('The provided credentials are invalid.')
 
         # We save the user in the context to later retrieve the token
         self.context['user'] = user

@@ -1,25 +1,35 @@
-// Dans votre ProtectedLayout.tsx
 import { Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
 import NoAccess from "@/pages/NoAccess/NoAccess.tsx";
+import { useUser } from "@/Context/UserContext.tsx";
+import { RotateCw } from "lucide-react";
 
 const ProtectedLayout = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+    const { checkAuth } = useUser();
+    const [loading, setLoading] = useState(true);
+    const [isAuthConfirmed, setIsAuthConfirmed] = useState(false);
 
     useEffect(() => {
-        const token = localStorage.getItem("access_token");
-        setIsAuthenticated(!!token);
-    }, []);
+        const checkStatus = async () => {
+            setLoading(true);
+            const authenticated = await checkAuth();
+            console.log("Statut d'authentification:", authenticated);
+            setIsAuthConfirmed(authenticated);
+            setLoading(false);
+        };
 
-    if (isAuthenticated === null) {
+        checkStatus();
+    }, [checkAuth]);
+
+    if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+                <RotateCw className="animate-spin text-gray-500 size-12" />
             </div>
         );
     }
 
-    if (!isAuthenticated) {
+    if (!isAuthConfirmed) {
         return <NoAccess />;
     }
 
