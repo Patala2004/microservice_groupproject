@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useTranslation } from "react-i18next";
-import { Post } from "../mockData"; // Adjust path if needed
+import type { Post } from "../mockData"; // Adjust path if needed
 import { getBadgeStyle, getTypeLabel } from "./homeUtils";
 
 interface PostCardProps {
