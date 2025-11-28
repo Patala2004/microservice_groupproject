@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface RecommendationRepository extends JpaRepository<UserFrequentTag, UserTagKey> {
+public interface UserTagsRepository extends JpaRepository<UserFrequentTag, UserTagKey> {
 
     List<UserFrequentTag> findByUserTag_UserId(int userId);
 }
