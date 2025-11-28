@@ -6,7 +6,7 @@ import group5.ms.tongji.recommendation.dto.UserInteraction;
 import group5.ms.tongji.recommendation.exceptions.InteractionTypeException;
 import group5.ms.tongji.recommendation.exceptions.NotFoundException;
 import group5.ms.tongji.recommendation.model.UserFrequentTag;
-import group5.ms.tongji.recommendation.service.RecommendationService;
+import group5.ms.tongji.recommendation.service.UserPreferencesService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -21,12 +21,12 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/recommendation/")
-@Tag(name = "Recommendation", description = "Recommendation API")
+@RequestMapping("api/upref/")
+@Tag(name = "User Preferences", description = "User Preferences API")
 @AllArgsConstructor
-public class RecommendationController {
+public class UserPreferencesController {
 
-    private RecommendationService recommendationService;
+    private UserPreferencesService userPreferencesService;
 
     @Operation(summary = "Get user frequent tags")
     @ApiResponses(value = {
@@ -43,7 +43,7 @@ public class RecommendationController {
     })
     @GetMapping("frequents/{userId}")
     public List<UserFrequentTag> getUserFrequentTags(@PathVariable int userId) {
-        List<UserFrequentTag> frequents =  recommendationService.getUserFrequentTags(userId);
+        List<UserFrequentTag> frequents =  userPreferencesService.getUserFrequentTags(userId);
         if(frequents.isEmpty())
             throw new NotFoundException("User", userId);
         return frequents;
@@ -65,32 +65,7 @@ public class RecommendationController {
             throw new InteractionTypeException();
         }
 
-        recommendationService.updateRecommendations(userId, tags, timestamp, interactionType);
-    }
-
-    @Operation(summary = "Get recommended posts for user")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Post succesfully obtained",
-                    content = @Content(
-                            mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(type = "integer"))
-                    )),
-            @ApiResponse(responseCode = "404", description = "User not found",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
-                    )),
-            @ApiResponse(responseCode = "502", description = "Posts service unavailable ",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorResponse.class)
-            ))
-
-    })
-
-    @GetMapping("getRec/{userId}")
-    public int[] getRecommendedItems(@PathVariable int userId, @RequestParam(defaultValue = "10") int limit) {
-        return recommendationService.getRecommendedItems(userId, limit);
+        userPreferencesService.updateRecommendations(userId, tags, timestamp, interactionType);
     }
 
 

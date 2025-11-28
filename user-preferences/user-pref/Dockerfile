@@ -17,6 +17,6 @@ WORKDIR /app
 # Copiar el JAR generado
 COPY --from=build /app/target/*.jar app.jar
 
-EXPOSE 8085
+EXPOSE 8086
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

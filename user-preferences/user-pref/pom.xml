@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>group5.ms.tongji</groupId>
-	<artifactId>recommendation</artifactId>
+	<artifactId>user-pref</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>recommendation</name>
-	<description>Recommendation microservice</description>
+	<name>user-pref</name>
+	<description>User preferences calculator microservice</description>
 	<url/>
 	<licenses>
 		<license/>

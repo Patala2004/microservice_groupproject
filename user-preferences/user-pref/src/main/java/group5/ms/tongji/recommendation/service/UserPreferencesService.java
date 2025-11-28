@@ -2,31 +2,25 @@ package group5.ms.tongji.recommendation.service;
 
 import group5.ms.tongji.recommendation.domain.InteractionTypes;
 import group5.ms.tongji.recommendation.domain.InteractionTypesWeights;
-import group5.ms.tongji.recommendation.dto.RecommendableItem;
-import group5.ms.tongji.recommendation.exceptions.NotFoundException;
 import group5.ms.tongji.recommendation.model.UserDecayDate;
 import group5.ms.tongji.recommendation.model.UserFrequentTag;
 import group5.ms.tongji.recommendation.model.UserTagKey;
 import group5.ms.tongji.recommendation.repository.UserTagsRepository;
 import group5.ms.tongji.recommendation.repository.UserDecayDateRepository;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.PriorityQueue;
 
 @Service
 @AllArgsConstructor
-public class   RecommendationService {
+public class UserPreferencesService {
 
     private UserTagsRepository userTagsRepository;
 
     private UserDecayDateRepository userDecayDateRepository;
-
-    private PostServiceClient postServiceClient;
 
     public void updateRecommendations(int userId, int[] tags, Date timestamp, InteractionTypes iteractionType) {
         HashMap<Integer, UserFrequentTag> userFrequentTags = obtainUserFrequentTagInfo(userId);
@@ -77,69 +71,9 @@ public class   RecommendationService {
         return tagWeight;
     }
 
-    //--------------------------------------------------------------------------------------------------
-    // RECOMMEND POSTS TO USER
-    //--------------------------------------------------------------------------------------------------
-    public int[] getRecommendedItems(int userId, int limit) {
-        HashMap<Integer, Float> userTags = obtainUserFrequentTagWeight(userId);
-        if(userTags.isEmpty())
-            throw new NotFoundException("User", userId);
-        RecommendableItem[] recommendables = postServiceClient.getPostsTags(userTags.keySet());
-        return selectBestMatches(userTags,limit,recommendables);
-    }
-
-    private int[] selectBestMatches(HashMap<Integer, Float> userTags, int limit, RecommendableItem[] recommendables) {
-        PriorityQueue<Recommendation> bestMatches = new PriorityQueue<>();
-        for(RecommendableItem r : recommendables) {
-            float matchValue = 0;
-            int[] rTags = r.getTags();
-            for(int rTag : rTags) {
-                matchValue += userTags.getOrDefault(rTag, 0f);
-            }
-            Recommendation recommendation = new Recommendation(r.getId(), matchValue);
-            if(bestMatches.size() < limit) {
-                bestMatches.add(recommendation);
-            } else if(bestMatches.peek() != null && bestMatches.peek().getWeight() < matchValue) {
-                bestMatches.poll();
-                bestMatches.add(recommendation);
-            }
-        }
-        return extractRecommendationsId(bestMatches);
-    }
-
-    private int[] extractRecommendationsId(PriorityQueue<Recommendation> bestFinds) {
-        int[] recommendationsId = new int[bestFinds.size()];
-        for(int i = 0; i < bestFinds.size(); i++) {
-            Recommendation r = bestFinds.poll();
-            recommendationsId[i] = r.getRecommendedId();
-        }
-        return recommendationsId;
-    }
-
-    private HashMap<Integer, Float> obtainUserFrequentTagWeight(int userId) {
-        List<UserFrequentTag> userFrequentTags = userTagsRepository.findByUserTag_UserId(userId);
-        HashMap<Integer, Float> tagWeight = new HashMap<>();
-        for(UserFrequentTag u : userFrequentTags) {
-            tagWeight.put(u.getUserTag().getTagId(), u.getWeight());
-        }
-        return tagWeight;
-    }
-
     public List<UserFrequentTag> getUserFrequentTags(int userId) {
         return userTagsRepository.findByUserTag_UserId(userId);
     }
 
-    @AllArgsConstructor
-    @Getter
-    private static class Recommendation implements Comparable<Recommendation> {
-
-        private int recommendedId;
-        private float   weight;
-
-        @Override
-        public int compareTo(Recommendation r) {
-            return Float.compare(weight, r.weight);
-        }
-    }
 
 }
