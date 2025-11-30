@@ -18,7 +18,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/post/api/posts")
+@RequestMapping("/post")
 @Tag(name = "Posts", description = "Posts API")
 @CrossOrigin
 public class PostController {
