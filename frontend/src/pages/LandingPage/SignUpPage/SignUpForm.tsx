@@ -26,8 +26,8 @@ const SignupForm = () => {
     const { t } = useTranslation();
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phoneRegex = /^[0-9]{11}$/; // chinese phone number format
-    const passwordRegex = /^(?=.*[0-9]).{8,}$/; // Min 8 characters + 1 digit
+    const phoneRegex = /^[0-9]{11}$/;
+    const passwordRegex = /^(?=.*[0-9]).{8,}$/;
 
     const handleSignup = async () => {
         if (!username || !name || !email || !password || !confirmPassword || !phone || !weXinId) {
@@ -119,54 +119,54 @@ const SignupForm = () => {
                 <div className="w-full flex flex-col items-center mb-4">
                     <span className="text-4xl font-bold tracking-tight bg-gradient-to-r 
                           from-rose-600 via-red-600 to-orange-500 bg-clip-text text-transparent">
-                        {t("signup.title")}
+                        {t("register.title")}
                     </span>
                     <p className="mt-2 text-lg text-neutral-200 text-center">
-                        {t('signup.subtitle')} <strong>{t('signup.plateform')}</strong>
+                        {t('register.subtitle')} <strong>{t('register.plateform')}</strong>
                     </p>
                 </div>
 
                 <div className="w-full space-y-4 mt-2 mb-4">
                     <InputTextField
-                        label={t('signup.name')}
+                        label={t('register.name')}
                         setter={setName}
-                        valueToDisplay={t('signup.placeholder_name')}
+                        valueToDisplay={t('register.placeholder_name')}
                     />
                     <InputTextField
-                        label={t('signup.username')}
+                        label={t('register.username')}
                         setter={setUsername}
-                        valueToDisplay={t('signup.placeholder_username')}
+                        valueToDisplay={t('register.placeholder_username')}
                     />
                     <InputTextField
-                        label={t('signup.email')}
+                        label={t('register.email')}
                         setter={setEmail}
-                        valueToDisplay={t('signup.placeholder_email')}
+                        valueToDisplay={t('register.placeholder_email')}
                     />
                     <InputTextField
-                        label={t('signup.password')}
+                        label={t('register.password')}
                         setter={setPassword}
                         password={true}
                         showPassword={visiblePassword}
-                        valueToDisplay={t('signup.placeholder_password')}
+                        valueToDisplay={t('register.placeholder_password')}
                         toggleShowPassword={() => setVisiblePassword((prev) => !prev)}
                     />
                     <InputTextField
-                        label={t('signup.confirm_password')}
+                        label={t('register.confirm_password')}
                         setter={setConfirmPassword}
                         password={true}
                         showPassword={visibleConfirmPassword}
-                        valueToDisplay={t('signup.placeholder_confirm_password')}
+                        valueToDisplay={t('register.placeholder_confirm_password')}
                         toggleShowPassword={() => setVisibleConfirmPassword((prev) => !prev)}
                     />
                     <InputTextField
-                        label={t('signup.phone_number')}
+                        label={t('register.phone_number')}
                         setter={setPhone}
-                        valueToDisplay={t('signup.placeholder_phone')}
+                        valueToDisplay={t('register.placeholder_phone')}
                     />
                     <InputTextField
-                        label={t('signup.wechat_id')}
+                        label={t('register.wechat_id')}
                         setter={setWeXinId}
-                        valueToDisplay={t('signup.placeholder_wechat_id')}
+                        valueToDisplay={t('register.placeholder_wechat_id')}
                     />
                 </div>
 
@@ -175,7 +175,7 @@ const SignupForm = () => {
                     size="full-width"
                     onClick={handleSignup}
                 >
-                    {t('signup.submit_btn')}
+                    {t('register.submit_btn')}
                 </Button>
 
                 <div className="w-full flex justify-end mt-5 mb-1">
@@ -188,7 +188,7 @@ const SignupForm = () => {
                         "
                         onClick={() => navigate("/signin")}
                     >
-                        {t('signup.login_link_prefix')} <strong>{t('signup.login_link')}</strong>
+                        {t('register.login_link_prefix')} <strong>{t('register.login_link')}</strong>
                     </span>
                 </div>
             </Card>

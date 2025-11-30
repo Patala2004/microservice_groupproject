@@ -13,18 +13,31 @@ const resources = {
 
       or: "OR",
 
+
+      header : {
+        'profile': "Profile",
+        'logout': "Logout",
+      },
+
+      no_access: {
+        title: "Access Denied",
+        subtitle: "You need to be authenticated to access this page.",
+        description: "This platform requires user authentication to ensure secure access to your personal content.",
+        login_prompt: "Please log in first.",
+      },
+
       // --- Landing & Auth ---
       landing: {
         "welcome-to": "Welcome to",
         tagline: "You want to post or announce something to other students?",
         "join-us-now": "Join us now.",
         description:
-          "This platform is designed to facilitate communication and sharing among students.",
-        create_account_btn: "Create an account",
+            "This platform is designed to facilitate communication and sharing among students.",
+        create_account_btn: "Register",
         login_btn: "Login",
       },
-      signup: {
-        title: "Inscription",
+      register: {
+        title: "Register",
         subtitle: "Create your account to access the",
         plateform: "platform.",
         name: "Name",
@@ -53,23 +66,25 @@ const resources = {
         password: "Password",
         submit_btn: "Sign In",
         signup_link_prefix: "No account?",
-        signup_link: "Sign up here.",
+        signup_link: "Register here.",
       },
       errors: {
         all_fields_required: "All fields are required.",
         invalid_email: "Invalid email format.",
         invalid_phone: "Phone number must be 11 digits.",
         weak_password:
-          "Password must be at least 8 characters long and contain at least one digit.",
+            "Password must be at least 8 characters long and contain at least one digit.",
         passwords_do_not_match: "Passwords do not match.",
         generic_signup_error:
-          "An error occurred during signup, please try again.",
+            "An error occurred during registration, please try again.",
         generic_login_error:
-          "An error occurred during login, please try again.",
+            "An error occurred during login, please try again.",
         login_fields_required: "All fields are required to login.",
+        invalid_credentials: "Invalid username or password.",
+        account_inactive: "Your account is inactive. Please contact support.",
       },
       success: {
-        signup_successful: "Signup successful! You can now log in.",
+        signup_successful: "Registration successful! You can now log in.",
         welcome_back: "Welcome back",
       },
 
@@ -146,7 +161,12 @@ const resources = {
         update_success: "Profile updated successfully",
         personal_info_desc: "Update your contact details and public information.",
         update_password_desc: "Ensure your account uses a strong password.",
-        },
+
+        default_name: "Your name",
+        default_email: "Your email",
+        default_phone: "Your phone number",
+        default_weixin: "Your WeChat ID",
+      },
     },
   },
   cn: {
@@ -160,16 +180,27 @@ const resources = {
 
       or: "或",
 
-      // --- Landing & Auth ---
+      header : {
+        'profile': "个人资料",
+        'logout': "登出",
+      },
+
+      no_access: {
+        title: "禁止访问",
+        subtitle: "您需要登录才能访问此页面。",
+        description: "本平台要求用户进行身份验证，以确保安全访问您的个人内容。",
+        login_prompt: "请先登录。",
+      },
+
       landing: {
         "welcome-to": "欢迎来到",
         tagline: "想向其他学生发布或宣布些什么？",
         "join-us-now": "现在就加入我们吧。",
         description: "本平台旨在促进学生之间的交流和分享。",
-        create_account_btn: "创建账号",
+        create_account_btn: "注册",
         login_btn: "登录",
       },
-      signup: {
+      register: {
         title: "注册",
         subtitle: "创建您的账户以访问",
         plateform: "平台。",
@@ -210,6 +241,8 @@ const resources = {
         generic_signup_error: "注册过程中发生错误，请重试。",
         generic_login_error: "登录过程中发生错误，请重试。",
         login_fields_required: "所有字段都是必需的，才能登录。",
+        invalid_credentials: "用户名或密码无效。",
+        account_inactive: "您的账户处于非活动状态。请联系支持人员。",
       },
       success: {
         signup_successful: "注册成功！您现在可以登录了。",
@@ -273,7 +306,7 @@ const resources = {
         placeholder_price: "免费 / 20元",
         placeholder_location: "例如：图书馆",
       },
-    profile: {
+      profile: {
         title: "我的个人资料",
         subtitle: "管理您的个人信息",
         save_btn: "保存更改",
@@ -289,14 +322,19 @@ const resources = {
         update_success: "资料更新成功",
         update_password_desc: "确保您的账户使用强密码。",
         personal_info_desc: "更新您的联系方式和公开信息。",
-    },
+
+        default_name: "您的姓名",
+        default_email: "您的邮箱",
+        default_phone: "您的电话号码",
+        default_weixin: "您的微信ID",
+      },
     },
   },
 };
 
 i18n.use(initReactI18next).init({
   resources,
-  lng: "en", // Default language
+  lng: "en",
 
   interpolation: {
     escapeValue: false,

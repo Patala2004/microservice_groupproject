@@ -42,7 +42,7 @@ const SignInForm = () => {
         login(authData.user, authData.access_token, "");
 
         toast.success(`${t('success.welcome_back')} ${authData.user.name}`);
-        navigate("/dashboard");
+        navigate("/home");
       } else {
         toast.error(responseBody.message || t('errors.generic_login_error'));
       }
@@ -75,7 +75,7 @@ const SignInForm = () => {
             {t('login.title')}
           </span>
             <p className="mt-2 text-lg text-neutral-200 text-center">
-              {t('login.subtitle')} <strong>{t('signup.plateform')}</strong>
+              {t('login.subtitle')} <strong>{t('register.plateform')}</strong>
             </p>
           </div>
 
@@ -83,14 +83,14 @@ const SignInForm = () => {
             <InputTextField
                 label={t('login.username')}
                 setter={setUsername}
-                valueToDisplay={t('signup.placeholder_username')}
+                valueToDisplay={t('register.placeholder_username')}
             />
             <InputTextField
                 label={t('login.password')}
                 setter={setPassword}
                 password={true}
                 showPassword={visiblePassword}
-                valueToDisplay={t('signup.placeholder_password')}
+                valueToDisplay={t('register.placeholder_password')}
                 toggleShowPassword={() => setVisiblePassword((prev) => !prev)}
             />
           </div>
