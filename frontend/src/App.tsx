@@ -29,11 +29,11 @@ function App() {
                   <Route path="/" element={<LandingPage />} />
                   <Route path="/signin" element={<SigninPage />} />
                   <Route path="/signup" element={<SignupPage />} />
-                  <Route path="/home" element={<Home />} />
-                  <Route path="/user" element={<UserPage />} />
 
                   <Route element={<ProtectedLayout />}>
                     <Route path="/test-protected" element={<div> salut</div>} />
+                    <Route path="/home" element={<Home />} />
+                    <Route path="/user" element={<UserPage />} />
                   </Route>
                 </Routes>
               </div>

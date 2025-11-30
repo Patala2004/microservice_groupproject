@@ -16,6 +16,7 @@ interface UserContextType {
         input: string
     ) => Promise<AxiosResponse | null>;
     checkAuth: () => Promise<boolean>;
+    updateUser: (updatedData: Partial<User>) => Promise<boolean>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -39,7 +40,6 @@ const getInitialLanguage = (): LanguageEnum => {
                 return parsed.preferedLanguage;
             }
         } catch {
-            // Ignore parsing errors
         }
     }
 
@@ -53,7 +53,7 @@ const getInitialLanguage = (): LanguageEnum => {
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(() => getInitialUser());
-    const [, setIsLoggedIn] = useState<boolean>(() => !!getInitialUser());
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => !!getInitialUser());
     const [language, setLanguageState] = useState<LanguageEnum>(
         () => getInitialLanguage()
     );
@@ -63,8 +63,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
             i18n.changeLanguage(language);
         }
     }, [language]);
-
-    const isLoggedIn = true;
 
     const login = (userData: User, token: string, refreshToken: string) => {
         localStorage.setItem("token", token);
@@ -115,6 +113,41 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
+    const updateUser = async (updatedData: Partial<User>): Promise<boolean> => {
+        if (!user || !user.id) {
+            console.error("Cannot update user: User ID missing.");
+            return false;
+        }
+        
+        const newUserData = { ...updatedData, username : user.username };
+
+        const token = localStorage.getItem("token");
+        const url = `user/api/users/${user.id}/`;
+
+        try {
+            const response = await api.put(url, newUserData, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.status === 200) {
+                const updatedUser = response.data;
+
+                login(
+                    updatedUser as User,
+                    token || '',
+                    localStorage.getItem("refreshToken") || ''
+                );
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error("Error updating user profile:", error);
+            return false;
+        }
+    };
+
     const checkAuth = async (): Promise<boolean> => {
         if (!localStorage.getItem("token")) {
             if (isLoggedIn) logout();
@@ -126,7 +159,12 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
             if (response && response.status === 200) {
                 let userData = response.data;
-                if (userData) {
+
+                if (userData && userData.user && userData.user.id) {
+                    userData = userData.user;
+                }
+
+                if (userData && userData.id) {
                     if (!user || user.id !== userData.id) {
                         login(
                             userData as User,
@@ -156,6 +194,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
                 logout,
                 authFetch,
                 checkAuth,
+                updateUser,
             }}
         >
             {children}

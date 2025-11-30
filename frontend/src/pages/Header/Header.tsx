@@ -15,6 +15,15 @@ const Header = () => {
         language === LanguageEnum.EN ? LanguageEnum.CN : LanguageEnum.EN;
     setLanguage(next);
   };
+  
+  const handleClickMainButton = () => {
+    if(isLoggedIn) {
+        navigate("/home");
+        }
+    else {
+      navigate("/");
+    }
+  };
 
   const handleProfileClick = () => {
     navigate("/user");
@@ -48,7 +57,7 @@ const Header = () => {
             cursor-pointer
             group
           "
-              onClick={() => navigate("/")}
+              onClick={handleClickMainButton}
           >
             <div
                 className="
@@ -66,7 +75,7 @@ const Header = () => {
             {t('app_name')}
           </span>
           </div>
-          
+
 
           <div className="flex items-center gap-4">
             <Button
@@ -75,7 +84,7 @@ const Header = () => {
             >
               {t(currentLanguageKey)}
             </Button>
-            
+
             {isLoggedIn ? (
                 <>
                   <Button
