@@ -35,24 +35,28 @@ const SignInForm = () => {
           }
       );
 
-      const data = response.data;
+      const responseBody = response.data;
+      const authData = responseBody.data;
 
-      if (response.status === 200) {
-        login(data.user, data.access_token, "");
+      if (response.status === 200 && authData && authData.user) {
+        login(authData.user, authData.access_token, "");
 
-        toast.success(`${t('success.welcome_back')} ${data.user.name}`);
-        navigate("/dashboard");
+        toast.success(`${t('success.welcome_back')} ${authData.user.name}`);
+        navigate("/home");
       } else {
-        toast.error(data.message || t('errors.generic_login_error'));
+        toast.error(responseBody.message || t('errors.generic_login_error'));
       }
     } catch (error) {
       console.error("An error occurred during login:", error);
 
       if (axios.isAxiosError(error) && error.response) {
+        const errorData = error.response.data;
+        const errorMessage = errorData?.message;
+
         if (error.response.status === 400) {
-          toast.error(t('errors.invalid_credentials'));
+          toast.error(errorMessage || t('errors.invalid_credentials'));
         } else if (error.response.status === 406) {
-          toast.error(t('errors.account_inactive'));
+          toast.error(errorMessage || t('errors.account_inactive'));
         } else {
           toast.error(t('errors.generic_login_error'));
         }
@@ -71,7 +75,7 @@ const SignInForm = () => {
             {t('login.title')}
           </span>
             <p className="mt-2 text-lg text-neutral-200 text-center">
-              {t('login.subtitle')} <strong>{t('signup.plateform')}</strong>
+              {t('login.subtitle')} <strong>{t('register.plateform')}</strong>
             </p>
           </div>
 
@@ -79,14 +83,14 @@ const SignInForm = () => {
             <InputTextField
                 label={t('login.username')}
                 setter={setUsername}
-                valueToDisplay={t('signup.placeholder_username')}
+                valueToDisplay={t('register.placeholder_username')}
             />
             <InputTextField
                 label={t('login.password')}
                 setter={setPassword}
                 password={true}
                 showPassword={visiblePassword}
-                valueToDisplay={t('signup.placeholder_password')}
+                valueToDisplay={t('register.placeholder_password')}
                 toggleShowPassword={() => setVisiblePassword((prev) => !prev)}
             />
           </div>

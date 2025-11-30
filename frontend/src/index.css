@@ -24,15 +24,6 @@
   --ring: oklch(0.7 0.15 25);
 }
 
-@layer utilities {
-  .no-scrollbar {
-    -ms-overflow-style: none; /* Internet Explorer 10+ */
-    scrollbar-width: none; /* Firefox */
-  }
-  .no-scrollbar::-webkit-scrollbar {
-    display: none; /* Safari and Chrome */
-  }
-}
 
 /* Dark mode overrides (with class .dark sur <html> ou <body>) */
 .dark {
@@ -55,7 +46,8 @@
 }
 
 body {
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   background-color: var(--background);
   color: var(--foreground);
   font-family: 'Lato', system-ui, -apple-system, BlinkMacSystemFont,
