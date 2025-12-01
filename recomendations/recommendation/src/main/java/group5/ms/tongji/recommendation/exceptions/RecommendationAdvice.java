@@ -12,11 +12,6 @@ import java.util.Map;
 @RestControllerAdvice
 public class RecommendationAdvice {
 
-    @ExceptionHandler(InteractionTypeException.class)
-    public ResponseEntity<Object> handleInvalidInteractionType (InteractionTypeException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", ex.getMessage(), "timestamp", Instant.now().toString()));
-    }
-
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Object> handleNotFound (NotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", ex.getMessage(), "timestamp", Instant.now().toString()));
