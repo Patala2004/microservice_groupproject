@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/upref/")
+@RequestMapping("upref/")
 @Tag(name = "User Preferences", description = "User Preferences API")
 @AllArgsConstructor
 public class UserPreferencesController {
@@ -41,7 +41,7 @@ public class UserPreferencesController {
                         schema = @Schema(implementation = ErrorResponse.class)
             ))
     })
-    @GetMapping("frequents/{userId}")
+    @GetMapping("{userId}")
     public List<UserFrequentTag> getUserFrequentTags(@PathVariable int userId) {
         List<UserFrequentTag> frequents =  userPreferencesService.getUserFrequentTags(userId);
         if(frequents.isEmpty())
@@ -53,10 +53,10 @@ public class UserPreferencesController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Tags succesfully updated")
     })
-    @PostMapping("update")
+    @PostMapping("")
     public void updateUserFrequentTags(@RequestBody UserInteraction interaction) {
         int userId = interaction.getUserId();
-        int[] tags = interaction.getTags();
+        int itemId = interaction.getItemId();
         Date timestamp = interaction.getTimestamp();
         InteractionTypes interactionType = null;
         try{
@@ -65,7 +65,7 @@ public class UserPreferencesController {
             throw new InteractionTypeException();
         }
 
-        userPreferencesService.updateRecommendations(userId, tags, timestamp, interactionType);
+        userPreferencesService.updateRecommendations(userId, itemId, timestamp, interactionType);
     }
 
 

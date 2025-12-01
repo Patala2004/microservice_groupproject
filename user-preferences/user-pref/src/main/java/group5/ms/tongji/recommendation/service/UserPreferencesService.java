@@ -22,8 +22,9 @@ public class UserPreferencesService {
 
     private UserDecayDateRepository userDecayDateRepository;
 
-    public void updateRecommendations(int userId, int[] tags, Date timestamp, InteractionTypes iteractionType) {
+    public void updateRecommendations(int userId, int itemId, Date timestamp, InteractionTypes iteractionType) {
         HashMap<Integer, UserFrequentTag> userFrequentTags = obtainUserFrequentTagInfo(userId);
+        List<Integer> tags = null; //TODO Buscar las tags del itemId
         decayAll(userId, userFrequentTags, timestamp);
         for(Integer tag : tags) {
             if(!userFrequentTags.containsKey(tag)) {

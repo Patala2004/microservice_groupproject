@@ -14,7 +14,7 @@ import java.util.Date;
 public class UserInteraction {
 
     private int userId;
-    private int[] tags;
+    private int itemId;
     private Date timestamp;
     private String type;
 
