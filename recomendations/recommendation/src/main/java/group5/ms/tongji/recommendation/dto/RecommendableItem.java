@@ -11,6 +11,5 @@ public class RecommendableItem {
 
     private int[] tags;
 
-    private String type;
 
 }

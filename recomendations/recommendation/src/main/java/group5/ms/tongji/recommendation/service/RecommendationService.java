@@ -1,8 +1,9 @@
 package group5.ms.tongji.recommendation.service;
 
 import group5.ms.tongji.recommendation.dto.RecommendableItem;
+import group5.ms.tongji.recommendation.dto.UserFrequentTag;
 import group5.ms.tongji.recommendation.exceptions.NotFoundException;
-import group5.ms.tongji.recommendation.model.UserFrequentTag;
+import group5.ms.tongji.recommendation.repository.posttag.PostTagRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
@@ -16,12 +17,14 @@ import java.util.PriorityQueue;
 public class   RecommendationService {
 
     private PostServiceClient postServiceClient;
+    private TagMapper tagMapper;
+    private PostTagRepository postTagRepository;
 
     public int[] getRecommendedItems(int userId, int limit) {
         HashMap<Integer, Float> userTags = obtainUserFrequentTagWeight(userId);
         if(userTags.isEmpty())
             throw new NotFoundException("User", userId);
-        RecommendableItem[] recommendables = null; //TODO hacer consulta en la databse itemTAG/userTag
+        RecommendableItem[] recommendables = postTagRepository.findAllRecommendablePosts();
         return selectBestMatches(userTags,limit,recommendables);
     }
 
@@ -54,12 +57,8 @@ public class   RecommendationService {
     }
 
     private HashMap<Integer, Float> obtainUserFrequentTagWeight(int userId) {
-        List<UserFrequentTag> userFrequentTags = null; //TODO llamar a la API de user-preferences
-        HashMap<Integer, Float> tagWeight = new HashMap<>();
-        for(UserFrequentTag u : userFrequentTags) {
-            tagWeight.put(u.getUserTag().getTagId(), u.getWeight());
-        }
-        return tagWeight;
+        UserFrequentTag[] userFrequentTags = postServiceClient.getUserFrequentTags(userId);
+        return tagMapper.toWeightMap(userFrequentTags);
     }
 
     @AllArgsConstructor

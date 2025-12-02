@@ -1,8 +1,6 @@
-package group5.ms.tongji.recommendation.model;
+package group5.ms.tongji.recommendation.dto;
 
 import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,8 +8,6 @@ import lombok.Setter;
 
 import java.util.Date;
 
-@Entity
-@Table(name = "userTags")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

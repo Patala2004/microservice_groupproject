@@ -1,13 +1,10 @@
 package group5.ms.tongji.recommendation.service;
 
-import group5.ms.tongji.recommendation.dto.RecommendableItem;
+import group5.ms.tongji.recommendation.dto.UserFrequentTag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @Service
@@ -16,16 +13,16 @@ public class PostServiceClient {
 
     WebClient client;
 
-    public RecommendableItem[] getPostsTags(Set<Integer> ids) {
+    public UserFrequentTag[] getUserFrequentTags(int id) {
         return client.get()
                 .uri(uriBuilder ->
                         uriBuilder
-                                .path("/post/api/posts")
-                                .queryParam("ids", ids)
+                                .path("/upref")
+                                .queryParam("id", id)
                                 .build()
                 )
                 .retrieve()
-                .bodyToMono(RecommendableItem[].class).block();
+                .bodyToMono(UserFrequentTag[].class).block();
     }
 
 
