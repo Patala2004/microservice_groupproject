@@ -5,29 +5,47 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3f80f48e-2e85-49da-be63-d11e2a2ef1c7" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/service/TagMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/recommendation/config/PostTagDbConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/recommendation/config/PrimaryDbConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/recommendation/model/posttag/PostTag.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/recommendation/model/posttag/PostTagId.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/recommendation/repository/posttag/PostTagRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../recomendations - copia/.idea/user-preferences.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/controller/RecommendationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/controller/RecommendationController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/domain/InteractionTypes.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/domain/InteractionTypesWeights.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/dto/UserInteraction.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/exceptions/InteractionTypeException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/exceptions/RecommendationAdvice.java" beforeDir="false" afterPath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/exceptions/RecommendationAdvice.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/model/UserDecayDate.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/repository/UserDecayDateRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/repository/UserTagsRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/config/WebClientConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/config/WebClientConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/model/UserFrequentTag.java" beforeDir="false" afterPath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/dto/UserFrequentTag.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/model/UserTagKey.java" beforeDir="false" afterPath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/dto/UserTagKey.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/service/PostServiceClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/service/PostServiceClient.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/service/RecommendationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/service/RecommendationService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/recommendation/controller/UserPreferencesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/recommendation/controller/UserPreferencesController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/recommendation/dto/UserInteraction.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/recommendation/dto/UserInteraction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/recommendation/model/UserDecayDate.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/recommendation/model/primary/UserDecayDate.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/recommendation/model/UserFrequentTag.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/recommendation/model/primary/UserFrequentTag.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/recommendation/model/UserTagKey.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/recommendation/model/primary/UserTagKey.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/recommendation/repository/UserDecayDateRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/recommendation/repository/primary/UserDecayDateRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/recommendation/repository/UserTagsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/recommendation/repository/primary/UserTagsRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/recommendation/service/UserPreferencesService.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/recommendation/service/UserPreferencesService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-pref/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/.." value="recommendation" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="ProjectCodeStyleSettingsMigration">
@@ -46,7 +64,7 @@
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;recommendation-division&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;user-pref&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -83,7 +101,8 @@
       <option name="presentableId" value="Default" />
       <updated>1764321237350</updated>
       <workItem from="1764321239257" duration="3046000" />
-      <workItem from="1764598667682" duration="1435000" />
+      <workItem from="1764598667682" duration="3260000" />
+      <workItem from="1764646199331" duration="5269000" />
     </task>
     <servers />
   </component>

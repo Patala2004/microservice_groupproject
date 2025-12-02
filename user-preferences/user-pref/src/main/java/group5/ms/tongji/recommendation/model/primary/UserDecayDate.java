@@ -1,4 +1,4 @@
-package group5.ms.tongji.recommendation.model;
+package group5.ms.tongji.recommendation.model.primary;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

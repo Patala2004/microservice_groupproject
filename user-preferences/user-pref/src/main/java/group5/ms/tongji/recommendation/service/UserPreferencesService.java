@@ -2,11 +2,12 @@ package group5.ms.tongji.recommendation.service;
 
 import group5.ms.tongji.recommendation.domain.InteractionTypes;
 import group5.ms.tongji.recommendation.domain.InteractionTypesWeights;
-import group5.ms.tongji.recommendation.model.UserDecayDate;
-import group5.ms.tongji.recommendation.model.UserFrequentTag;
-import group5.ms.tongji.recommendation.model.UserTagKey;
-import group5.ms.tongji.recommendation.repository.UserTagsRepository;
-import group5.ms.tongji.recommendation.repository.UserDecayDateRepository;
+import group5.ms.tongji.recommendation.model.primary.UserDecayDate;
+import group5.ms.tongji.recommendation.model.primary.UserFrequentTag;
+import group5.ms.tongji.recommendation.model.primary.UserTagKey;
+import group5.ms.tongji.recommendation.repository.posttag.PostTagRepository;
+import group5.ms.tongji.recommendation.repository.primary.UserTagsRepository;
+import group5.ms.tongji.recommendation.repository.primary.UserDecayDateRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,9 +23,11 @@ public class UserPreferencesService {
 
     private UserDecayDateRepository userDecayDateRepository;
 
+    private PostTagRepository postTagRepository;
+
     public void updateRecommendations(int userId, int itemId, Date timestamp, InteractionTypes iteractionType) {
         HashMap<Integer, UserFrequentTag> userFrequentTags = obtainUserFrequentTagInfo(userId);
-        List<Integer> tags = null; //TODO Buscar las tags del itemId
+        List<Integer> tags = postTagRepository.findAllTagIds(itemId);
         decayAll(userId, userFrequentTags, timestamp);
         for(Integer tag : tags) {
             if(!userFrequentTags.containsKey(tag)) {

@@ -1,7 +1,7 @@
-package group5.ms.tongji.recommendation.repository;
+package group5.ms.tongji.recommendation.repository.primary;
 
-import group5.ms.tongji.recommendation.model.UserFrequentTag;
-import group5.ms.tongji.recommendation.model.UserTagKey;
+import group5.ms.tongji.recommendation.model.primary.UserFrequentTag;
+import group5.ms.tongji.recommendation.model.primary.UserTagKey;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

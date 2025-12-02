@@ -5,7 +5,7 @@ import group5.ms.tongji.recommendation.dto.ErrorResponse;
 import group5.ms.tongji.recommendation.dto.UserInteraction;
 import group5.ms.tongji.recommendation.exceptions.InteractionTypeException;
 import group5.ms.tongji.recommendation.exceptions.NotFoundException;
-import group5.ms.tongji.recommendation.model.UserFrequentTag;
+import group5.ms.tongji.recommendation.model.primary.UserFrequentTag;
 import group5.ms.tongji.recommendation.service.UserPreferencesService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;

@@ -1,6 +1,6 @@
-package group5.ms.tongji.recommendation.repository;
+package group5.ms.tongji.recommendation.repository.primary;
 
-import group5.ms.tongji.recommendation.model.UserDecayDate;
+import group5.ms.tongji.recommendation.model.primary.UserDecayDate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
