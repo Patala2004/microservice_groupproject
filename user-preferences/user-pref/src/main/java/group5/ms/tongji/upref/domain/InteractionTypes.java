@@ -4,6 +4,5 @@ public enum InteractionTypes {
     CLICK,
     JOIN,
     POST,
-    SEARCH,
-    REGISTER
+    SEARCH
 }

@@ -8,7 +8,6 @@ public class InteractionTypesWeights {
             InteractionTypes.CLICK, 0.125f,
             InteractionTypes.POST, 0.30f,
             InteractionTypes.JOIN, 0.40f,
-            InteractionTypes.SEARCH, 0.55f,
-            InteractionTypes.REGISTER, 0.5f
+            InteractionTypes.SEARCH, 0.55f
     );
 }

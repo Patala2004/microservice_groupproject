@@ -2,6 +2,7 @@ package group5.ms.tongji.upref.service;
 
 import group5.ms.tongji.upref.domain.InteractionTypes;
 import group5.ms.tongji.upref.domain.InteractionTypesWeights;
+import group5.ms.tongji.upref.exceptions.NotFoundException;
 import group5.ms.tongji.upref.model.primary.UserDecayDate;
 import group5.ms.tongji.upref.model.primary.UserFrequentTag;
 import group5.ms.tongji.upref.model.primary.UserTagKey;
@@ -11,6 +12,7 @@ import group5.ms.tongji.upref.repository.primary.UserDecayDateRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -68,6 +70,8 @@ public class UserPreferencesService {
 
     private HashMap<Integer, UserFrequentTag> obtainUserFrequentTagInfo(int userId) {
         List<UserFrequentTag> userFrequentTags = userTagsRepository.findByUserTag_UserId(userId);
+        if(userFrequentTags.isEmpty())
+            throw new NotFoundException("existing tags or user", userId);
         HashMap<Integer, UserFrequentTag> tagWeight = new HashMap<>();
         for(UserFrequentTag u : userFrequentTags) {
             tagWeight.put(u.getUserTag().getTagId(), u);
@@ -80,4 +84,13 @@ public class UserPreferencesService {
     }
 
 
+    public void initializeRecommendations(int userId, int[] tags, Date timestamp) {
+        List<UserFrequentTag> userFrequentTags = new ArrayList<>();
+        for(Integer tag : tags) {
+            UserTagKey userTag = new UserTagKey(userId, tag);
+            UserFrequentTag newFrequentTag = new UserFrequentTag(userTag, 0.5f, timestamp);
+            userFrequentTags.add(newFrequentTag);
+        }
+        userTagsRepository.saveAll(userFrequentTags);
+    }
 }

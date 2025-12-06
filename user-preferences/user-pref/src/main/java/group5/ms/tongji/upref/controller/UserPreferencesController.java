@@ -3,6 +3,7 @@ package group5.ms.tongji.upref.controller;
 import group5.ms.tongji.upref.domain.InteractionTypes;
 import group5.ms.tongji.upref.dto.ErrorResponse;
 import group5.ms.tongji.upref.dto.UserInteraction;
+import group5.ms.tongji.upref.dto.UserRegisterTags;
 import group5.ms.tongji.upref.exceptions.InteractionTypeException;
 import group5.ms.tongji.upref.exceptions.NotFoundException;
 import group5.ms.tongji.upref.model.primary.UserFrequentTag;
@@ -21,7 +22,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("upref/")
+@RequestMapping("upref")
 @Tag(name = "User Preferences", description = "User Preferences API")
 @AllArgsConstructor
 public class UserPreferencesController {
@@ -41,7 +42,7 @@ public class UserPreferencesController {
                         schema = @Schema(implementation = ErrorResponse.class)
             ))
     })
-    @GetMapping("{userId}")
+    @GetMapping("/{userId}")
     public List<UserFrequentTag> getUserFrequentTags(@PathVariable int userId) {
         List<UserFrequentTag> frequents =  userPreferencesService.getUserFrequentTags(userId);
         if(frequents.isEmpty())
@@ -51,7 +52,12 @@ public class UserPreferencesController {
 
     @Operation(summary = "Update user frequent tags")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Tags succesfully updated")
+            @ApiResponse(responseCode = "200", description = "Tags succesfully updated"),
+            @ApiResponse(responseCode = "404", description = "User not found",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    ))
     })
     @PostMapping("")
     public void updateUserFrequentTags(@RequestBody UserInteraction interaction) {
@@ -66,6 +72,19 @@ public class UserPreferencesController {
         }
 
         userPreferencesService.updateRecommendations(userId, itemId, timestamp, interactionType);
+    }
+
+    @Operation(summary = "Establish first user frequent tags after registering")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Tags succesfully updated")
+    })
+    @PostMapping("/register")
+    public void updateUserFrequentTagsRegister(@RequestBody UserRegisterTags uTags) {
+        int userId = uTags.getUserId();
+        int[] tags = uTags.getTags();
+        Date timestamp = uTags.getTimestamp();
+
+        userPreferencesService.initializeRecommendations(userId, tags, timestamp);
     }
 
 

@@ -5,15 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3f80f48e-2e85-49da-be63-d11e2a2ef1c7" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/dto/UserRegisterTags.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../recomendations - copia/.idea/user-preferences.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/config/WebClientConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/config/WebClientConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/dto/UserFrequentTag.java" beforeDir="false" afterPath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/dto/UserFrequentTag.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/dto/UserTagKey.java" beforeDir="false" afterPath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/dto/UserTagKey.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/service/PostServiceClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/service/PostServiceClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/service/RecommendationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/service/RecommendationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/service/TagMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/../recomendations/recommendation/src/main/java/group5/ms/tongji/recommendation/service/TagMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/config/PostTagDbConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/config/PostTagDbConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/config/PrimaryDbConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/config/PrimaryDbConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/controller/UserPreferencesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/controller/UserPreferencesController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/domain/InteractionTypes.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/domain/InteractionTypes.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/domain/InteractionTypesWeights.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/domain/InteractionTypesWeights.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/service/UserPreferencesService.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/service/UserPreferencesService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-pref/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,11 +57,13 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;user-pref&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/pmaci/Desktop/Tongji Clases/MS/msa-group/recomendations&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.projectsettings.compiler.annotationProcessors&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -65,19 +71,11 @@
     <configuration name="RecommendationApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
       <module name="user-pref" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="group5.ms.tongji.recommendation.RecommendationApplication" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="group5.ms.tongji.upref.RecommendationApplication" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-  </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-jdk-9823dce3aa75-125ca727e0f0-intellij.indexing.shared.core-IU-243.23654.189" />
-        <option value="bundled-js-predefined-d6986cc7102b-822845ee3bb5-JavaScript-IU-243.23654.189" />
-      </set>
-    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -91,6 +89,9 @@
       <workItem from="1764598667682" duration="3260000" />
       <workItem from="1764646199331" duration="5557000" />
       <workItem from="1764652609555" duration="555000" />
+      <workItem from="1764653793831" duration="49000" />
+      <workItem from="1764667085772" duration="6721000" />
+      <workItem from="1764945549637" duration="763000" />
     </task>
     <servers />
   </component>
