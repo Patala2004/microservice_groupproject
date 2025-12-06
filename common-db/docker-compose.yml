@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  posttag_pg:
+    image: postgres:15
+    container_name: posttag_db
+    environment:
+      POSTGRES_DB: posttagdb
+      POSTGRES_USER: posttaguser
+      POSTGRES_PASSWORD: password
+    volumes:
+      - posttagpgdata:/var/lib/postgresql/data
+    ports:
+      - "5440:5432"
+
+volumes: 
+  posttagpgdata:
