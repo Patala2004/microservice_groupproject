@@ -1,0 +1,63 @@
+/* App.css – Modern global style */
+
+/* Root fullscreen */
+#root {
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Transitions globales premium */
+* {
+  transition:
+    background-color 200ms ease,
+    color 200ms ease,
+    border-color 200ms ease,
+    box-shadow 200ms ease,
+    transform 150ms ease;
+}
+
+/* Typographie clean */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 🌌 FOND GLOBAL DE L'APPLICATION */
+body {
+  background:
+    radial-gradient(circle at top, rgba(139, 0, 0, 0.08), transparent 45%),
+    radial-gradient(circle at bottom, rgba(255, 120, 80, 0.08), transparent 45%),
+    #f9f9f9;
+}
+
+/* Dark mode */
+.dark body {
+  background:
+    radial-gradient(circle at top, rgba(255, 80, 80, 0.08), transparent 40%),
+    radial-gradient(circle at bottom, rgba(255, 140, 90, 0.08), transparent 45%),
+    #0a0a0a;
+}
+
+/* Sélection de texte stylée */
+::selection {
+  background: rgba(139, 0, 0, 0.25);
+  color: inherit;
+}
+
+/* Scrollbar moderne */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    to bottom,
+    #8b0000,
+    #ab3f3e
+  );
+  border-radius: 999px;
+}

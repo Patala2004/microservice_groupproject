@@ -1,0 +1,42 @@
+services:
+  userapi:
+    build: ./userapi/
+    depends_on:
+      - userapi_db
+    command: sh -c 'gunicorn userapi.wsgi:application --bind 0.0.0.0:8081 --reload --preload'
+    volumes:
+      - ./userapi/:/home/app/
+      - staticfiles:/home/app/staticfiles
+    networks:
+      - userapp_network
+  userapi_db:
+    image: postgres:15
+    container_name: userapi_pg_db
+    environment:
+      POSTGRES_DB: userdb
+      POSTGRES_USER: pguser
+      POSTGRES_PASSWORD: password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    networks:
+      - userapp_network
+  
+  userapi_nginx:
+    build: ./nginx/
+    depends_on:
+      - userapi
+    ports:
+      - "8081:80"
+    volumes:
+      - staticfiles:/home/app/static
+    networks:
+      - userapp_network
+
+volumes:
+  pgdata:
+  staticfiles:
+
+networks:
+  userapp_network:
+    driver: bridge

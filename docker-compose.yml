@@ -1,0 +1,53 @@
+services:
+  gateway:
+    extends:
+      file: api_gateway/docker-compose.yml
+      service: postapp
+
+  userapi:
+    extends:
+      file: user/docker-compose.yml
+      service: userapi
+
+  userapi_db:
+    extends:
+      file: user/docker-compose.yml
+      service: userapi_db
+
+  userapi_nginx:
+    extends:
+      file: user/docker-compose.yml
+      service: userapi_nginx
+  
+  post_pg:
+    extends:
+      file: post/docker-compose.yml
+      service: post_pg
+  
+  postapp:
+    extends:
+      file: post/docker-compose.yml
+      service: postapp
+  
+  post-nginx:
+    extends:
+      file: post/docker-compose.yml
+      service: post-nginx
+
+  frontend:
+    extends:
+      file: frontend/docker-compose.yml
+      service: frontend
+    networks:
+      - userapp_network
+
+networks:
+  postapp_network:
+    driver: bridge
+  userapp_network:
+    driver: bridge
+
+volumes:
+  pgdata:
+  staticfiles:
+  postpgdata:
