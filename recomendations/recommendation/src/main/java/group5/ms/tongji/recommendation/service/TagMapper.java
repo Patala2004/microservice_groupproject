@@ -6,10 +6,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
-import java.util.Map;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @Component
 public class TagMapper {
     public HashMap<Integer, Float> toWeightMap(UserFrequentTag[] tags) {

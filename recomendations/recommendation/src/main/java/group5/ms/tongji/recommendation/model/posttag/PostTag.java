@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table
+@Table(name = "post_tag")
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostTag {

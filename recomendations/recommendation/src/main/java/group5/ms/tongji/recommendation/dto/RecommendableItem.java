@@ -7,9 +7,9 @@ import lombok.Getter;
 @Getter
 public class RecommendableItem {
 
-    private int id;
+    private Integer id;
 
-    private int[] tags;
+    private Integer[] tags;
 
 
 }
