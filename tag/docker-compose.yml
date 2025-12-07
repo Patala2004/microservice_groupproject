@@ -1,6 +1,36 @@
+volumes:
+  models:
+  pgdata:
+
 services:
+  ollama:
+    image: ollama/ollama
+    container_name: ollama-tagging
+    volumes:
+      - models:/root/.ollama
+  
   tag:
     build: ./tag/.
     container_name: tag_service
+    depends_on:
+      - ollama
     ports:
       - "8087:8000"
+    environment:
+      OLLAMA_HOST: "http://ollama-tagging:11434"
+
+  db:
+    image: postgres:15
+    container_name: tagging-db
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: tags_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    command:
+      bash -c "apt-get update &&
+               apt-get install -y postgresql-server-dev-15 build-essential git &&
+               git clone https://github.com/pgvector/pgvector.git &&
+               cd pgvector && make && make install &&
+               docker-entrypoint.sh postgres"

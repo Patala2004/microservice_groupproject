@@ -2,7 +2,10 @@ FROM python:3.14
 
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y git && apt-get clean
+
 COPY requirements.txt .
+RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cu121
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
