@@ -4,10 +4,10 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { LanguageEnum } from "@/Context/userTypes.tsx";
 import InputTextField from "@/components/own/InputTextField.tsx";
-import api from "@/lib/api/axios.ts";
 import { Card } from "@/components/ui/card";
 import {useTranslation} from "react-i18next";
 import axios from "axios";
+import userApi from "@/lib/api/userApi.ts";
 
 const SignupForm = () => {
     const [username, setUsername] = useState<string>('');
@@ -57,7 +57,7 @@ const SignupForm = () => {
         }
 
         try {
-            const response = await api.post('user/api/users/', {
+            const response = await userApi.post('user/users/', {
                     username,
                     password,
                     name,

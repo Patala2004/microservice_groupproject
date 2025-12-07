@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
 import { useUser } from "@/Context/UserContext.tsx";
-import api from "@/lib/api/axios.ts";
+import userApi from "@/lib/api/userApi.ts";
 
 const SignInForm = () => {
   const [username, setUsername] = useState<string>("");
@@ -25,8 +25,8 @@ const SignInForm = () => {
     }
 
     try {
-      const response = await api.post(
-          "user/api/users/login/",
+      const response = await userApi.post(
+          "user/users/login/",
           { username, password },
           {
             headers: {

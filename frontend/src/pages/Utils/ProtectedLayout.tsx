@@ -13,7 +13,6 @@ const ProtectedLayout = () => {
         const checkStatus = async () => {
             setLoading(true);
             const authenticated = await checkAuth();
-            console.log("Statut d'authentification:", authenticated);
             setIsAuthConfirmed(authenticated);
             setLoading(false);
         };

@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useTranslation } from "react-i18next";
+import { useUser } from "@/Context/UserContext";
 
 interface UserDashboardProps {
   onOpenCreatePost: () => void;
@@ -10,15 +11,18 @@ interface UserDashboardProps {
 
 const UserDashboard = ({ onOpenCreatePost }: UserDashboardProps) => {
   const { t } = useTranslation();
+  const {user} = useUser();
+
+    const avatarLetter =
+        user?.name?.[0]?.toUpperCase() || user?.username?.[0]?.toUpperCase() || "?";
 
   return (
     <Card className="border-slate-800 bg-slate-900 sticky top-24 shadow-xl overflow-hidden">
-      {/* Gradient Banner */}
       <div className="h-20 bg-gradient-to-r from-orange-600 to-red-600 relative">
         <div className="absolute -bottom-8 left-6">
           <Avatar className="w-16 h-16 border-4 border-slate-900 shadow-xl">
             <AvatarFallback className="bg-slate-800 text-slate-200 font-bold text-lg">
-              ME
+                {avatarLetter}
             </AvatarFallback>
           </Avatar>
         </div>
@@ -40,8 +44,6 @@ const UserDashboard = ({ onOpenCreatePost }: UserDashboardProps) => {
 
         <div className="grid grid-cols-3 gap-2 text-center">
           <StatBox value="3" label={t("dashboard.stat_posts")} />
-          <StatBox value="12" label={t("dashboard.stat_likes")} />
-          <StatBox value="2" label={t("dashboard.stat_events")} />
         </div>
       </CardContent>
     </Card>

@@ -74,13 +74,10 @@ const PersonalInfoForm = ({
         if (success) {
             toast.success(t("profile.update_success"));
         } else {
-            // NOTE: This generic error is likely hiding API validation failure messages.
-            // In a real app, you would parse error.response.data from updateUser call.
             toast.error(t("errors.generic_signup_error"));
         }
     };
 
-    // Determine if the button should be disabled
     const isDisabled = !hasChanges();
 
     return (
