@@ -6,7 +6,9 @@ import jakarta.validation.constraints.Positive;
 import microservices.groupproject.post_api.StorageService.StorageService;
 import microservices.groupproject.post_api.model.*;
 import microservices.groupproject.post_api.repository.LocationRepository;
-import microservices.groupproject.post_api.repository.PostRepository;
+import microservices.groupproject.post_api.service.ExternalRecomendationServiceClient;
+import microservices.groupproject.post_api.service.PostService;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,29 +25,31 @@ import java.util.List;
 @CrossOrigin
 public class PostController {
 
-    private final PostRepository repository;
+    private final PostService service;
     private final LocationRepository locationRepository;
 
     // Image storage
     private final StorageService documentStorage;
 
-    public PostController(PostRepository repository, LocationRepository locationRepository,
-            StorageService documentStorage) {
-        this.repository = repository;
+    // External services
+    private final ExternalRecomendationServiceClient externalRecomClient;
+
+    public PostController(PostService service, LocationRepository locationRepository,
+            StorageService documentStorage, ExternalRecomendationServiceClient externalRecomClient) {
+        this.service = service;
         this.locationRepository = locationRepository;
         this.documentStorage = documentStorage;
+        this.externalRecomClient = externalRecomClient;
     }
 
     @GetMapping
     public List<Post> all() {
-        return repository.findAll();
+        return service.getAllPosts();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Post> getById(@PathVariable Long id) {
-        return repository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(service.getPostById(id));
     }
 
     @PostMapping(consumes = "multipart/form-data", produces = "application/json")
@@ -81,7 +85,19 @@ public class PostController {
             post.setImageUrl(imageUrl);
         }
 
-        Post saved = repository.save(post);
+        Post saved = service.createPost(post);
         return ResponseEntity.created(URI.create("/api/posts/" + saved.getId())).body(saved);
+    }
+
+    @GetMapping("/recomendations")
+    public ResponseEntity<List<Post>> getUserRecomendedPosts(
+        @RequestParam(required = false) int userId
+    ) {
+        UserRecomResponse externalResponse = externalRecomClient.getUserRecom(userId);
+        List<Integer> postIds = externalResponse.getPostIds();
+
+        List<Post> postList = service.getPostList(postIds.stream().map(Integer::longValue).toList());
+
+        return ResponseEntity.ok(postList);
     }
 }

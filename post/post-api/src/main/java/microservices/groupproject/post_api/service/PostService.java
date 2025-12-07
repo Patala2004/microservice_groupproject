@@ -2,10 +2,11 @@ package microservices.groupproject.post_api.service;
 
 import microservices.groupproject.post_api.model.Post;
 import microservices.groupproject.post_api.repository.PostRepository;
+import microservices.groupproject.post_api.exception.PostNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PostService {
@@ -20,8 +21,9 @@ public class PostService {
         return postRepository.findAll();
     }
 
-    public Optional<Post> getPostById(Long id) {
-        return postRepository.findById(id);
+    public Post getPostById(Long id) {
+        return postRepository.findById(id)
+        .orElseThrow(() -> new PostNotFoundException(id));
     }
 
     public Post createPost(Post post) {
@@ -43,5 +45,17 @@ public class PostService {
             .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
             
         postRepository.delete(post);
+    }
+
+    public List<Post> getPostList(List<Long> postIds){
+        List<Post> postList = new ArrayList<>();
+        for(Long id: postIds){
+            Post post = postRepository.findById(id)
+            .orElseThrow(() -> new PostNotFoundException(id));
+
+            postList.add(post);
+        }
+
+        return postList;
     }
 }
