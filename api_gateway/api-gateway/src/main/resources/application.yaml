@@ -8,21 +8,6 @@ spring:
 
   cloud:
     gateway:
-      globalcors:
-        add-to-simple-url-handler-mapping: true
-        corsConfigurations:
-          '[/**]':
-            allowedOrigins:
-              - "http://localhost:5173"
-            allowedMethods:
-              - GET
-              - POST
-              - PUT
-              - DELETE
-              - OPTIONS
-            allowedHeaders:
-              - "*"
-            allowCredentials: true
       server:
         webmvc:
           routes:
@@ -32,6 +17,7 @@ spring:
                 - Path=/api/v1/user/**
               filters:
                 - StripPrefix=2
+                - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
 
             - id: post-service
               uri: http://host.docker.internal:8082
@@ -39,6 +25,7 @@ spring:
                 - Path=/api/v1/post/**
               filters:
                 - StripPrefix=2
+                - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
 
 springdoc:
   swagger-ui:
