@@ -5,10 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3f80f48e-2e85-49da-be63-d11e2a2ef1c7" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/config/BrokerQueueConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../broker/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../broker/docker-compose.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/user-pref/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/config/BrokerQueueConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/config/BrokerQueueConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/controller/UserPreferencesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/controller/UserPreferencesController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/user-pref/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/resources/application.properties" afterDir="false" />
     </list>
