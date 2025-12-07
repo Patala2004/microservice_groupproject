@@ -22,7 +22,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/post")
 @Tag(name = "Posts", description = "Posts API")
-@CrossOrigin
 public class PostController {
 
     private final PostService service;
