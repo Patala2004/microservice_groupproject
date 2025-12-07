@@ -8,3 +8,9 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: admin
       RABBITMQ_DEFAULT_PASS: adminpassword
+    networks:
+      - ms_network  
+
+networks:
+  ms_network:
+    driver: bridge
