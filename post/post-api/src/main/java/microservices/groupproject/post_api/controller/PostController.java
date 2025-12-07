@@ -42,8 +42,15 @@ public class PostController {
     }
 
     @GetMapping
-    public List<Post> all() {
-        return service.getAllPosts();
+    public List<Post> all(
+        @RequestParam(required = false) String titleStartsWith,
+        @RequestParam(required = false) String titleContains,
+        @RequestParam(required = false) String contentContains,
+        @RequestParam(required = false) PostType type,
+        @RequestParam(required = false) String locationTitle,
+        @RequestParam(required = false) Long posterId
+    ) {
+        return service.getAllPosts(titleStartsWith, titleContains, contentContains, type, locationTitle, posterId);
     }
 
     @GetMapping("/{id}")

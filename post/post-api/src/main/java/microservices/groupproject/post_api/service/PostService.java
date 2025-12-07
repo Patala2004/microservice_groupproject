@@ -1,8 +1,12 @@
 package microservices.groupproject.post_api.service;
 
 import microservices.groupproject.post_api.model.Post;
+import microservices.groupproject.post_api.model.PostType;
 import microservices.groupproject.post_api.repository.PostRepository;
+import microservices.groupproject.post_api.specification.PostSpecification;
 import microservices.groupproject.post_api.exception.PostNotFoundException;
+
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,8 +21,23 @@ public class PostService {
         this.postRepository = postRepository;
     }
 
-    public List<Post> getAllPosts() {
-        return postRepository.findAll();
+    public List<Post> getAllPosts(
+        String titleStartsWith,
+        String titleContains,
+        String contentContains,
+        PostType type,
+        String locationTitle,
+        Long posterId
+    ) {
+        Specification<Post> spec = Specification.<Post>unrestricted()
+            .and(PostSpecification.titleStartsWith(titleStartsWith))
+            .and(PostSpecification.titleContains(titleContains))
+            .and(PostSpecification.contentContains(contentContains))
+            .and(PostSpecification.hasType(type))
+            .and(PostSpecification.locationTitleContains(locationTitle))
+            .and(PostSpecification.postedBy(posterId));
+
+        return postRepository.findAll(spec);
     }
 
     public Post getPostById(Long id) {
