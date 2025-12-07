@@ -33,8 +33,6 @@ const UserPage = () => {
   const [phone, setPhone] = useState(initialUser.phone_number);
   const [weixinId, setWeixinId] = useState(initialUser.weixinId);
   const [avatar, setAvatar] = useState("https://github.com/shadcn.png");
-
-  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
 

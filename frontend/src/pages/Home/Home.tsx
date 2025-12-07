@@ -1,20 +1,14 @@
 import { Search, Flame, Clock, Sparkles } from "lucide-react";
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-
-// UI Components
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-
-// Sub-Components
 import RecommendationsSidebar from "./components/RecommendationsSidebar";
 import UserDashboard from "./components/UserDashboard";
 import CreatePostDialog from "./components/CreatePostDialog";
 import PostCard from "./components/PostCard";
 import PostDetailsModal from "./components/PostDetailsModal";
-
-// Data
 import { FAKE_POSTS, CURRENT_USER} from "./mockData";
 import type { Post, PostCategory } from "./mockData";
 
@@ -22,18 +16,13 @@ type SortOption = "recent" | "popular" | "recommended";
 
 const HomePage = () => {
   const { t } = useTranslation();
-
-  // --- STATE ---
   const [posts, setPosts] = useState<Post[]>(FAKE_POSTS);
   const [sortView, setSortView] = useState<SortOption>("recent");
   const [filterType, setFilterType] = useState<PostCategory | "all">("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
-  
-  // Modal States
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
-
-  // --- LOGIC ---
+  
   const processedPosts = useMemo(() => {
     let result = posts.filter((post) => {
       const matchesType = filterType === "all" || post.type === filterType;
@@ -131,7 +120,7 @@ const HomePage = () => {
             </div>
 
             <div className="flex flex-col gap-3">
-              <Tabs defaultValue="recent" value={sortView} onValueChange={(val) => setSortView(val as SortOption)} className="w-full">
+              <Tabs defaultValue="recent" value={sortView} onValueChange={(val:any) => setSortView(val as SortOption)} className="w-full">
                 <TabsList className="grid w-full grid-cols-3 h-10 bg-slate-900 p-1 rounded-lg border border-slate-800">
                   <TabsTrigger value="recent" className="text-xs data-[state=active]:bg-slate-800 data-[state=active]:text-slate-100 text-slate-400">
                     <Clock className="w-3 h-3 mr-2" /> {t("sort.recent")}

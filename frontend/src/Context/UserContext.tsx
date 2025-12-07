@@ -2,7 +2,7 @@ import {createContext, useContext, useEffect, useState} from "react";
 import {LanguageEnum, type User} from "@/Context/userTypes.tsx";
 import i18n from "i18next";
 import axios, {type AxiosResponse} from "axios";
-import api from "@/lib/api/axios.ts";
+import userApi from "@/lib/api/userApi.ts";
 
 
 interface UserContextType {
@@ -100,7 +100,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         input: string
     ): Promise<AxiosResponse | null> => {
         try {
-            return await api.get(input, {
+            return await userApi.get(input, {
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -115,17 +115,16 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
     const updateUser = async (updatedData: Partial<User>): Promise<boolean> => {
         if (!user || !user.id) {
-            console.error("Cannot update user: User ID missing.");
             return false;
         }
-        
+
         const newUserData = { ...updatedData, username : user.username };
 
         const token = localStorage.getItem("token");
-        const url = `user/api/users/${user.id}/`;
+        const url = `user/users/${user.id}/`;
 
         try {
-            const response = await api.put(url, newUserData, {
+            const response = await userApi.put(url, newUserData, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -155,7 +154,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         }
 
         try {
-            const response = await authFetch("user/api/users/auth/");
+            const response = await authFetch("user/users/auth/");
 
             if (response && response.status === 200) {
                 let userData = response.data;
