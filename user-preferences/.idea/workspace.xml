@@ -5,11 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3f80f48e-2e85-49da-be63-d11e2a2ef1c7" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../event-collector/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../event-collector/docker-compose.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../event-collector/src/main/java/group5/ms/tongji/collector/event_collector/config/PublisherConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../event-collector/src/main/java/group5/ms/tongji/collector/event_collector/controller/CollectorController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../event-collector/src/main/java/group5/ms/tongji/collector/event_collector/dto/UserInteraction.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../event-collector/src/main/java/group5/ms/tongji/collector/event_collector/service/CollectorService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../event_collector/.gitignore" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-pref/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/config/BrokerQueueConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/config/BrokerQueueConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/controller/UserPreferencesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/controller/UserPreferencesController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-pref/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,7 +53,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "broker-integration",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/pmaci/Desktop/Tongji Clases/MS/msa-group/recomendations",
+    "last_opened_file_path": "C:/Users/pmaci/Desktop/Tongji Clases/MS/msa-group/user-preferences",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
