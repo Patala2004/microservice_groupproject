@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -61,6 +62,21 @@ public class UserPreferencesController {
     })
     @PostMapping("")
     public void updateUserFrequentTags(@RequestBody UserInteraction interaction) {
+        int userId = interaction.getUserId();
+        int itemId = interaction.getItemId();
+        Date timestamp = interaction.getTimestamp();
+        InteractionTypes interactionType = null;
+        try{
+            interactionType = InteractionTypes.valueOf(interaction.getType().toUpperCase());
+        } catch ( IllegalArgumentException e ){
+            throw new InteractionTypeException();
+        }
+
+        userPreferencesService.updateRecommendations(userId, itemId, timestamp, interactionType);
+    }
+
+    @RabbitListener(queues = "inter.queue")
+    public void receive(UserInteraction interaction){
         int userId = interaction.getUserId();
         int itemId = interaction.getItemId();
         Date timestamp = interaction.getTimestamp();

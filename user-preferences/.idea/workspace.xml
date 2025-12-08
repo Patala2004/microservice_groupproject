@@ -5,19 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3f80f48e-2e85-49da-be63-d11e2a2ef1c7" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/dto/UserRegisterTags.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../recomendations - copia/.idea/user-preferences.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../event-collector/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../event-collector/docker-compose.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../event-collector/src/main/java/group5/ms/tongji/collector/event_collector/config/PublisherConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../event-collector/src/main/java/group5/ms/tongji/collector/event_collector/controller/CollectorController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../event-collector/src/main/java/group5/ms/tongji/collector/event_collector/dto/UserInteraction.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../event-collector/src/main/java/group5/ms/tongji/collector/event_collector/service/CollectorService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../event_collector/.gitignore" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/config/PostTagDbConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/config/PostTagDbConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/config/PrimaryDbConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/config/PrimaryDbConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/controller/UserPreferencesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/controller/UserPreferencesController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/domain/InteractionTypes.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/domain/InteractionTypes.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/domain/InteractionTypesWeights.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/domain/InteractionTypesWeights.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/service/UserPreferencesService.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/service/UserPreferencesService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-pref/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/config/BrokerQueueConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/config/BrokerQueueConfig.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,7 +30,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$/.." value="recommendation" />
+        <entry key="$PROJECT_DIR$/.." value="main" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -51,22 +47,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;user-pref&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/pmaci/Desktop/Tongji Clases/MS/msa-group/recomendations&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.projectsettings.compiler.annotationProcessors&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "broker-integration",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/pmaci/Desktop/Tongji Clases/MS/msa-group/user-preferences",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "reference.projectsettings.compiler.annotationProcessors",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="RecommendationApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
