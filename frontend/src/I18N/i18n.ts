@@ -82,6 +82,7 @@ const resources = {
         login_fields_required: "All fields are required to login.",
         invalid_credentials: "Invalid username or password.",
         account_inactive: "Your account is inactive. Please contact support.",
+        generic_fetch_error: "Error fetching data. Please try again.",
       },
       success: {
         signup_successful: "Registration successful! You can now log in.",
@@ -166,6 +167,9 @@ const resources = {
         personal_info_desc: "Update your contact details and public information.",
         update_password_desc: "Ensure your account uses a strong password.",
         my_posts: "My Posts",
+        delete_modal_title: "Confirm Deletion",
+        delete_modal_desc: "Are you sure you want to delete this post? This action cannot be undone.",
+        delete_btn: "Delete Post",
 
         default_name: "Your name",
         default_email: "Your email",
@@ -248,6 +252,7 @@ const resources = {
         login_fields_required: "所有字段都是必需的，才能登录。",
         invalid_credentials: "用户名或密码无效。",
         account_inactive: "您的账户处于非活动状态。请联系支持人员。",
+        generic_fetch_error: "获取数据失败。请重试。",
       },
       success: {
         signup_successful: "注册成功！您现在可以登录了。",
@@ -331,11 +336,9 @@ const resources = {
         update_password_desc: "确保您的账户使用强密码。",
         personal_info_desc: "更新您的联系方式和公开信息。",
         my_posts: "我的帖子",
-
-        default_name: "您的姓名",
-        default_email: "您的邮箱",
-        default_phone: "您的电话号码",
-        default_weixin: "您的微信ID",
+        delete_modal_title: "确认删除",
+        delete_modal_desc: "您确定要删除此帖子吗？此操作不可撤消。",
+        delete_btn: "删除帖子",
       },
     },
   },

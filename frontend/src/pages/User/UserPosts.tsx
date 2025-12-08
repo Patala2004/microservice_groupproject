@@ -1,26 +1,29 @@
-import { Search } from "lucide-react";
-import { useState, useMemo, useEffect } from "react";
-import { useTranslation } from "react-i18next";
-import { Input } from "@/components/ui/input";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import {RotateCw, Search} from "lucide-react";
+import {useEffect, useMemo, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {Input} from "@/components/ui/input";
+import {ScrollArea, ScrollBar} from "@/components/ui/scroll-area";
 import PostCard from "@/components/own/PostCard.tsx";
-import { useUser } from "@/Context/UserContext.tsx";
-import { type Post, usePost } from "@/Context/PostContext.tsx";
-import { RotateCw } from "lucide-react";
-import { PostType } from "@/Context/PostType";
-
-type SortOption = "recent" | "popular";
+import {useUser} from "@/Context/UserContext.tsx";
+import {type Post, usePost} from "@/Context/PostContext.tsx";
+import {PostType} from "@/Context/PostType";
+import {Button} from "@/components/ui/button.tsx";
+import { toast } from "sonner";
 
 const UserPosts = () => {
     const { t } = useTranslation();
     const { user } = useUser();
-    const { getPostsByUserId } = usePost();
+    const { getPostsByUserId, setPosts } = usePost();
 
-    const [posts, setPosts] = useState<Post[]>([]);
+    const [posts, setPostsState] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
-    const [sortView, setSortView] = useState<SortOption>("recent");
     const [filterType, setFilterType] = useState<PostType | "all">("all");
     const [searchQuery, setSearchQuery] = useState<string>("");
+
+    const updatePosts = (newPosts: Post[]) => {
+        setPostsState(newPosts);
+        setPosts(newPosts);
+    }
 
     useEffect(() => {
         const fetchUserPosts = async () => {
@@ -30,15 +33,17 @@ const UserPosts = () => {
             }
 
             setLoading(true);
-            const userPosts = await getPostsByUserId(user.id);
+            const userIdNum = user.id;
+
+            const userPosts = await getPostsByUserId(userIdNum);
             if (userPosts) {
-                setPosts(userPosts);
+                updatePosts(userPosts);
             }
             setLoading(false);
         };
 
         fetchUserPosts();
-    }, [user?.id, getPostsByUserId]);
+    }, [user?.id]);
 
     const availableTypes = useMemo(() => {
         const types = new Set<PostType>();
@@ -47,29 +52,32 @@ const UserPosts = () => {
     }, [posts]);
 
     const processedPosts = useMemo(() => {
-        let result = posts.filter((post) => {
+        return posts.filter((post) => {
             const matchesType = filterType === "all" || post.type === filterType;
             const searchLower = searchQuery.toLowerCase();
 
             const matchesSearch =
                 post.title.toLowerCase().includes(searchLower) ||
-                post.content.toLowerCase().includes(searchLower);
+                post.content.toLowerCase().includes(searchLower) ||
+                post.location?.title.toLowerCase().includes(searchLower) ||
+                user?.weixinId.toLowerCase().includes(searchLower) ||
+                user?.username.toLowerCase().includes(searchLower);
 
             return matchesType && matchesSearch;
         });
+    }, [posts, filterType, searchQuery]);
 
-        if (sortView === "popular") {
-            result.sort((a, b) => (b.id || 0) - (a.id || 0));
-        } else {
-            result.sort((a, b) => (b.id || 0) - (a.id || 0));
-        }
-        return result;
-    }, [posts, filterType, searchQuery, sortView]);
+    const handleConfirmDelete = (postId: number) => {
+        toast.success(t("profile.delete_modal_title"));
+        
+        const updatedPosts = posts.filter(p => p.id !== postId);
+        updatePosts(updatedPosts);
+    };
 
     if (loading) {
         return (
             <div className="flex items-center justify-center py-16">
-                <RotateCw className="animate-spin text-cyan-500 size-8" />
+                <RotateCw className="animate-spin text-orange-500 size-8" />
             </div>
         );
     }
@@ -78,12 +86,12 @@ const UserPosts = () => {
         <div className="space-y-6">
             <div className="space-y-4">
                 <div className="relative group">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-cyan-500 transition-colors" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-orange-500 transition-colors" />
                     <Input
                         placeholder={t("home.search_placeholder")}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-9 h-11 bg-slate-900 border-slate-800 focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 rounded-xl transition-all"
+                        className="pl-9 h-11 bg-slate-900 border-slate-800 focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/50 rounded-xl transition-all"
                     />
                 </div>
 
@@ -91,13 +99,28 @@ const UserPosts = () => {
 
                     <ScrollArea className="w-full whitespace-nowrap">
                         <div className="flex space-x-2 pb-1">
-                            <button onClick={() => setFilterType("all")} className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 border ${filterType === "all" ? "bg-cyan-600 text-white border-cyan-600" : "bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-400"}`}>
+                            <Button
+                                onClick={() => setFilterType("all")}
+                                variant="tag"
+                                size="tag-size"
+                                className={filterType === "all" ?
+                                    "bg-orange-600 text-white hover:bg-orange-700 border-orange-600" :
+                                    "bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-400"}
+                            >
                                 {t("filters.all")}
-                            </button>
+                            </Button>
                             {availableTypes.map((cat) => (
-                                <button key={cat} onClick={() => setFilterType(cat)} className={`capitalize px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 border ${filterType === cat ? "bg-cyan-600 text-white border-cyan-600" : "bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-400"}`}>
+                                <Button
+                                    key={cat}
+                                    onClick={() => setFilterType(cat)}
+                                    variant="tag"
+                                    size="tag-size"
+                                    className={filterType === cat ?
+                                        "bg-orange-600 text-white hover:bg-orange-700 border-orange-600" :
+                                        "bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-400"}
+                                >
                                     {t(`filters.${cat.toLowerCase()}`)}
-                                </button>
+                                </Button>
                             ))}
                         </div>
                         <ScrollBar orientation="horizontal" className="invisible" />
@@ -115,8 +138,10 @@ const UserPosts = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                 {processedPosts.map((post) => (
                     <PostCard
+                        key={post.id}
                         post={post}
                         user={user}
+                        onDelete={handleConfirmDelete}
                     />
                 ))}
             </div>

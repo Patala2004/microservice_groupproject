@@ -7,40 +7,51 @@ import {getBadgeStyle, getTypeLabel} from "@/pages/Home/components/homeUtils";
 import type {Post} from "@/Context/PostContext.tsx";
 import type {User} from "@/Context/userTypes.tsx";
 import { useState } from "react";
-import PostDetailsModal from "@/pages/Home/components/PostDetailsModal.tsx";
+import PostDeleteModal from "@/pages/Modal/PostDeleteModal.tsx";
 
 interface PostCardProps {
   post: Post;
-  user: User;
+  user: User | null;
+  onDelete: (postId: number) => void;
 }
 
-const PostCard = ({ post, user }: PostCardProps) => {
+const PostCard = ({ post, user, onDelete }: PostCardProps) => {
   const { t } = useTranslation();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const posterIdString = post.poster.toString();
-  const currentUserIdString = user.id.toString();
+  const currentUserIdString = user?.id?.toString();
 
   const isHost = posterIdString === currentUserIdString;
 
-  const displayName = user.name;
-  const posterAvatarUrl = user.avatarUrl;
+  const displayName = user?.name || `User ID: ${post.poster}`;
+  const posterAvatarUrl = user?.avatarUrl;
   const initials = displayName?.charAt(0).toUpperCase() || posterIdString.charAt(0);
   const locationTitle = post.location?.title || t('post_actions.no_location');
 
-  const cardShadowHover = "hover:shadow-cyan-900/10";
-  const cardBorderHover = "hover:border-sky-700";
-  const accentColor = "text-cyan-400";
+  const cardShadowHover = "hover:shadow-red-900/10";
+  const cardBorderHover = "hover:border-orange-700";
+  const accentColor = "text-orange-400";
 
-  const handleDelete = (e: React.MouseEvent) => {
+  const handleDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = (postId: number) => {
+    setIsDeleteModalOpen(false);
+    onDelete(postId);
+  };
+
+  const handleCardClick = () => {
+    // TODO: Ouvrir la modal de détails (PostDetailsModal) si nécessaire
   };
 
 
   return (
       <>
         <Card
-            onClick={() => setIsModalOpen(true)}
+            onClick={handleCardClick}
             className={`group relative border-slate-800 bg-slate-900/60 shadow-lg 
             ${cardShadowHover} ${cardBorderHover} transition-all duration-300 cursor-pointer overflow-hidden`}
         >
@@ -57,20 +68,20 @@ const PostCard = ({ post, user }: PostCardProps) => {
                 <span className={`text-sm font-bold text-slate-200 leading-none mb-1 group-hover:${accentColor} transition-colors`}>
                   {displayName}
                 </span>
-                  <span className="text-xs text-slate-500 font-medium">@{user.weixinId}</span>
+                  <span className="text-xs text-slate-500 font-medium">@{user?.weixinId}</span>
                 </div>
               </div>
-              
+
               <div className={`flex flex-row items-center justify-center 
               rounded-full px-3 py-1 text-xs font-medium border ${getBadgeStyle(post.type)}`}>
                 {getTypeLabel(post.type, t)}
               </div>
-              
+
               {isHost && (
                   <Button
                       variant="ghost"
                       size="icon"
-                      onClick={handleDelete}
+                      onClick={handleDeleteClick}
                       className="size-8 rounded-full text-red-500/70 hover:text-red-500 hover:bg-red-500/10"
                   >
                     <X className="size-4" />
@@ -134,14 +145,14 @@ const PostCard = ({ post, user }: PostCardProps) => {
           </CardFooter>
         </Card>
 
-        <PostDetailsModal
-            post={post}
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            currentUser={currentUserIdString}
-            posterName={displayName}
-            posterAvatarUrl={posterAvatarUrl}
-        />
+        {isHost && (
+            <PostDeleteModal
+                post={post}
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirmDelete={handleConfirmDelete}
+            />
+        )}
       </>
   );
 };

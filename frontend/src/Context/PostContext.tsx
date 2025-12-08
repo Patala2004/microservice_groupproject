@@ -2,6 +2,7 @@ import { createContext, useContext, useState } from "react";
 import type {PostType} from "@/Context/PostType.tsx";
 import postApi from "@/lib/api/postApi.ts";
 import i18n from "i18next";
+import type { Dispatch, SetStateAction } from "react";
 
 export interface Location {
     title: string;
@@ -29,6 +30,7 @@ export interface CreatePostPayload {
 
 interface PostContextType {
     posts: Post[];
+    setPosts: Dispatch<SetStateAction<Post[]>>;
     createPost: (data: CreatePostPayload) => Promise<Post | null>;
     getAllPosts: (filters?: {type?: PostType, posterId?: number}) => Promise<void>;
     getPostById: (id: number) => Promise<Post | null>;
@@ -143,6 +145,7 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
         <PostContext.Provider
             value={{
                 posts,
+                setPosts,
                 createPost,
                 getAllPosts,
                 getPostById,

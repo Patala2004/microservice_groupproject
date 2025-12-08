@@ -73,7 +73,7 @@ const UserPage = () => {
 
           <div className="mb-12 text-center sm:text-left space-y-2 animate-in fade-in slide-in-from-top-4 duration-700">
             <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 via-cyan-500 to-emerald-600 drop-shadow-sm">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-rose-600 via-red-600 to-orange-500 drop-shadow-sm">
               {t("profile.title")}
             </span>
             </h1>
@@ -100,7 +100,7 @@ const UserPage = () => {
                   <TabsTrigger
                       value="info"
                       className="h-4/5 rounded-xl text-slate-400 data-[state=active]:bg-gradient-to-r 
-                      data-[state=active]:from-sky-500 data-[state=active]:to-emerald-600 
+                      data-[state=active]:from-rose-600 data-[state=active]:to-orange-500
                       data-[state=active]:text-white data-[state=active]:shadow-lg transition-all font-medium"
                   >
                     <UserIcon className="w-4 h-4 mr-2" /> {t("profile.personal_info")}
@@ -108,7 +108,7 @@ const UserPage = () => {
                   <TabsTrigger
                       value="security"
                       className="h-4/5 rounded-xl text-slate-400 data-[state=active]:bg-gradient-to-r 
-                      data-[state=active]:from-sky-500 data-[state=active]:to-emerald-600
+                      data-[state=active]:from-rose-600 data-[state=active]:to-orange-500
                        data-[state=active]:text-white data-[state=active]:shadow-lg transition-all font-medium"
                   >
                     <ShieldCheck className="w-4 h-4 mr-2" />{" "}
@@ -117,7 +117,7 @@ const UserPage = () => {
                   <TabsTrigger
                       value="posts"
                       className="h-4/5 rounded-xl text-slate-400 data-[state=active]:bg-gradient-to-r 
-                      data-[state=active]:from-sky-500 data-[state=active]:to-emerald-600
+                      data-[state=active]:from-rose-600 data-[state=active]:to-orange-500
                        data-[state=active]:text-white data-[state=active]:shadow-lg transition-all font-medium"
                   >
                     <LayoutGrid className="w-4 h-4 mr-2" />{" "}

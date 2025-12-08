@@ -126,7 +126,8 @@ const PersonalInfoForm = ({
                     <Button
                         onClick={handleSaveChanges}
                         disabled={isDisabled}
-                        className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 text-white shadow-lg shadow-orange-900/20 transition-all hover:scale-[1.02] active:scale-[0.98] px-8 py-6 rounded-xl font-bold w-full md:w-auto"
+                        variant="gradient-fire"
+                        size="lg"
                     >
                         <Save className="w-4 h-4 mr-2" />{" "}
                         {t("profile.save_btn")}
