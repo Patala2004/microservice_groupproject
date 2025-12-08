@@ -7,10 +7,10 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import RecommendationsSidebar from "./components/RecommendationsSidebar";
 import UserDashboard from "./components/UserDashboard";
 import CreatePostDialog from "./components/CreatePostDialog";
-import PostCard from "./components/PostCard";
 import PostDetailsModal from "./components/PostDetailsModal";
 import { FAKE_POSTS, CURRENT_USER} from "./mockData";
 import type { Post, PostCategory } from "./mockData";
+import PostCard from "@/components/own/PostCard.tsx";
 
 type SortOption = "recent" | "popular" | "recommended";
 
@@ -91,7 +91,6 @@ const HomePage = () => {
   return (
     <div className="dark relative min-h-screen w-full flex justify-center bg-slate-950 text-slate-100 selection:bg-orange-500/30">
       
-      {/* Background Ambient Glow */}
       <div className="fixed inset-0 -z-10 pointer-events-none">
         <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-600/10 blur-[120px] rounded-full" />
         <div className="absolute bottom-[0%] left-[-10%] w-[500px] h-[500px] bg-orange-600/5 blur-[120px] rounded-full" />
@@ -104,10 +103,8 @@ const HomePage = () => {
           <RecommendationsSidebar />
         </div>
 
-        {/* Center: Feed */}
         <main className="lg:col-span-6 lg:order-2 order-3 min-h-[200vh]">
           
-          {/* Header (Search + Tabs) */}
           <div className="sticky top-0 z-30 pb-4 pt-2 -mx-4 px-4 bg-slate-950/80 backdrop-blur-lg mb-6 space-y-4 border-b border-slate-800/60">
             <div className="relative group">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-orange-500 transition-colors" />
@@ -139,7 +136,7 @@ const HomePage = () => {
                   <button onClick={() => setFilterType("all")} className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 border ${filterType === "all" ? "bg-orange-600 text-white border-orange-600" : "bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-400"}`}>
                     {t("filters.all")}
                   </button>
-                  {(["sell", "buy", "activity", "transport"] as const).map((cat) => (
+                  {(["sell", "buy", "activity", "sport"] as const).map((cat) => (
                     <button key={cat} onClick={() => setFilterType(cat)} className={`capitalize px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 border ${filterType === cat ? "bg-orange-600 text-white border-orange-600" : "bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-400"}`}>
                       {t(`filters.${cat}`)}
                     </button>
@@ -150,7 +147,6 @@ const HomePage = () => {
             </div>
           </div>
 
-          {/* Posts Feed */}
           <div className="space-y-6 pb-20">
             {processedPosts.length === 0 && (
               <div className="text-center py-16 text-slate-500 border border-dashed border-slate-800 rounded-2xl">
@@ -171,7 +167,6 @@ const HomePage = () => {
           </div>
         </main>
 
-        {/* Right: User Dashboard */}
         <aside className="hidden lg:block lg:col-span-3 lg:order-3 order-2">
           <UserDashboard onOpenCreatePost={() => setIsCreateOpen(true)} />
         </aside>

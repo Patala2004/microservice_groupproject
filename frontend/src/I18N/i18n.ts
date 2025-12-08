@@ -86,6 +86,7 @@ const resources = {
       success: {
         signup_successful: "Registration successful! You can now log in.",
         welcome_back: "Welcome back",
+        post_created: "Post created successfully!",
       },
 
       // --- Home Page ---
@@ -146,7 +147,7 @@ const resources = {
         placeholder_content: "Provide details...",
         placeholder_price: "Free / $20",
         placeholder_location: "e.g. Library",
-        
+
       },
       profile: {
         title: "My Profile",
@@ -164,6 +165,7 @@ const resources = {
         update_success: "Profile updated successfully",
         personal_info_desc: "Update your contact details and public information.",
         update_password_desc: "Ensure your account uses a strong password.",
+        my_posts: "My Posts",
 
         default_name: "Your name",
         default_email: "Your email",
@@ -250,6 +252,7 @@ const resources = {
       success: {
         signup_successful: "注册成功！您现在可以登录了。",
         welcome_back: "欢迎回来",
+        post_created: "帖子创建成功！",
       },
 
       // --- Home Page ---
@@ -327,6 +330,7 @@ const resources = {
         update_success: "资料更新成功",
         update_password_desc: "确保您的账户使用强密码。",
         personal_info_desc: "更新您的联系方式和公开信息。",
+        my_posts: "我的帖子",
 
         default_name: "您的姓名",
         default_email: "您的邮箱",

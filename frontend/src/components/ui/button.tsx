@@ -44,6 +44,10 @@ const buttonVariants = cva(
                     "text-white bg-red-800 hover:bg-red-700 font-bold " +
                     "shadow-lg shadow-red-900/40 hover:shadow-red-900/60 " +
                     "hover:-translate-y-[2px] rounded-xl",
+                "delete":
+                    "bg-red-600 text-white hover:bg-red-500 font-semibold " +
+                    "shadow-md shadow-red-900/30 hover:shadow-red-900/50 " +
+                    "hover:-translate-y-[2px] rounded-lg",
             },
             size: {
                 default: "h-9 px-4 py-2 has-[>svg]:px-3 rounded-md",
