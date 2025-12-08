@@ -51,7 +51,7 @@ public class UserPreferencesController {
         return frequents;
     }
 
-    @Operation(summary = "Update user frequent tags")
+    /*@Operation(summary = "Update user frequent tags")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Tags succesfully updated"),
             @ApiResponse(responseCode = "404", description = "User not found",
@@ -73,7 +73,7 @@ public class UserPreferencesController {
         }
 
         userPreferencesService.updateRecommendations(userId, itemId, timestamp, interactionType);
-    }
+    }*/
 
     @RabbitListener(queues = "inter.queue")
     public void receive(UserInteraction interaction){

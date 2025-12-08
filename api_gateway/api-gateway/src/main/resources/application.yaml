@@ -25,6 +25,22 @@ spring:
               filters:
                 - StripPrefix=2
 
+            - id: event-collector-service
+              uri: http://host.docker.internal:8089
+              predicates:
+                - Path=/api/v1/evcollector/**
+              filters:
+                - StripPrefix=2
+
+            - id: user-preferences-service
+              uri: http://host.docker.internal:8086
+              predicates:
+                - Path=/api/v1/upref/**
+              filters:
+                - StripPrefix=2
+
+
+
 springdoc:
   swagger-ui:
     enabled: true
@@ -33,6 +49,10 @@ springdoc:
         url: "/api/v1/user/schema/"
       - name: "Post Service"
         url: "/api/v1/post/v3/api-docs"
+      - name: "Event Collector Service"
+        url: "api/v1/evcollector/v3/api-docs"
+      - name: "User Preferences Service"
+        url: "api/v1/upref/v3/api-docs"
     doc-expansion: list
     urls-primary-name: "User Service"
   

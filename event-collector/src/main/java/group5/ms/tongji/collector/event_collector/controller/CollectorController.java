@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CollectorController {
     CollectorService collectorService;
 
-    @Operation(summary = "Get user frequent tags")
+    @Operation(summary = "Queue interactions for updating user frequent tags")
     @PostMapping("")
     public void postUserInteraction(@RequestBody UserInteraction userInteraction) {
         collectorService.queueUserInteraction(userInteraction);
