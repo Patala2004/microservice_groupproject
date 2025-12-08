@@ -2,6 +2,9 @@ package microservices.groupproject.post_api.specification;
 
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
+
+import java.time.LocalDateTime;
+
 import org.springframework.data.jpa.domain.Specification;
 
 import microservices.groupproject.post_api.model.*;
@@ -34,5 +37,29 @@ public class PostSpecification {
 
     public static Specification<Post> postedBy(Long userId) {
         return (root, query, cb) -> userId == null ? null : cb.equal(root.get("poster"), userId);
+    }
+
+    // --- creationTime ---
+    public static Specification<Post> creationBefore(LocalDateTime time) {
+        return (root, query, cb) -> time == null ? null : cb.lessThan(root.get("creationTime"), time);
+    }
+
+    public static Specification<Post> creationAfter(LocalDateTime time) {
+        return (root, query, cb) -> time == null ? null : cb.greaterThan(root.get("creationTime"), time);
+    }
+
+    // --- eventTime (nullable) ---
+    public static Specification<Post> eventBefore(LocalDateTime time) {
+        return (root, query, cb) -> {
+            if (time == null) return null;
+            return cb.lessThan(root.get("eventTime"), time);
+        };
+    }
+
+    public static Specification<Post> eventAfter(LocalDateTime time) {
+        return (root, query, cb) -> {
+            if (time == null) return null;
+            return cb.greaterThan(root.get("eventTime"), time);
+        };
     }
 }
