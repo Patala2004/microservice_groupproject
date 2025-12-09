@@ -9,29 +9,39 @@ import {type Post, usePost} from "@/Context/PostContext.tsx";
 import {PostType} from "@/Context/PostType";
 import {Button} from "@/components/ui/button.tsx";
 import { toast } from "sonner";
-import type {User} from "@/Context/userTypes.tsx";
 
-interface UserPostsProps {
-    posts: Post[];
-    loading: boolean;
-    updatePosts: (newPosts: Post[]) => void;
-}
-
-const UserPosts = ({ posts, loading, updatePosts }: UserPostsProps) => {
+const UserPosts = () => {
     const { t } = useTranslation();
     const { user } = useUser();
-    const { setPosts } = usePost();
-    
+    const { getPostsByUserId } = usePost();
+
+    const [posts, setPostsState] = useState<Post[]>([]);
+    const [loading, setLoading] = useState(true);
     const [filterType, setFilterType] = useState<PostType | "all">("all");
     const [searchQuery, setSearchQuery] = useState<string>("");
 
-    const handleConfirmDelete = (postId: number) => {
-        console.log(`LOGIC DELETE: Post ID ${postId} confirmed for deletion.`);
-        toast.info(t("profile.delete_modal_title"));
+    const updatePosts = (newPosts: Post[]) => {
+        setPostsState(newPosts);
+    }
 
-        const updatedPosts = posts.filter(p => p.id !== postId);
-        updatePosts(updatedPosts);
-    };
+    useEffect(() => {
+        const fetchUserPosts = async () => {
+            if (!user || !user.id) {
+                setLoading(false);
+                return;
+            }
+
+            setLoading(true);
+            const userPosts = await getPostsByUserId( user.id);
+
+            if (userPosts) {
+                updatePosts(userPosts);
+            }
+            setLoading(false);
+        };
+
+        fetchUserPosts();
+    }, [user?.id, getPostsByUserId]);
 
     const availableTypes = useMemo(() => {
         const types = new Set<PostType>();
@@ -51,6 +61,14 @@ const UserPosts = ({ posts, loading, updatePosts }: UserPostsProps) => {
             return matchesType && matchesSearch;
         });
     }, [posts, filterType, searchQuery]);
+
+    const handleConfirmDelete = (postId: number) => {
+        console.log(`LOGIC DELETE: Post ID ${postId} confirmed for deletion.`);
+        toast.info(t("profile.delete_modal_title"));
+
+        const updatedPosts = posts.filter(p => p.id !== postId);
+        updatePosts(updatedPosts);
+    };
 
     if (loading) {
         return (

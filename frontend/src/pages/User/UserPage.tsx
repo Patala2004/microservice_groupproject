@@ -122,7 +122,7 @@ const UserPage = () => {
                   handleAvatarClick={handleAvatarClick}
                   handleFileChange={handleFileChange}
                   fileInputRef={fileInputRef}
-                  postCount={userPosts.length}©
+                  postCount={userPosts.length}
               />
             </div>
 

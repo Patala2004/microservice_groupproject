@@ -7,13 +7,12 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import RecommendationsSidebar from "./components/RecommendationsSidebar";
 import UserDashboard from "./components/UserDashboard";
 import CreatePostDialog from "./components/CreatePostDialog";
-import PostCard from "@/components/own/PostCard.tsx";
-
 import { usePost, type Post } from "@/Context/PostContext.tsx";
 import { useUser } from "@/Context/UserContext.tsx";
 import { PostType } from "@/Context/PostType";
 import { Button } from "@/components/ui/button.tsx";
 import {toast} from "sonner";
+import PostCard from "@/components/own/PostCard.tsx";
 
 
 type SortOption = "recent" | "popular" | "recommended";
@@ -21,7 +20,7 @@ type SortOption = "recent" | "popular" | "recommended";
 const HomePage = () => {
   const { t } = useTranslation();
   const { user } = useUser();
-  const { posts, getRecentPosts, createPost, getPostRecommendations } = usePost();
+  const { posts, getRecentPosts, getPostRecommendations } = usePost();
 
   const [loading, setLoading] = useState(true);
   const [sortView, setSortView] = useState<SortOption>("recent");
@@ -45,12 +44,13 @@ const HomePage = () => {
 
       setLoading(false);
     };
+    
     fetchInitialData();
   }, [getRecentPosts, getPostRecommendations, user?.id]);
 
   const handleConfirmDelete = (postId: number) => {
     console.log(`LOGIC DELETE: Post ID ${postId} confirmed for deletion.`);
-    toast.info(t("profile.delete_modal_title"));
+    toast.success(t("profile.delete_modal_title"));
   };
 
 

@@ -73,7 +73,7 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
             const response = await postApi.get("/post");
 
             if (response.status === 200) {
-                setPosts(prev => response.data);
+                setPosts(response.data);
             }
         } catch (error) {
             console.error(i18n.t("errors.generic_fetch_error") || "Error fetching recent posts:", error);

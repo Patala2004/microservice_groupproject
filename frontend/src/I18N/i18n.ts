@@ -90,7 +90,6 @@ const resources = {
         post_created: "Post created successfully!",
       },
 
-      // --- Home Page ---
       home: {
         trending_topics: "Trending Topics",
         search_placeholder: "Search...",
@@ -125,6 +124,12 @@ const resources = {
         be_first: "Be the first to join!",
         like: "Like",
         comment: "Comment",
+        more: "more",
+        more_users: "users",
+        show_contact: "Show Contact Info",
+        contact_poster_title: "Contact {{name}}",
+        contact_poster_description: "Use the following verified details to contact the poster directly.",
+        no_contact_available: "No contact details are available for this user.",
       },
       dashboard: {
         welcome: "Welcome back!",
@@ -170,6 +175,13 @@ const resources = {
         delete_modal_title: "Confirm Deletion",
         delete_modal_desc: "Are you sure you want to delete this post? This action cannot be undone.",
         delete_btn: "Delete Post",
+
+        email: "Email",
+        phone_number: "Phone Number",
+        wechat_id: "WeChat ID",
+        default_weixin_unavailable: "WeChat ID unavailable",
+        default_email_unavailable: "Email unavailable",
+        default_phone_unavailable: "Phone unavailable",
 
         default_name: "Your name",
         default_email: "Your email",
@@ -295,6 +307,12 @@ const resources = {
         be_first: "成为第一个加入的人！",
         like: "点赞",
         comment: "评论",
+        more: "更多",
+        more_users: "位用户",
+        show_contact: "显示联系方式",
+        contact_poster_title: "联系 {{name}}",
+        contact_poster_description: "请使用以下已验证的详细信息直接联系发帖人。",
+        no_contact_available: "此用户没有可用的联系方式。",
       },
       dashboard: {
         welcome: "欢迎回来!",
@@ -339,6 +357,18 @@ const resources = {
         delete_modal_title: "确认删除",
         delete_modal_desc: "您确定要删除此帖子吗？此操作不可撤消。",
         delete_btn: "删除帖子",
+
+        email: "电子邮件",
+        phone_number: "电话号码",
+        wechat_id: "微信ID",
+        default_weixin_unavailable: "微信ID不可用",
+        default_email_unavailable: "电子邮件不可用",
+        default_phone_unavailable: "电话号码不可用",
+
+        default_name: "您的姓名",
+        default_email: "您的邮箱",
+        default_phone: "您的电话号码",
+        default_weixin: "您的微信ID",
       },
     },
   },
