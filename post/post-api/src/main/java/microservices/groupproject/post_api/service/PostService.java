@@ -66,9 +66,16 @@ public class PostService {
         existing.setTitle(post.getTitle());
         existing.setContent(post.getContent());
         existing.setEventTime(post.getEventTime());
-        existing.setImageUrl(post.getImageUrl());
         existing.setLocation(post.getLocation());
 
+        return postRepository.save(existing);
+    }
+
+    public Post updatePostImage(Long postId, String imageUrl){
+        Post existing = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException(postId));
+        
+        existing.setImageUrl(imageUrl);
         return postRepository.save(existing);
     }
 
