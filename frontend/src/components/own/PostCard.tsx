@@ -44,7 +44,6 @@ const PostCard = ({ post, user, onDelete }: PostCardProps) => {
   };
 
   const handleCardClick = () => {
-    // TODO: Ouvrir la modal de détails (PostDetailsModal) si nécessaire
   };
 
 
@@ -78,14 +77,16 @@ const PostCard = ({ post, user, onDelete }: PostCardProps) => {
               </div>
 
               {isHost && (
-                  <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={handleDeleteClick}
-                      className="size-8 rounded-full text-red-500/70 hover:text-red-500 hover:bg-red-500/10"
-                  >
-                    <X className="size-4" />
-                  </Button>
+                  <div className="absolute top-2 right-2 z-10">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={handleDeleteClick}
+                        className="size-8 rounded-full text-red-500/70 hover:text-red-500 hover:bg-red-500/10"
+                    >
+                      <X className="size-4" />
+                    </Button>
+                  </div>
               )}
             </div>
 

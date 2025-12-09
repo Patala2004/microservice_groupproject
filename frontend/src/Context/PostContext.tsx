@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useCallback } from "react";
 import type {PostType} from "@/Context/PostType.tsx";
 import postApi from "@/lib/api/postApi.ts";
 import i18n from "i18next";
@@ -36,6 +36,8 @@ interface PostContextType {
     getPostById: (id: number) => Promise<Post | null>;
     getPostsByUserId: (userId: number) => Promise<Post[] | null>;
     getPostsByType: (type: PostType) => Promise<Post[] | null>;
+    getRecentPosts: () => Promise<void>;
+    getPostRecommendations: (userId: number) => Promise<Post[] | null>;
 }
 
 const PostContext = createContext<PostContextType | undefined>(undefined);
@@ -43,7 +45,7 @@ const PostContext = createContext<PostContextType | undefined>(undefined);
 export const PostProvider = ({ children }: { children: React.ReactNode }) => {
     const [posts, setPosts] = useState<Post[]>([]);
 
-    const getAllPosts = async (filters?: {type?: PostType, posterId?: number}) => {
+    const getAllPosts = useCallback(async (filters?: {type?: PostType, posterId?: number}) => {
         try {
             const params = new URLSearchParams();
             if (filters?.type) {
@@ -64,9 +66,36 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
         } catch (error) {
             console.error(i18n.t("errors.generic_fetch_error") || "Error fetching all posts:", error);
         }
-    };
+    }, [setPosts]);
 
-    const getPostsByUserId = async (userId: number): Promise<Post[] | null> => {
+    const getRecentPosts = useCallback(async () => {
+        try {
+            const response = await postApi.get("/post");
+
+            if (response.status === 200) {
+                setPosts(prev => response.data);
+            }
+        } catch (error) {
+            console.error(i18n.t("errors.generic_fetch_error") || "Error fetching recent posts:", error);
+        }
+    }, [setPosts]);
+
+    const getPostRecommendations = useCallback(async (userId: number): Promise<Post[] | null> => {
+        try {
+            const response = await postApi.get(`/post/recommendations?userId=${userId}`);
+
+            if (response.status === 200) {
+                return response.data;
+            }
+            return null;
+        } catch (error) {
+            console.error(i18n.t("errors.generic_fetch_error") || `Error fetching recommendations for user ${userId}:`, error);
+            return null;
+        }
+    }, []);
+
+
+    const getPostsByUserId = useCallback(async (userId: number): Promise<Post[] | null> => {
         try {
             const response = await postApi.get(`/post?posterId=${userId}`);
 
@@ -78,9 +107,9 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
             console.error(i18n.t("errors.generic_fetch_error") || `Error fetching posts for user ${userId}:`, error);
             return null;
         }
-    };
+    }, []);
 
-    const getPostsByType = async (type: PostType): Promise<Post[] | null> => {
+    const getPostsByType = useCallback(async (type: PostType): Promise<Post[] | null> => {
         try {
             const response = await postApi.get(`/post?type=${type}`);
 
@@ -92,9 +121,9 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
             console.error(i18n.t("errors.generic_fetch_error") || `Error fetching posts by type ${type}:`, error);
             return null;
         }
-    };
+    }, []);
 
-    const getPostById = async (id: number): Promise<Post | null> => {
+    const getPostById = useCallback(async (id: number): Promise<Post | null> => {
         try {
             const response  = await postApi.get(`/post/${id}`);
 
@@ -106,10 +135,10 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
             console.error(i18n.t("errors.generic_fetch_error") || `Error fetching post ${id}:`, error);
             return null;
         }
-    };
+    }, []);
 
 
-    const createPost = async ({ imageFile, ...postData }: CreatePostPayload): Promise<Post | null> => {
+    const createPost = useCallback(async ({ imageFile, ...postData }: CreatePostPayload): Promise<Post | null> => {
         const formData = new FormData();
 
         formData.append('title', postData.title);
@@ -139,7 +168,7 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
             console.error(i18n.t("errors.generic_fetch_error") || "Error creating post:", error);
             return null;
         }
-    };
+    }, [setPosts]);
 
     return (
         <PostContext.Provider
@@ -151,6 +180,8 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
                 getPostById,
                 getPostsByUserId,
                 getPostsByType,
+                getRecentPosts,
+                getPostRecommendations,
             }}
         >
             {children}

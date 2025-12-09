@@ -12,6 +12,7 @@ interface UserProfileCardProps {
     handleAvatarClick: () => void;
     handleFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     fileInputRef: React.RefObject<HTMLInputElement | null>;
+    postCount: number;
 }
 
 const BadgeInfo = ({ value, label }: { value: string; label: string }) => (
@@ -30,6 +31,7 @@ const UserProfileCard = ({
                              handleAvatarClick,
                              handleFileChange,
                              fileInputRef,
+                             postCount,
                          }: UserProfileCardProps) => {
     const { t } = useTranslation();
     const avatarFallbackLetter = name.charAt(0).toUpperCase() || '?';
@@ -76,8 +78,7 @@ const UserProfileCard = ({
                 </p>
 
                 <div className="w-full flex gap-3 justify-center mb-6">
-                    <BadgeInfo label={t("dashboard.stat_posts")} value="3" />
-                    <BadgeInfo label={t("dashboard.stat_likes")} value="12" />
+                    <BadgeInfo label={t("dashboard.stat_posts")} value={postCount.toString()} />
                 </div>
 
                 <Button

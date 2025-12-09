@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import {
@@ -10,6 +10,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { useUser } from "@/Context/UserContext.tsx";
+import { usePost, type Post } from "@/Context/PostContext.tsx";
 import UserProfileCard from "./UserProfileCard.tsx";
 import PersonalInfoForm from "./PersonalInfoForm.tsx";
 import SecurityForm from "./SecurityForm.tsx";
@@ -20,6 +21,10 @@ import React from "react";
 const UserPage = () => {
   const { t } = useTranslation();
   const { user, updateUser } = useUser();
+  const { getPostsByUserId, setPosts: setGlobalPosts } = usePost();
+
+  const [userPosts, setUserPosts] = useState<Post[]>([]);
+  const [postsLoading, setPostsLoading] = useState(true);
 
   const initialUser = user || {
     username: t("profile.default_username"),
@@ -40,6 +45,32 @@ const UserPage = () => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const updatePosts = useCallback((newPosts: Post[]) => {
+    setUserPosts(newPosts);
+    setGlobalPosts(newPosts);
+  }, [setGlobalPosts]);
+  
+  useEffect(() => {
+    const fetchUserPosts = async () => {
+      if (!user || !user.id) {
+        setPostsLoading(false);
+        return;
+      }
+      setPostsLoading(true);
+
+      const userIdNum = parseInt(user.id);
+      const posts = await getPostsByUserId(userIdNum);
+
+      if (posts) {
+        setUserPosts(posts);
+      }
+      setPostsLoading(false);
+    };
+
+    fetchUserPosts();
+  }, [user?.id, getPostsByUserId]);
+
+
   const handleAvatarClick = () => fileInputRef.current?.click();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,19 +85,19 @@ const UserPage = () => {
   if (!user) {
     return (
         <div className="min-h-screen flex items-center justify-center bg-slate-950">
-          <RotateCw className="animate-spin text-cyan-500 size-12" />
+          <RotateCw className="animate-spin text-orange-500 size-12" />
         </div>
     );
   }
 
   return (
-      <div className="min-h-screen w-full bg-slate-950 text-slate-100 relative overflow-x-hidden selection:bg-cyan-500/30 font-sans">
+      <div className="min-h-screen w-full bg-slate-950 text-slate-100 relative overflow-x-hidden selection:bg-orange-500/30 font-sans">
         <div className="fixed inset-0 z-0 pointer-events-none">
           <div
-              className="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] bg-sky-600/10 blur-[150px] rounded-full opacity-40 animate-pulse"
+              className="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] bg-red-600/10 blur-[150px] rounded-full opacity-40 animate-pulse"
               style={{ animationDuration: "4s" }}
           />
-          <div className="absolute bottom-[-10%] right-[-5%] w-[600px] h-[600px] bg-emerald-600/10 blur-[150px] rounded-full opacity-30" />
+          <div className="absolute bottom-[-10%] right-[-5%] w-[600px] h-[600px] bg-orange-600/10 blur-[150px] rounded-full opacity-30" />
         </div>
 
         <div className="relative z-10 container mx-auto px-4 py-12 max-w-6xl">
@@ -91,6 +122,7 @@ const UserPage = () => {
                   handleAvatarClick={handleAvatarClick}
                   handleFileChange={handleFileChange}
                   fileInputRef={fileInputRef}
+                  postCount={userPosts.length}©
               />
             </div>
 
@@ -161,7 +193,11 @@ const UserPage = () => {
                     value="posts"
                     className="mt-0 focus-visible:outline-none"
                 >
-                  <UserPosts />
+                  <UserPosts
+                      posts={userPosts}
+                      loading={postsLoading}
+                      updatePosts={updatePosts}
+                  />
                 </TabsContent>
               </Tabs>
             </div>

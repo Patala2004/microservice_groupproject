@@ -9,41 +9,29 @@ import {type Post, usePost} from "@/Context/PostContext.tsx";
 import {PostType} from "@/Context/PostType";
 import {Button} from "@/components/ui/button.tsx";
 import { toast } from "sonner";
+import type {User} from "@/Context/userTypes.tsx";
 
-const UserPosts = () => {
+interface UserPostsProps {
+    posts: Post[];
+    loading: boolean;
+    updatePosts: (newPosts: Post[]) => void;
+}
+
+const UserPosts = ({ posts, loading, updatePosts }: UserPostsProps) => {
     const { t } = useTranslation();
     const { user } = useUser();
-    const { getPostsByUserId, setPosts } = usePost();
-
-    const [posts, setPostsState] = useState<Post[]>([]);
-    const [loading, setLoading] = useState(true);
+    const { setPosts } = usePost();
+    
     const [filterType, setFilterType] = useState<PostType | "all">("all");
     const [searchQuery, setSearchQuery] = useState<string>("");
 
-    const updatePosts = (newPosts: Post[]) => {
-        setPostsState(newPosts);
-        setPosts(newPosts);
-    }
+    const handleConfirmDelete = (postId: number) => {
+        console.log(`LOGIC DELETE: Post ID ${postId} confirmed for deletion.`);
+        toast.info(t("profile.delete_modal_title"));
 
-    useEffect(() => {
-        const fetchUserPosts = async () => {
-            if (!user || !user.id) {
-                setLoading(false);
-                return;
-            }
-
-            setLoading(true);
-            const userIdNum = user.id;
-
-            const userPosts = await getPostsByUserId(userIdNum);
-            if (userPosts) {
-                updatePosts(userPosts);
-            }
-            setLoading(false);
-        };
-
-        fetchUserPosts();
-    }, [user?.id]);
+        const updatedPosts = posts.filter(p => p.id !== postId);
+        updatePosts(updatedPosts);
+    };
 
     const availableTypes = useMemo(() => {
         const types = new Set<PostType>();
@@ -58,21 +46,11 @@ const UserPosts = () => {
 
             const matchesSearch =
                 post.title.toLowerCase().includes(searchLower) ||
-                post.content.toLowerCase().includes(searchLower) ||
-                post.location?.title.toLowerCase().includes(searchLower) ||
-                user?.weixinId.toLowerCase().includes(searchLower) ||
-                user?.username.toLowerCase().includes(searchLower);
+                post.content.toLowerCase().includes(searchLower);
 
             return matchesType && matchesSearch;
         });
     }, [posts, filterType, searchQuery]);
-
-    const handleConfirmDelete = (postId: number) => {
-        toast.success(t("profile.delete_modal_title"));
-        
-        const updatedPosts = posts.filter(p => p.id !== postId);
-        updatePosts(updatedPosts);
-    };
 
     if (loading) {
         return (
@@ -104,7 +82,7 @@ const UserPosts = () => {
                                 variant="tag"
                                 size="tag-size"
                                 className={filterType === "all" ?
-                                    "bg-orange-600 text-white hover:bg-orange-700 border-orange-600" :
+                                    "bg-orange-600 text-white border-orange-600 hover:bg-orange-700" :
                                     "bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-400"}
                             >
                                 {t("filters.all")}
@@ -116,7 +94,7 @@ const UserPosts = () => {
                                     variant="tag"
                                     size="tag-size"
                                     className={filterType === cat ?
-                                        "bg-orange-600 text-white hover:bg-orange-700 border-orange-600" :
+                                        "bg-orange-600 text-white border-orange-600 hover:bg-orange-700" :
                                         "bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-400"}
                                 >
                                     {t(`filters.${cat.toLowerCase()}`)}
