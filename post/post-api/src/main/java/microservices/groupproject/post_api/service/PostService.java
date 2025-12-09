@@ -9,6 +9,7 @@ import microservices.groupproject.post_api.exception.PostNotFoundException;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,10 @@ public class PostService {
         String contentContains,
         PostType type,
         String locationTitle,
+        LocalDateTime afterCreationTime,
+        LocalDateTime beforeCreationTime,
+        LocalDateTime afterEventTime,
+        LocalDateTime beforeEventTime,
         Long posterId
     ) {
         Specification<Post> spec = Specification.<Post>unrestricted()
@@ -35,7 +40,11 @@ public class PostService {
             .and(PostSpecification.contentContains(contentContains))
             .and(PostSpecification.hasType(type))
             .and(PostSpecification.locationTitleContains(locationTitle))
-            .and(PostSpecification.postedBy(posterId));
+            .and(PostSpecification.postedBy(posterId))
+            .and(PostSpecification.creationBefore(beforeCreationTime))
+            .and(PostSpecification.creationAfter(afterCreationTime))
+            .and(PostSpecification.eventBefore(beforeEventTime))
+            .and(PostSpecification.eventAfter(afterEventTime));
 
         return postRepository.findAll(spec);
     }

@@ -17,6 +17,7 @@ import microservices.groupproject.post_api.exception.*;
 
 import java.io.IOException;
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -48,9 +49,14 @@ public class PostController {
         @RequestParam(required = false) String contentContains,
         @RequestParam(required = false) PostType type,
         @RequestParam(required = false) String locationTitle,
+        @RequestParam(required = false) LocalDateTime beforeCreationDateStamp,
+        @RequestParam(required = false) LocalDateTime afterCreationDateStamp,
+        @RequestParam(required = false) LocalDateTime beforeEventDateStamp,
+        @RequestParam(required = false) LocalDateTime afterEventDateStamp,
         @RequestParam(required = false) Long posterId
     ) {
-        return service.getAllPosts(titleStartsWith, titleContains, contentContains, type, locationTitle, posterId);
+        return service.getAllPosts(titleStartsWith, titleContains, contentContains, type, locationTitle, 
+            afterCreationDateStamp, beforeCreationDateStamp, afterEventDateStamp, beforeEventDateStamp, posterId);
     }
 
     @GetMapping("/{id}")
@@ -65,6 +71,7 @@ public class PostController {
             @RequestParam("type") PostType type,
             @RequestParam("locationTitle") String locationTitle,
             @RequestParam("poster") @Positive(message = "user id of poster must be positive") Long poster,
+            @RequestParam(value = "eventTime", required = false) LocalDateTime eventTime,
             @RequestParam(value = "image", required = false) MultipartFile imageFile) {
 
         // Create Location
@@ -79,6 +86,7 @@ public class PostController {
         post.setType(type);
         post.setLocation(location);
         post.setPoster(poster);
+        post.setEventTime(eventTime);
 
         // Handle image if present
         if (imageFile != null && !imageFile.isEmpty()) {
