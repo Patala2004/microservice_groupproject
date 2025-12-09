@@ -32,7 +32,8 @@ public class PostService {
         LocalDateTime beforeCreationTime,
         LocalDateTime afterEventTime,
         LocalDateTime beforeEventTime,
-        Long posterId
+        Long posterId,
+        Long participantId
     ) {
         Specification<Post> spec = Specification.<Post>unrestricted()
             .and(PostSpecification.titleStartsWith(titleStartsWith))
@@ -44,7 +45,8 @@ public class PostService {
             .and(PostSpecification.creationBefore(beforeCreationTime))
             .and(PostSpecification.creationAfter(afterCreationTime))
             .and(PostSpecification.eventBefore(beforeEventTime))
-            .and(PostSpecification.eventAfter(afterEventTime));
+            .and(PostSpecification.eventAfter(afterEventTime))
+            .and(PostSpecification.hasJoined(participantId));
 
         return postRepository.findAll(spec);
     }
