@@ -53,16 +53,30 @@ public class PostController {
         @RequestParam(required = false) LocalDateTime afterCreationDateStamp,
         @RequestParam(required = false) LocalDateTime beforeEventDateStamp,
         @RequestParam(required = false) LocalDateTime afterEventDateStamp,
-        @RequestParam(required = false) Long posterId
+        @RequestParam(required = false) Long posterId,
+        @RequestParam(required = false) Long participantId
     ) {
         return service.getAllPosts(titleStartsWith, titleContains, contentContains, type, locationTitle, 
-            afterCreationDateStamp, beforeCreationDateStamp, afterEventDateStamp, beforeEventDateStamp, posterId);
+        afterCreationDateStamp, beforeCreationDateStamp, afterEventDateStamp, beforeEventDateStamp, posterId,
+        participantId);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Post> getById(@PathVariable Long id) {
         return ResponseEntity.ok(service.getPostById(id));
     }
+
+    // In case schedule endpoints wants a boolean "is occupied" endpoint
+    // @GetMapping("/userIsOcupied")
+    // public boolean userIsOcupied(
+    //     @RequestParam Long userId,
+    //     @RequestParam LocalDateTime beforeEventDateStamp,
+    //     @RequestParam(required = false) LocalDateTime afterEventDateStamp
+    // ) {
+    //     List<Post> posts = service.getAllPosts(null, null, null, null, null, null, null, afterEventDateStamp, beforeEventDateStamp, null, userId);
+    //     if(posts != null && !posts.isEmpty()) return true;
+    //     return false;
+    // }
 
     @PostMapping(consumes = "multipart/form-data", produces = "application/json")
     public ResponseEntity<Post> create(

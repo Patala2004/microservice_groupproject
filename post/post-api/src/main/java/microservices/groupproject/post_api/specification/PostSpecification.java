@@ -62,4 +62,8 @@ public class PostSpecification {
             return cb.greaterThan(root.get("eventTime"), time);
         };
     }
+
+    public static Specification<Post> hasJoined(Long userId) {
+        return (root, query, cb) -> userId == null ? null : cb.isMember(userId, root.get("joinedUsers"));
+    }
 }
