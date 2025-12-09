@@ -17,6 +17,7 @@ interface UserContextType {
     ) => Promise<AxiosResponse | null>;
     checkAuth: () => Promise<boolean>;
     updateUser: (updatedData: Partial<User>) => Promise<boolean>;
+    getUserById: (userId: string) => Promise<User | null>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -113,6 +114,21 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
+    const getUserById = async (userId: string): Promise<User | null> => {
+        try {
+            const response = await userApi.get(`user/users/${userId}/`);
+
+            if (response.status === 200) {
+                return response.data as User;
+            }
+            return null;
+        } catch (error) {
+            console.error(`Error fetching user ${userId}:`, error);
+            return null;
+        }
+    };
+
+
     const updateUser = async (updatedData: Partial<User>): Promise<boolean> => {
         if (!user || !user.id) {
             return false;
@@ -163,10 +179,18 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
                     userData = userData.user;
                 }
 
-                if (userData && userData.id) {
-                    if (!user || user.id !== userData.id) {
+                if (userData && (userData.id || userData.id?.toString())) {
+                    const userId = userData.id?.toString();
+
+                    if (!user || user.id !== userId) {
+                        const userToStore: User = {
+                            ...(userData as User),
+                            id: userId,
+                            preferedLanguage: userData.preferedLanguage || language
+                        };
+
                         login(
-                            userData as User,
+                            userToStore,
                             localStorage.getItem("token") || '',
                             localStorage.getItem("refreshToken") || ''
                         );
@@ -194,6 +218,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
                 authFetch,
                 checkAuth,
                 updateUser,
+                getUserById,
             }}
         >
             {children}

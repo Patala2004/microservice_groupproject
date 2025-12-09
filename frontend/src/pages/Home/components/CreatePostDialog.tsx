@@ -188,7 +188,7 @@ const CreatePostDialog = ({ open, onOpenChange }: CreatePostDialogProps) => {
                       <SelectItem value={PostType.ACTIVITY}>{t("post_type.activity")}</SelectItem>
                       <SelectItem value={PostType.SELL}>{t("post_type.sell")}</SelectItem>
                       <SelectItem value={PostType.BUY}>{t("post_type.buy")}</SelectItem>
-                      <SelectItem value={PostType.SPORT}>{t("post_type.sport")}</SelectItem>
+                      <SelectItem value={PostType.SPORT}>{t("post_type.transport")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

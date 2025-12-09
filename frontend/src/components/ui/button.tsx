@@ -6,7 +6,6 @@ const cn = (...classes: string[]) => classes.filter(Boolean).join(' ');
 
 
 const buttonVariants = cva(
-    // REMOVED 'rounded-md' from base to ensure size variants take precedence
     "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive shadow-xs",
     {
         variants: {
@@ -44,6 +43,13 @@ const buttonVariants = cva(
                     "text-white bg-red-800 hover:bg-red-700 font-bold " +
                     "shadow-lg shadow-red-900/40 hover:shadow-red-900/60 " +
                     "hover:-translate-y-[2px] rounded-xl",
+                "delete":
+                    "bg-red-600 text-white hover:bg-red-500 font-semibold " +
+                    "shadow-md shadow-red-900/30 hover:shadow-red-900/50 " +
+                    "hover:-translate-y-[2px] rounded-lg",
+                "tag":
+                    "border text-xs font-semibold rounded-full transition-all duration-300 " +
+                    "disabled:pointer-events-auto disabled:opacity-100" 
             },
             size: {
                 default: "h-9 px-4 py-2 has-[>svg]:px-3 rounded-md",
@@ -55,7 +61,7 @@ const buttonVariants = cva(
                 "secondary-button":
                     "h-10 text-lg w-full px-5 has-[>svg]:px-3.5 rounded-xl",
                 "full-width": "w-full h-12 text-xl px-5 mt-2 has-[>svg]:px-3.5 rounded-xl",
-
+                "tag-size": "h-8 px-4 py-1.5",
             },
         },
         defaultVariants: {
