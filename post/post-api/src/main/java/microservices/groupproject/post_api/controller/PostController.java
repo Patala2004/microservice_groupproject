@@ -20,6 +20,7 @@ import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/post")
 @Tag(name = "Posts", description = "Posts API")
@@ -128,4 +129,31 @@ public class PostController {
 
         return ResponseEntity.ok(postList);
     }
+
+    @PostMapping("/{id}/join")
+    public ResponseEntity<String> joinPostEvent(
+        @PathVariable Long id,
+        @RequestParam Long userId) {
+
+        boolean joined = service.joinEvent(id, userId);
+        
+        String message = joined? "Succesfully joined the event" : "User is already signed up for the event";
+
+        return ResponseEntity.ok(message);
+    }
+
+    @PostMapping("/{id}/leave")
+    public ResponseEntity<String> leavePostEvent(
+        @PathVariable Long id,
+        @RequestParam Long userId) {
+
+        boolean left = service.leaveEvent(id, userId);
+        
+        if(left){
+            return ResponseEntity.ok("Succesfully left the event");
+        } else{
+            return ResponseEntity.badRequest().body("User wasn't included in the event list");
+        }
+    }
+    
 }
