@@ -7,7 +7,7 @@ services:
     image: ollama/ollama
     container_name: ollama-tagging
     volumes:
-      - models:/root/.ollama
+      - models:/ollama
   
   tag:
     build: ./tag/.
@@ -18,19 +18,14 @@ services:
       - "8087:8000"
     environment:
       OLLAMA_HOST: "http://ollama-tagging:11434"
+      POSTGRES_TAGGING_DB: "postgresql://user:password@db:5432/tags_db"
 
   db:
-    image: postgres:15
+    image: pgvector/pgvector:pg17-trixie
     container_name: tagging-db
     environment:
-      POSTGRES_USER: root
+      POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: tags_db
     volumes:
-      - pgdata:/var/lib/postgresql/data
-    command:
-      bash -c "apt-get update &&
-               apt-get install -y postgresql-server-dev-15 build-essential git &&
-               git clone https://github.com/pgvector/pgvector.git &&
-               cd pgvector && make && make install &&
-               docker-entrypoint.sh postgres"
+      - pgdata:/data
