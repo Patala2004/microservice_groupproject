@@ -19,6 +19,7 @@ services:
     environment:
       OLLAMA_HOST: "http://ollama-tagging:11434"
       POSTGRES_TAGGING_DB: "postgresql://user:password@db:5432/tags_db"
+      TAG_POST_DB: "???"
 
   db:
     image: pgvector/pgvector:pg17-trixie

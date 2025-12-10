@@ -2,28 +2,21 @@ from fastapi import FastAPI
 import ollama_llm as llm
 
 app = FastAPI()
+
+# --- for test ---
+
 phi3 = llm.Phi3_3b()
 qwen4b = llm.Qwen3_4b()
 qwen8b = llm.Qwen3_8b()
+
+# --- endpoints ---
 
 @app.get("/")
 def root():
     return {"message": "¡Hola FastAPI!"}
 
-@app.post("/llm-test/phi3")
-def llm_test_phi3():
-    llm_test(phi3)
 
-@app.post("/llm-test/qwenb4")
-def llm_test_qwenb4():
-    llm_test(qwen4b)
-
-@app.post("/llm-test/qwenb8")
-def llm_test_qwenb8():
-    llm_test(qwen8b)
-
-def llm_test(llm: llm.OllamaLLM):
-    return [llm_test_1(llm), llm_test_2(llm), llm_test_3(llm)]
+# --- funcs for test ---
 
 def llm_test_1(llm: llm.OllamaLLM):
     return llm.generate_tags(
@@ -42,3 +35,24 @@ def llm_test_3(llm: llm.OllamaLLM):
         input_title="Zootropolis in Anting cinema this Saturday",
         input_content="We would like to go to the cinema in Anting this Saturday to watch Zootropolis 2. If someone else also wants to come we could share transport expenses."
     )
+
+
+def llm_test(llm: llm.OllamaLLM):
+    return [llm_test_1(llm), llm_test_2(llm), llm_test_3(llm)]
+
+
+# --- test endpoints ---
+
+@app.post("/llm-test/phi3")
+def llm_test_phi3():
+    llm_test(phi3)
+
+@app.post("/llm-test/qwenb4")
+def llm_test_qwenb4():
+    llm_test(qwen4b)
+
+@app.post("/llm-test/qwenb8")
+def llm_test_qwenb8():
+    llm_test(qwen8b)
+
+
