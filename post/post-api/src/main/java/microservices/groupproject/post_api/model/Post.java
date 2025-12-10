@@ -37,8 +37,7 @@ public class Post {
     @Enumerated(EnumType.STRING)
     private PostType type;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "location_id", nullable = true)
+    @Embedded
     private Location location;
 
     @NotNull
