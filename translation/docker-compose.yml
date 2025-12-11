@@ -1,0 +1,24 @@
+volumes:
+  models:
+
+services:
+  ollama:
+    image: ollama/ollama
+    container_name: ollama-translate
+    volumes:
+      - models:/ollama
+    networks:
+      - translation_network
+  
+  translate:
+    build: ./tag/.
+    container_name: translate
+    depends_on:
+      - ollama
+    ports:
+      - "8088:8000"
+    environment:
+      OLLAMA_HOST: "http://ollama-translate:11434"
+    networks:
+      - translation_network
+
