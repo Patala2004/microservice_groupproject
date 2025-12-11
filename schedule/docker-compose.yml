@@ -1,44 +1,44 @@
 version: "3.8"
 
 services:
-  upref_pg:
+  schedule_pg:
     image: postgres:15
-    container_name: upref_db
+    container_name: schedule_db
     environment:
-      POSTGRES_DB: uprefdb
-      POSTGRES_USER: uprefuser
+      POSTGRES_DB: scheduledb
+      POSTGRES_USER: scheduleuser
       POSTGRES_PASSWORD: password
     volumes:
-      - uprefpgdata:/var/lib/postgresql/data
+      - schedulepgdata:/var/lib/postgresql/data
     ports:
       - "5436:5432"
     networks:
-      - uprefdb_network
+      - scheduledb_network
 
-  uprefapp:
+  scheduleapp:
     build:
-      context: ./user-pref
+      context: ./schedule
       args:
         - DOCKER_BUILD_FLAGS=--progress=plain
-    container_name: upref_app
+    container_name: schedule_app
     depends_on:
-      - upref_pg
+      - schedule_pg
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://upref_pg:5432/uprefdb
-      SPRING_DATASOURCE_USERNAME: uprefuser
+      SPRING_DATASOURCE_URL: jdbc:postgresql://schedule_pg:5432/scheduledb
+      SPRING_DATASOURCE_USERNAME: scheduleuser
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
     networks:
-      - uprefdb_network
+      - scheduledb_network
       - ms_network
     ports:
-      - "8086:8080"
+      - "8083:8080"
 
 
 volumes:
-  uprefpgdata:
+  schedulepgdata:
 
 networks:
-  uprefdb_network:
+  scheduledb_network:
     driver: bridge
   ms_network:

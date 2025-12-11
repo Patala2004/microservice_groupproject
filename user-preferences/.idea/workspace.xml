@@ -5,10 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3f80f48e-2e85-49da-be63-d11e2a2ef1c7" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../api_gateway/api-gateway/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../api_gateway/api-gateway/src/main/resources/application.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/config/WebClientConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/controller/ScheduleController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/dto/ClassResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/dto/ClassTime.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/dto/ClassTimeTable.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/dto/Post.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/dto/ScheduleItem.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/dto/TimeInterval.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/model/ClassSession.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/model/UserClassId.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/model/UserClassSession.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/repository/ClassesRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/repository/UserClassesRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/service/FakeApiData.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/service/ScheduleItemMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/service/ScheduleService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/controller/UserPreferencesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/java/group5/ms/tongji/upref/controller/UserPreferencesController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-pref/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/user-pref/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,22 +55,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/pmaci/Desktop/Tongji Clases/MS/msa-group/api_gateway&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.projectsettings.compiler.annotationProcessors&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "schedule-ms",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/pmaci/Desktop/Tongji Clases/MS/msa-group/schedule",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "reference.projectsettings.compiler.annotationProcessors",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="RecommendationApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
@@ -67,6 +80,14 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-125ca727e0f0-intellij.indexing.shared.core-IU-243.23654.189" />
+        <option value="bundled-js-predefined-d6986cc7102b-822845ee3bb5-JavaScript-IU-243.23654.189" />
+      </set>
+    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -83,6 +104,7 @@
       <workItem from="1764653793831" duration="49000" />
       <workItem from="1764667085772" duration="6721000" />
       <workItem from="1764945549637" duration="763000" />
+      <workItem from="1765369279775" duration="40000" />
     </task>
     <servers />
   </component>
