@@ -11,7 +11,7 @@ engine = create_engine(DATABASE_URL)
 class Tag(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     name: str
-    embedding: list[float] = Field(sa_type=VECTOR(3))
+    embedding: list[float] = Field(sa_type=VECTOR(384))
 
 
 def init_db():

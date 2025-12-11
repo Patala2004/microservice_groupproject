@@ -1,7 +1,15 @@
 from fastapi import FastAPI
+import post_info
 import ollama_llm as llm
+import embeddings
+import tagging_pgdb as db
+import tagpost_pgbd as tagpost_db
 
 app = FastAPI()
+
+@app.on_event("startup")
+def on_startup():
+    db.init_db()
 
 # --- for test ---
 
@@ -11,9 +19,34 @@ qwen8b = llm.Qwen3_8b()
 
 # --- endpoints ---
 
-@app.get("/")
-def root():
-    return {"message": "¡Hola FastAPI!"}
+@app.post("/tag")
+def tag(post_id):
+    try:
+        title, content = post_info.getTitleContent(post_id)
+
+        tagname_list = qwen8b.generate_tags(
+            input_title=title,
+            input_content=content
+        )
+
+        vectors = embeddings.embed(tagname_list)
+
+        final_tag_ids = []
+        for i in range(len(vectors)):
+            current = db.store_tag(
+                name=tagname_list[i],
+                embedding=vectors[i]
+            )
+            final_tag_ids.append(current.id)
+        
+        tagpost_db.add_relations(tag_ids=final_tag_ids, post_id=post_id)
+
+        return {"status": "ok"}
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 
 
 # --- funcs for test ---

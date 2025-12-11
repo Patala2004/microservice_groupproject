@@ -8,18 +8,33 @@ services:
     container_name: ollama-tagging
     volumes:
       - models:/ollama
+    networks:
+      - tagging_network
+  
+  embeddings:
+    build: ./embeddings/.
+    container_name: embeddings_service
+    volumes:
+      - models:/sentencetransformers
+    networks:
+      - tagging_network
   
   tag:
     build: ./tag/.
     container_name: tag_service
     depends_on:
       - ollama
+      - embeddings
     ports:
       - "8087:8000"
     environment:
       OLLAMA_HOST: "http://ollama-tagging:11434"
       POSTGRES_TAGGING_DB: "postgresql://user:password@db:5432/tags_db"
       TAG_POST_DB: "???"
+      EMBEDDINGS_URL: "http://embeddings_service:8000"
+      POST_SERVICE_URL: "???"
+    networks:
+      - tagging_network
 
   db:
     image: pgvector/pgvector:pg17-trixie
@@ -30,3 +45,5 @@ services:
       POSTGRES_DB: tags_db
     volumes:
       - pgdata:/data
+    networks:
+      - tagging_network
