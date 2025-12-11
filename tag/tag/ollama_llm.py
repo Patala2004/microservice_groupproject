@@ -18,7 +18,7 @@ class OllamaLLM:
             prompt = get_prompt(input_title, input_content),
             model = self.model_name
         )
-        return response_to_tagnames_list(response)
+        return response_to_tagnames_list(response.message.content)
 
 class Phi3_3b(OllamaLLM):
     def __init__(self):

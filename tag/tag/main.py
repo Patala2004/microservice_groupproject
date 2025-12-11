@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 import post_info
+import translation
 import ollama_llm as llm
 import embeddings
 import tagging_pgdb as db
@@ -23,6 +24,14 @@ qwen8b = llm.Qwen3_8b()
 def tag(post_id):
     try:
         title, content = post_info.getTitleContent(post_id)
+        title = translation.translate(
+            input=title,
+            language="English"
+        )
+        content = translation.translate(
+            input=content,
+            language="English"
+        )
 
         tagname_list = qwen8b.generate_tags(
             input_title=title,

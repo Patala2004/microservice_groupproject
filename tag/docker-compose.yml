@@ -25,6 +25,7 @@ services:
     depends_on:
       - ollama
       - embeddings
+      - db
     ports:
       - "8087:8000"
     environment:
@@ -33,6 +34,7 @@ services:
       TAG_POST_DB: "???"
       EMBEDDINGS_URL: "http://embeddings_service:8000"
       POST_SERVICE_URL: "???"
+      TRANSLATION_URL: "???"
     networks:
       - tagging_network
 
