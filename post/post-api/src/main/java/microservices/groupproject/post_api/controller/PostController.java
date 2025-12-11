@@ -15,10 +15,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import microservices.groupproject.post_api.exception.*;
 
-import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
+
+
 
 @RestController
 @RequestMapping("/post")
@@ -105,16 +106,76 @@ public class PostController {
         // Handle image if present
         if (imageFile != null && !imageFile.isEmpty()) {
             String imageUrl;
-            try {
-                imageUrl = documentStorage.saveFile(imageFile);
-            } catch (IOException e) {
-                throw new FileStorageException(imageFile.getOriginalFilename(), e);
-            }
+
+            imageUrl = documentStorage.saveFile(imageFile);
+
             post.setImageUrl(imageUrl);
         }
 
         Post saved = service.createPost(post);
         return ResponseEntity.created(URI.create("/api/posts/" + saved.getId())).body(saved);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Post> editPostInfo(
+            @PathVariable Long id,
+            @RequestBody Post post) {
+
+        Post saved = service.updatePost(id, post);
+        return ResponseEntity.ok(saved);
+    }
+
+    @PutMapping(value = "/{id}/image", 
+            consumes = "multipart/form-data", produces = "application/json")
+    public ResponseEntity<Post> editPostImage(
+        @PathVariable Long id, 
+        @RequestPart(value = "image") MultipartFile imageFile) {
+
+        if (imageFile == null || imageFile.isEmpty()) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        
+        Post post = service.getPostById(id);
+        
+        if(post.getImageUrl() != null){
+            documentStorage.deleteFile(post.getImageUrl());
+        }
+
+        String imageUrl;
+
+        try{
+            imageUrl = documentStorage.saveFile(imageFile);
+        } catch (FileStorageException e){
+            // If there's an error after deletion of image -> Dont save url of prev image
+            service.updatePostImage(id, null);
+            throw new FileStorageException(imageFile.getOriginalFilename(), e);
+        }
+
+        post = service.updatePostImage(id, imageUrl);
+
+        return ResponseEntity.ok(post);
+    }
+
+    @DeleteMapping("/{id}/image")
+    public ResponseEntity<Void> deletePostImage(@PathVariable Long id ) {
+        Post post = service.getPostById(id);
+
+        if(post.getImageUrl() != null){
+            documentStorage.deleteFile(post.getImageUrl());
+            service.updatePostImage(id, null);
+        }
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePost(@PathVariable Long id) {
+        Post post = service.getPostById(id);
+        if(post.getImageUrl() != null){
+            documentStorage.deleteFile(post.getImageUrl());
+        }
+        service.deletePost(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/recomendations")
@@ -128,4 +189,31 @@ public class PostController {
 
         return ResponseEntity.ok(postList);
     }
+
+    @PostMapping("/{id}/join")
+    public ResponseEntity<String> joinPostEvent(
+        @PathVariable Long id,
+        @RequestParam Long userId) {
+
+        boolean joined = service.joinEvent(id, userId);
+        
+        String message = joined? "Succesfully joined the event" : "User is already signed up for the event";
+
+        return ResponseEntity.ok(message);
+    }
+
+    @PostMapping("/{id}/leave")
+    public ResponseEntity<String> leavePostEvent(
+        @PathVariable Long id,
+        @RequestParam Long userId) {
+
+        boolean left = service.leaveEvent(id, userId);
+        
+        if(left){
+            return ResponseEntity.ok("Succesfully left the event");
+        } else{
+            return ResponseEntity.badRequest().body("User wasn't included in the event list");
+        }
+    }
+    
 }

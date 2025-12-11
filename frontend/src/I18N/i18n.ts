@@ -82,13 +82,14 @@ const resources = {
         login_fields_required: "All fields are required to login.",
         invalid_credentials: "Invalid username or password.",
         account_inactive: "Your account is inactive. Please contact support.",
+        generic_fetch_error: "Error fetching data. Please try again.",
       },
       success: {
         signup_successful: "Registration successful! You can now log in.",
         welcome_back: "Welcome back",
+        post_created: "Post created successfully!",
       },
 
-      // --- Home Page ---
       home: {
         trending_topics: "Trending Topics",
         search_placeholder: "Search...",
@@ -123,6 +124,12 @@ const resources = {
         be_first: "Be the first to join!",
         like: "Like",
         comment: "Comment",
+        more: "more",
+        more_users: "users",
+        show_contact: "Show Contact Info",
+        contact_poster_title: "Contact {{name}}",
+        contact_poster_description: "Use the following verified details to contact the poster directly.",
+        no_contact_available: "No contact details are available for this user.",
       },
       dashboard: {
         welcome: "Welcome back!",
@@ -146,7 +153,7 @@ const resources = {
         placeholder_content: "Provide details...",
         placeholder_price: "Free / $20",
         placeholder_location: "e.g. Library",
-        
+
       },
       profile: {
         title: "My Profile",
@@ -164,6 +171,17 @@ const resources = {
         update_success: "Profile updated successfully",
         personal_info_desc: "Update your contact details and public information.",
         update_password_desc: "Ensure your account uses a strong password.",
+        my_posts: "My Posts",
+        delete_modal_title: "Confirm Deletion",
+        delete_modal_desc: "Are you sure you want to delete this post? This action cannot be undone.",
+        delete_btn: "Delete Post",
+
+        email: "Email",
+        phone_number: "Phone Number",
+        wechat_id: "WeChat ID",
+        default_weixin_unavailable: "WeChat ID unavailable",
+        default_email_unavailable: "Email unavailable",
+        default_phone_unavailable: "Phone unavailable",
 
         default_name: "Your name",
         default_email: "Your email",
@@ -246,10 +264,12 @@ const resources = {
         login_fields_required: "所有字段都是必需的，才能登录。",
         invalid_credentials: "用户名或密码无效。",
         account_inactive: "您的账户处于非活动状态。请联系支持人员。",
+        generic_fetch_error: "获取数据失败。请重试。",
       },
       success: {
         signup_successful: "注册成功！您现在可以登录了。",
         welcome_back: "欢迎回来",
+        post_created: "帖子创建成功！",
       },
 
       // --- Home Page ---
@@ -287,6 +307,12 @@ const resources = {
         be_first: "成为第一个加入的人！",
         like: "点赞",
         comment: "评论",
+        more: "更多",
+        more_users: "位用户",
+        show_contact: "显示联系方式",
+        contact_poster_title: "联系 {{name}}",
+        contact_poster_description: "请使用以下已验证的详细信息直接联系发帖人。",
+        no_contact_available: "此用户没有可用的联系方式。",
       },
       dashboard: {
         welcome: "欢迎回来!",
@@ -327,6 +353,17 @@ const resources = {
         update_success: "资料更新成功",
         update_password_desc: "确保您的账户使用强密码。",
         personal_info_desc: "更新您的联系方式和公开信息。",
+        my_posts: "我的帖子",
+        delete_modal_title: "确认删除",
+        delete_modal_desc: "您确定要删除此帖子吗？此操作不可撤消。",
+        delete_btn: "删除帖子",
+
+        email: "电子邮件",
+        phone_number: "电话号码",
+        wechat_id: "微信ID",
+        default_weixin_unavailable: "微信ID不可用",
+        default_email_unavailable: "电子邮件不可用",
+        default_phone_unavailable: "电话号码不可用",
 
         default_name: "您的姓名",
         default_email: "您的邮箱",
