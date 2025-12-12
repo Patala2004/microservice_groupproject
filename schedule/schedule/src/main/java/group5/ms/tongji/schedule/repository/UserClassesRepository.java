@@ -19,15 +19,18 @@ public interface UserClassesRepository extends JpaRepository<UserClassSession, U
     UserClassSession findUserCoincidences(List<String> classCodes, Integer userId);*/
 
     @Query(value = """
-            SELECT c.className as title, c.start, c.end FROM user_class u
-            JOIN class_session c ON u.sessionId = c.sessionId
-            WHERE u.userId = :userId
-            AND c.start < :end
-            AND c.end > :start;
+            SELECT c.name as title, c.start_date, c.end_date FROM user_class u
+            JOIN class_session c ON u.session_id = c.session_id
+            WHERE u.user_id = :userId
+            AND c.start_date < :end
+            AND c.end_date > :start;
             """,
             nativeQuery = true)
     List<ScheduleItem> findUserCoincidences(LocalDateTime start, LocalDateTime end, Integer userId);
 
     @Query()
-    UserClassSession findByIdUserId(Integer userId);
+    UserClassSession findByUserClassUserId(Integer userId);
+
+    @Query
+    boolean existsByUserClassUserId(Integer userId);
 }

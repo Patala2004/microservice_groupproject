@@ -20,4 +20,9 @@ public class WebClientConfig {
                 .baseUrl("https://api.tongji.edu.cn")
                 .build();
     }
+
+    @Bean
+    public WebClient.Builder webClientBuilder() {
+        return WebClient.builder();
+    }
 }

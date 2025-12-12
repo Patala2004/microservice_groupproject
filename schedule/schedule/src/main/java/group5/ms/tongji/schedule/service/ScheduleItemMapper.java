@@ -6,6 +6,7 @@ import group5.ms.tongji.schedule.dto.Post;
 import group5.ms.tongji.schedule.dto.ScheduleItem;
 import group5.ms.tongji.schedule.model.ClassSession;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
+@Component
 public class ScheduleItemMapper {
     public List<ScheduleItem> mapPostsToScheduleItem(List<Post> posts){
         List<ScheduleItem> scheduleItems = new ArrayList<>();
@@ -49,6 +51,6 @@ public class ScheduleItemMapper {
 
 
     public ScheduleItem mapClassSessionToScheduleItem(ClassSession classSession) {
-        return new ScheduleItem(classSession.getStart(), classSession.getEnd(), classSession.getName());
+        return new ScheduleItem(classSession.getStartDate(), classSession.getEndDate(), classSession.getName());
     }
 }

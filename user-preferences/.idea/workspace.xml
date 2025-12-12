@@ -5,23 +5,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3f80f48e-2e85-49da-be63-d11e2a2ef1c7" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/config/WebClientConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/controller/ScheduleController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/dto/ClassResponse.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/dto/ClassTime.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/dto/ClassTimeTable.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/dto/Post.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/dto/ScheduleItem.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/dto/TimeInterval.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/model/ClassSession.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/model/UserClassId.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/model/UserClassSession.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/repository/ClassesRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/repository/UserClassesRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/service/FakeApiData.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/service/ScheduleItemMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/service/ScheduleService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/dto/ErrorResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/exceptions/RecommendationAdvice.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../api_gateway/api-gateway/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../api_gateway/api-gateway/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../schedule/schedule/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../schedule/schedule/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../schedule/schedule/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../schedule/schedule/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/config/WebClientConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/config/WebClientConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/controller/ScheduleController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/controller/ScheduleController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/model/ClassSession.java" beforeDir="false" afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/model/ClassSession.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/model/UserClassId.java" beforeDir="false" afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/model/UserClassId.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/model/UserClassSession.java" beforeDir="false" afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/model/UserClassSession.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/repository/ClassesRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/repository/ClassesRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/repository/UserClassesRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/repository/UserClassesRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/service/ClassService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/service/ClassService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/service/ClassSessionMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/service/ClassSessionMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/service/FakeApiData.java" beforeDir="false" afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/service/FakeApiData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/service/PostService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/service/PostService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/service/ScheduleItemMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/service/ScheduleItemMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/service/ScheduleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/java/group5/ms/tongji/schedule/service/ScheduleService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../schedule/schedule/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../schedule/schedule/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,7 +63,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "schedule-ms",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/pmaci/Desktop/Tongji Clases/MS/msa-group/schedule",
+    "last_opened_file_path": "C:/Users/pmaci/Desktop/Tongji Clases/MS/msa-group/event-collector",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -105,6 +107,7 @@
       <workItem from="1764667085772" duration="6721000" />
       <workItem from="1764945549637" duration="763000" />
       <workItem from="1765369279775" duration="40000" />
+      <workItem from="1765517018307" duration="194000" />
     </task>
     <servers />
   </component>

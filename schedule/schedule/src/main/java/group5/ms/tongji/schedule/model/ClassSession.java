@@ -16,13 +16,13 @@ public class ClassSession {
     Integer sessionId;
     String code;
     String name;
-    LocalDateTime start;
-    LocalDateTime end;
+    LocalDateTime startDate;
+    LocalDateTime endDate;
 
-    public ClassSession(String code, String name, LocalDateTime start, LocalDateTime end) {
+    public ClassSession(String code, String name, LocalDateTime startDate, LocalDateTime endDate) {
         this.code = code;
         this.name = name;
-        this.start = start;
-        this.end = end;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 }
