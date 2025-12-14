@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 import ollama_llm as llm
 
 app = FastAPI()
