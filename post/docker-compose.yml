@@ -3,7 +3,7 @@ version: "3.8"
 services:
   post_pg:
     image: postgres:15
-    container_name: post_api_db
+    # container_name: post_api_db
     environment:
       POSTGRES_DB: postdb
       POSTGRES_USER: postuser
@@ -15,7 +15,7 @@ services:
 
   postapp:
     build: ./post-api/.
-    container_name: post_api_app
+    # container_name: post_api_app
     depends_on:
       - post_pg
     environment:
@@ -30,7 +30,7 @@ services:
 
   post-nginx:
     image: nginx:latest
-    container_name: post_api_nginx
+    # container_name: post_api_nginx
     depends_on:
       - postapp
     ports:

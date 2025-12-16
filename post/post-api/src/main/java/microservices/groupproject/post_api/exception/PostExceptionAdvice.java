@@ -10,29 +10,32 @@ import org.springframework.web.bind.annotation.*;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestControllerAdvice
 public class PostExceptionAdvice {
-    // @ExceptionHandler(UserNotFoundException.class)
-    // @ResponseStatus(HttpStatus.NOT_FOUND)
-    // ErrorMessage userNotFoundHandler(UserNotFoundException ex) {
-    // return new ErrorMessage(ex.getMessage());
-    // }
+
+    @ExceptionHandler(PostNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    ErrorMessage postNotFoundHandler(PostNotFoundException ex, HttpServletRequest request) {
+        return new ErrorMessage(ex.getMessage(), request.getRequestURI());
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorMessage handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ErrorMessage handleValidationExceptions(MethodArgumentNotValidException ex, HttpServletRequest request) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        return new ErrorMessage(errors.toString());
+        return new ErrorMessage(errors.toString(), request.getRequestURI());
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorMessage handleInvalidEnumException(HttpMessageNotReadableException ex) {
+    public ErrorMessage handleInvalidEnumException(HttpMessageNotReadableException ex, HttpServletRequest request) {
         Throwable cause = ex.getCause();
         if (cause instanceof InvalidFormatException invalidFormatException) {
             Class<?> targetType = invalidFormatException.getTargetType();
@@ -44,12 +47,12 @@ public class PostExceptionAdvice {
                                 ". Allowed values are: " + Arrays.toString(allowedValues));
             }
         }
-        return new ErrorMessage("Malformed JSON request");
+        return new ErrorMessage("Malformed JSON request", request.getRequestURI());
     }
 
     @ExceptionHandler(FileStorageException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorMessage handleIOException(FileStorageException ex) {
-        return new ErrorMessage("Failed to store file: " + ex.getMessage());
+    public ErrorMessage handleIOException(FileStorageException ex, HttpServletRequest request) {
+        return new ErrorMessage("Failed to store file: " + ex.getMessage(), request.getRequestURI());
     }
 }

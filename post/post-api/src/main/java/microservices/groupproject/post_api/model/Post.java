@@ -3,6 +3,10 @@ package microservices.groupproject.post_api.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -47,4 +51,10 @@ public class Post {
 
     @Column(length = 500)
     private String imageUrl;
+
+    @Column(updatable = false, nullable = false)
+    @CreationTimestamp // Automatically sets it to LocalDateTime.now() on creation
+    private LocalDateTime creationTime;
+
+    private LocalDateTime eventTime;
 }

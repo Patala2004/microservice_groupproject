@@ -3,6 +3,8 @@ package microservices.groupproject.post_api.StorageService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import microservices.groupproject.post_api.exception.FileStorageException;
+
 import java.io.IOException;
 import java.nio.file.*;
 
@@ -19,7 +21,7 @@ public class LocalStorageService implements StorageService {
     }
 
     @Override
-    public String saveFile(MultipartFile file) throws IOException {
+    public String saveFile(MultipartFile file) {
         // Create a unique filename to avoid conflicts
         String originalFilename = file.getOriginalFilename();
         String filename = System.currentTimeMillis() + "_" + originalFilename;
@@ -27,15 +29,23 @@ public class LocalStorageService implements StorageService {
         Path destination = uploadDir.resolve(filename);
 
         // Save the file
-        Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
+        try{
+            Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
+        } catch(IOException e){
+            throw new FileStorageException(originalFilename, e);
+        }
 
-        // Return relative path (or you could return a URL if serving via web server)
         return "/uploads/" + filename;
     }
 
     @Override
-    public void deleteFile(String filePath) throws IOException {
+    public void deleteFile(String filePath) {
         Path path = uploadDir.resolve(Paths.get(filePath).getFileName());
-        Files.deleteIfExists(path);
+
+        try{
+            Files.deleteIfExists(path);
+        } catch (IOException e){
+            throw new FileStorageException(Paths.get(filePath).getFileName().toString(), e);
+        }
     }
 }

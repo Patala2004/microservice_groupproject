@@ -17,7 +17,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # ---------- Stage 2: Create runtime image ----------
-FROM eclipse-temurin:17-jdk-alpine
+FROM eclipse-temurin:17-jdk
 
 # Set working directory inside runtime container
 WORKDIR /app

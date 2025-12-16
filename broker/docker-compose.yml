@@ -1,0 +1,16 @@
+services:
+  interaction-brk:
+    image: rabbitmq:3-management
+    container_name: interaction-brk
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: adminpassword
+    networks:
+      - ms_network  
+
+networks:
+  ms_network:
+    driver: bridge

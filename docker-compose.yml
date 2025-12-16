@@ -2,7 +2,7 @@ services:
   gateway:
     extends:
       file: api_gateway/docker-compose.yml
-      service: postapp
+      service: gateway
 
   userapi:
     extends:
@@ -33,7 +33,16 @@ services:
     extends:
       file: post/docker-compose.yml
       service: post-nginx
-  
+
+  frontend:
+    extends:
+      file: frontend/docker-compose.yml
+      service: frontend
+    networks:
+      - userapp_network
+      - postapp_network
+    environment:
+      - VITE_API_URL=http://localhost:8000/api/v1
 
 networks:
   postapp_network:

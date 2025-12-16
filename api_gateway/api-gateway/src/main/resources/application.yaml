@@ -1,9 +1,11 @@
 server:
   port: 8000
+  
 
 spring:
   application:
-    name: "API Gateway"
+    name: api-gateway
+
   cloud:
     gateway:
       server:
@@ -12,12 +14,52 @@ spring:
             - id: user-service
               uri: http://host.docker.internal:8081
               predicates:
-                - Path=/user/**
+                - Path=/api/v1/user/**
+              filters:
+                - StripPrefix=2
+
             - id: post-service
               uri: http://host.docker.internal:8082
               predicates:
-                - Path=/post/**
-      
+                - Path=/api/v1/post/**
+              filters:
+                - StripPrefix=2
+
+            - id: event-collector-service
+              uri: http://host.docker.internal:8089
+              predicates:
+                - Path=/api/v1/evcollector/**
+              filters:
+                - StripPrefix=2
+
+            - id: user-preferences-service
+              uri: http://host.docker.internal:8086
+              predicates:
+                - Path=/api/v1/upref/**
+              filters:
+                - StripPrefix=2
+
+
+
+springdoc:
+  swagger-ui:
+    enabled: true
+    urls:
+      - name: "User Service"
+        url: "/api/v1/user/schema/"
+      - name: "Post Service"
+        url: "/api/v1/post/v3/api-docs"
+      - name: "Event Collector Service"
+        url: "api/v1/evcollector/v3/api-docs"
+      - name: "User Preferences Service"
+        url: "api/v1/upref/v3/api-docs"
+    doc-expansion: list
+    urls-primary-name: "User Service"
+  
+  api-docs:
+    enabled: true
+  
+  enable-spring-security: false
 
 management:
   endpoints:
