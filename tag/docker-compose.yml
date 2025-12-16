@@ -8,17 +8,31 @@ services:
     container_name: ollama-tagging
     volumes:
       - models:/ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
     networks:
       - tagging_network
-  
+
   embeddings:
     build: ./embeddings/.
     container_name: embeddings_service
     volumes:
       - models:/sentencetransformers
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
     networks:
       - tagging_network
-  
+
   tag:
     build: ./tag/.
     container_name: tag_service
@@ -31,10 +45,17 @@ services:
     environment:
       OLLAMA_HOST: "http://ollama-tagging:11434"
       POSTGRES_TAGGING_DB: "postgresql://user:password@db:5432/tags_db"
-      TAG_POST_DB: "???"
+      TAG_POST_DB: "http://host.docker.internal:5440"
       EMBEDDINGS_URL: "http://embeddings_service:8000"
-      POST_SERVICE_URL: "???"
-      TRANSLATION_URL: "???"
+      POST_SERVICE_URL: "http://host.docker.internal:8082"
+      TRANSLATION_URL: "http://host.docker.internal:8088"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
     networks:
       - tagging_network
 
@@ -49,3 +70,7 @@ services:
       - pgdata:/data
     networks:
       - tagging_network
+
+networks:
+  tagging_network:
+    driver: bridge

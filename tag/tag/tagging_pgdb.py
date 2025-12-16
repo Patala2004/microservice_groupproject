@@ -1,12 +1,13 @@
 from sqlmodel import SQLModel, Session, Field, create_engine, select
-from sqlalchemy import text
-from pgvector.sqlalchemy import VECTOR, cosine_distance
+from sqlalchemy import text, func
+from pgvector.sqlalchemy import VECTOR
 import os
 
 DATABASE_URL = os.environ['POSTGRES_TAGGING_DB']
 SIMILARITY_THRESHOLD = 0.2
 
 engine = create_engine(DATABASE_URL)
+
 
 class Tag(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
@@ -19,6 +20,7 @@ def init_db():
     with get_session() as session:
         session.exec(text('CREATE EXTENSION IF NOT EXISTS vector'))
 
+
 def get_session():
     return Session(engine)
 
@@ -26,22 +28,22 @@ def get_session():
 def similar_tag_exists(embedding: list[float]):
     with get_session() as session:
         stmt = (
-            select(Tag, cosine_distance(Tag.embedding, embedding).label("dist"))
-            .order_by(cosine_distance(Tag.embedding, embedding))
+            select(Tag, func.cosine_distance(
+                Tag.embedding, embedding).label("dist"))
+            .order_by(func.cosine_distance(Tag.embedding, embedding))
             .limit(1)
         )
         result = session.exec(stmt).first()
 
         if result is None:
             return None
-        
+
         tag, distance = result
 
         if distance > SIMILARITY_THRESHOLD:
             return tag
-        
+
         return None
-        
 
 
 def store_tag(name: str, embedding: list[float]):
@@ -49,7 +51,7 @@ def store_tag(name: str, embedding: list[float]):
 
     if existing:
         return existing
-    
+
     else:
         new_tag = Tag(name=name, embedding=embedding)
 
