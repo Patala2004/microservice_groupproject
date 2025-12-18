@@ -485,10 +485,10 @@ mb5y23z9g3h16ftbbw1a012s3d5tnk6n	.eJxVjEEOwiAQRe_C2hBogYJL956BDDODVA0kpV0Z765Nut
 --
 
 COPY public.userapp_campus (id, en_name, cn_name) FROM stdin;
-1	Jiading Campus	σÿëσ«Üµáíσî║
-2	Siping Road Campus	σ¢¢σ╣│Φ╖»µáíσî║
-3	Huxi Campus	µ╣ûΦÑ┐µáíσî║
-4	Hubei Campus	µ╣ûσîùµáíσî║
+1	Jiading Campus	嘉定校区
+2	Siping Road Campus	四平路校区
+3	Huxi Campus	湖西校区
+4	Hubei Campus	湖北校区
 \.
 
 
