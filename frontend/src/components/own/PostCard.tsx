@@ -10,12 +10,14 @@ import { useState, useEffect, useCallback } from "react";
 import PostDeleteModal from "@/pages/Modal/PostDeleteModal.tsx";
 import { useUser } from "@/Context/UserContext.tsx";
 import PostDetailsModal from "@/pages/Home/components/PostDetailsModal.tsx";
-import {toast} from "sonner";
+import { toast } from "sonner";
 
 interface PostCardProps {
   post: Post;
   user: User | null;
   onDelete: (postId: number) => void;
+  canEditPost: boolean;
+  onPostUpdated?: (updatedPost: Post) => void;
 }
 
 interface DisplayUser {
@@ -27,7 +29,7 @@ interface DisplayUser {
   phone_number: string;
 }
 
-const PostCard = ({ post, user, onDelete }: PostCardProps) => {
+const PostCard = ({ post, user, onDelete, canEditPost = false, onPostUpdated }: PostCardProps) => {
   const { t } = useTranslation();
   const { getUserById } = useUser();
   const { joinPost, leavePost } = usePost();
@@ -101,14 +103,14 @@ const PostCard = ({ post, user, onDelete }: PostCardProps) => {
     setIsDeleteModalOpen(false);
     onDelete(postId);
   };
-  
+
   const handleJoinInModal = async (postId: number, isJoining: boolean) => {
-    if(!user) return;
+    if (!user) return;
 
     try {
       let success = false;
 
-      if(isJoining) {
+      if (isJoining) {
         success = await joinPost(postId, user?.id);
         if (success) toast.success(t("post_actions.join_success"));
       } else {
@@ -117,6 +119,12 @@ const PostCard = ({ post, user, onDelete }: PostCardProps) => {
       }
     } catch (e) {
       console.error("Join/Leave error", e);
+    }
+  };
+
+  const handleInternalUpdate = (updatedPost: Post) => {
+    if (onPostUpdated) {
+      onPostUpdated(updatedPost);
     }
   };
 
@@ -185,8 +193,8 @@ const PostCard = ({ post, user, onDelete }: PostCardProps) => {
                     <div className="flex items-center gap-1.5 text-slate-400">
                       <Users className="w-4 h-4 text-orange-500" />
                       <span className="text-xs font-semibold">
-                        {post.joinedUsers.length > 0 ? t("post_actions.joined_count", { count: post.joinedUsers.length }) : t("post_actions.be_first")}
-                      </span>
+                    {post.joinedUsers.length > 0 ? t("post_actions.joined_count", { count: post.joinedUsers.length }) : t("post_actions.be_first")}
+                  </span>
                       {remainingCount > 0 && <span className="text-xs text-slate-500 ml-1">+ {remainingCount} {t('post_actions.more')}</span>}
                     </div>
                   </div>
@@ -201,8 +209,10 @@ const PostCard = ({ post, user, onDelete }: PostCardProps) => {
             onClose={() => setIsDetailsModalOpen(false)}
             currentUser={currentUserIdString || ""}
             onJoin={handleJoinInModal}
+            onPostUpdated={handleInternalUpdate}
             posterName={displayPoster.name}
             posterAvatarUrl={displayPoster.avatarUrl}
+            canEditPost={canEditPost}
         />
 
         {isHost && (

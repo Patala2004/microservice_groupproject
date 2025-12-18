@@ -40,9 +40,10 @@ interface PostDetailsModalProps {
   onClose: () => void;
   currentUser: string;
   onJoin: (postId: number, isJoining: boolean) => void;
+  onPostUpdated: (updatedPost: Post) => void;
   posterName: string;
   posterAvatarUrl?: string;
-  isMyPostPage?: boolean;
+  canEditPost?: boolean;
 }
 
 interface DisplayUser {
@@ -54,7 +55,8 @@ interface DisplayUser {
   phone_number?: string;
 }
 
-const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, posterName, posterAvatarUrl, isMyPostPage = false }: PostDetailsModalProps) => {
+const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUpdated, 
+                            posterName, posterAvatarUrl,  canEditPost = false }: PostDetailsModalProps) => {
   const { t } = useTranslation();
   const { getUserById } = useUser();
   const { updatePost } = usePost();
@@ -166,6 +168,7 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, posterNa
     setIsUpdating(false);
     if (result) {
       toast.success(t("post_actions.update_success"));
+      onPostUpdated(result);
       setIsEditing(false);
     } else {
       toast.error(t("post_actions.update_error"));
@@ -237,7 +240,7 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, posterNa
                     <span className="opacity-80">{getHeaderIcon()}</span>
                     <span>{getTypeLabel(post.type, t)}</span>
                   </div>
-                  {isMyPostPage && isHost && !isEditing && (
+                  {canEditPost && isHost && !isEditing && (
                       <Button size="sm" variant="secondary" className="h-8 rounded-full bg-white/10 hover:bg-white/20 border-none text-white backdrop-blur-sm" onClick={() => setIsEditing(true)}>
                         <Pencil className="w-3.5 h-3.5 mr-1.5" /> {t('post_actions.edit')}
                       </Button>
@@ -257,18 +260,18 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, posterNa
                     <div className="space-y-4 mb-6">
                       <div className="space-y-2">
                         <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('create_modal.label_title')}</label>
-                        <Input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} className="bg-slate-800/50 border-slate-700" />
+                        <Input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} className="bg-slate-800/50 border-slate-700 focus-visible:ring-orange-500" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('create_modal.label_location')}</label>
-                        <Input value={editLocation} onChange={(e) => setEditLocation(e.target.value)} className="bg-slate-800/50 border-slate-700" />
+                        <Input value={editLocation} onChange={(e) => setEditLocation(e.target.value)} className="bg-slate-800/50 border-slate-700 focus-visible:ring-orange-500" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('create_modal.label_content')}</label>
-                        <Textarea value={editContent} onChange={(e) => setEditContent(e.target.value)} className="bg-slate-800/50 border-slate-700 min-h-[100px]" />
+                        <Textarea value={editContent} onChange={(e) => setEditContent(e.target.value)} className="bg-slate-800/50 border-slate-700 min-h-[100px] focus-visible:ring-orange-500" />
                       </div>
                       <div className="flex gap-2 justify-end">
-                        <Button size="sm" variant="ghost" onClick={() => setIsEditing(false)} disabled={isUpdating}><XIcon className="w-4 h-4 mr-1" /> {t('post_actions.cancel')}</Button>
+                        <Button size="sm" variant="ghost" onClick={() => setIsEditing(false)} disabled={isUpdating} className="text-slate-400 hover:text-white hover:bg-slate-800"><XIcon className="w-4 h-4 mr-1" /> {t('post_actions.cancel')}</Button>
                         <Button size="sm" className="bg-orange-600 hover:bg-orange-500 text-white" onClick={handleUpdate} disabled={isUpdating}>
                           {isUpdating ? <RotateCw className="w-4 h-4 animate-spin mr-1" /> : <Check className="w-4 h-4 mr-1" />} {t('post_actions.save')}
                         </Button>

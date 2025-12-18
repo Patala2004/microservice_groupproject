@@ -138,6 +138,7 @@ const UserPosts = () => {
                         post={post}
                         user={user}
                         onDelete={handleConfirmDelete}
+                        canEditPost={true}
                     />
                 ))}
             </div>
