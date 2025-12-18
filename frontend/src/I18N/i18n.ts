@@ -83,6 +83,7 @@ const resources = {
         invalid_credentials: "Invalid username or password.",
         account_inactive: "Your account is inactive. Please contact support.",
         generic_fetch_error: "Error fetching data. Please try again.",
+        generic_delete_error: "Error deleting data. Please try again.",
       },
       success: {
         signup_successful: "Registration successful! You can now log in.",
@@ -265,6 +266,7 @@ const resources = {
         invalid_credentials: "用户名或密码无效。",
         account_inactive: "您的账户处于非活动状态。请联系支持人员。",
         generic_fetch_error: "获取数据失败。请重试。",
+        generic_delete_error: "删除数据时出错。请重试。",
       },
       success: {
         signup_successful: "注册成功！您现在可以登录了。",

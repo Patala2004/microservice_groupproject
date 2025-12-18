@@ -20,7 +20,7 @@ type SortOption = "recent" | "popular" | "recommended";
 const HomePage = () => {
   const { t } = useTranslation();
   const { user } = useUser();
-  const { posts, getRecentPosts, getPostRecommendations } = usePost();
+  const { posts, getRecentPosts, getPostRecommendations, deletePost } = usePost();
 
   const [loading, setLoading] = useState(true);
   const [sortView, setSortView] = useState<SortOption>("recent");
@@ -48,8 +48,8 @@ const HomePage = () => {
     fetchInitialData();
   }, [getRecentPosts, getPostRecommendations, user?.id]);
 
-  const handleConfirmDelete = (postId: number) => {
-    console.log(`LOGIC DELETE: Post ID ${postId} confirmed for deletion.`);
+  const handleConfirmDelete = async  (postId: number) => {
+    await deletePost(postId);
     toast.success(t("profile.delete_modal_title"));
   };
 

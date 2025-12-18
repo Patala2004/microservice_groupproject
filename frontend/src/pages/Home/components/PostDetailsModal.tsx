@@ -1,15 +1,11 @@
 import {
-  Heart,
-  MessageCircle,
   MapPin,
   Users,
-  Share2,
   Calendar,
   Tag,
   ShoppingBag,
   Dumbbell,
   RotateCw,
-  X,
   UserRoundPlus,
   UserRoundMinus,
   CornerDownRight

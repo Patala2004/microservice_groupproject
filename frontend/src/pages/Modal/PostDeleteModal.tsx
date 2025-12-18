@@ -1,8 +1,8 @@
-import { X, AlertTriangle } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useTranslation } from "react-i18next";
-import type { Post } from "@/Context/PostContext.tsx";
+import {type Post} from "@/Context/PostContext.tsx";
 
 interface PostDeleteModalProps {
     post: Post | null;
@@ -28,9 +28,6 @@ const PostDeleteModal = ({ post, isOpen, onClose, onConfirmDelete }: PostDeleteM
                         <AlertTriangle className="size-6" />
                         {t("profile.delete_modal_title")}
                     </DialogTitle>
-                    <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full text-slate-400 hover:bg-slate-800">
-                        <X className="size-4" />
-                    </Button>
                 </DialogHeader>
 
                 <DialogDescription className="text-slate-400 mt-4">

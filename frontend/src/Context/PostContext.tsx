@@ -32,6 +32,7 @@ interface PostContextType {
     posts: Post[];
     setPosts: Dispatch<SetStateAction<Post[]>>;
     createPost: (data: CreatePostPayload) => Promise<Post | null>;
+    deletePost: (id: number) => Promise<boolean>;
     getAllPosts: (filters?: {type?: PostType, posterId?: number}) => Promise<void>;
     getPostById: (id: number) => Promise<Post | null>;
     getPostsByUserId: (userId: number) => Promise<Post[] | null>;
@@ -136,7 +137,17 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
             return null;
         }
     }, []);
-
+    
+    const deletePost = useCallback(async (id: number): Promise<boolean> => {
+        try {
+            const response = await postApi.delete(`/post/${id}`);
+            
+            return response.status === 200;
+        } catch (error) {
+            console.error(i18n.t("errors.generic_delete_error") || `Error deleting post ${id}:`, error);
+            return false;
+        }
+    }, [setPosts]);
 
     const createPost = useCallback(async ({ imageFile, ...postData }: CreatePostPayload): Promise<Post | null> => {
         const formData = new FormData();
@@ -176,6 +187,7 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
                 posts,
                 setPosts,
                 createPost,
+                deletePost,
                 getAllPosts,
                 getPostById,
                 getPostsByUserId,

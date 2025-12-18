@@ -2,14 +2,13 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button.tsx";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogTitle, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { usePost, type CreatePostPayload} from "@/Context/PostContext.tsx";
 import { useUser } from "@/Context/UserContext.tsx";
-import React from "react";
-import { RotateCw, X, Edit, Tag, Calendar, ShoppingBag, Dumbbell } from "lucide-react";
+import { RotateCw, Edit, Tag, Calendar, ShoppingBag, Dumbbell } from "lucide-react";
 import { PostType } from "@/Context/PostType";
 
 interface CreatePostDialogProps {
@@ -37,13 +36,6 @@ const CreatePostDialog = ({ open, onOpenChange }: CreatePostDialogProps) => {
     setImageFile(null);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setImageFile(e.target.files[0]);
-    } else {
-      setImageFile(null);
-    }
-  };
 
   const handleSubmit = async () => {
     if (!user || !user.id) {
@@ -103,15 +95,15 @@ const CreatePostDialog = ({ open, onOpenChange }: CreatePostDialogProps) => {
   const getHeaderIcon = () => {
     switch (type) {
       case PostType.ACTIVITY:
-        return <Calendar className="w-6 h-6 text-white" />;
+        return <Calendar className="w-6 h-6 text-white mr-5" />;
       case PostType.SELL:
-        return <Tag className="w-6 h-6 text-white" />;
+        return <Tag className="w-6 h-6 text-white mr-5" />;
       case PostType.BUY:
-        return <ShoppingBag className="w-6 h-6 text-white" />;
+        return <ShoppingBag className="w-6 h-6 text-white mr-5" />;
       case PostType.SPORT:
-        return <Dumbbell className="w-6 h-6 text-white" />;
+        return <Dumbbell className="w-6 h-6 text-white mr-5" />;
       default:
-        return <Edit className="w-6 h-6 text-white" />;
+        return <Edit className="w-6 h-6 text-white mr-5" />;
     }
   };
 
@@ -126,17 +118,11 @@ const CreatePostDialog = ({ open, onOpenChange }: CreatePostDialogProps) => {
 
             <div className="relative z-10 flex w-full justify-between items-end">
               <h2 className="text-xl font-bold text-white tracking-tight">
-                {t("create_modal.header_title")}
+                {t("create_modal.header_title")} - {t(`post_type.${type.toLowerCase()}`)}
               </h2>
-              <DialogClose asChild>
-                <Button size="icon" variant="ghost" className="text-white/70 hover:text-white hover:bg-white/10 rounded-full">
-                  <X className="w-5 h-5" />
-                </Button>
-              </DialogClose>
             </div>
           </div>
 
-          {/* FORM CONTENT */}
           <div className="p-6">
             <DialogTitle className="hidden">{t("create_modal.title")}</DialogTitle>
             <div className="grid gap-4 py-4">
@@ -174,35 +160,22 @@ const CreatePostDialog = ({ open, onOpenChange }: CreatePostDialogProps) => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="type">{t("create_modal.label_category")}</Label>
-                  <Select
-                      onValueChange={(val:any) => setType(val as PostType)}
-                      value={type}
-                  >
-                    <SelectTrigger id="type" className="bg-slate-800/50 border-slate-700 text-slate-100 focus-visible:ring-cyan-500 rounded-md">
-                      <SelectValue placeholder={t("create_modal.label_type")} />
-                    </SelectTrigger>
-                    <SelectContent className="bg-slate-900 border-slate-800 text-slate-200">
-                      <SelectItem value={PostType.ACTIVITY}>{t("post_type.activity")}</SelectItem>
-                      <SelectItem value={PostType.SELL}>{t("post_type.sell")}</SelectItem>
-                      <SelectItem value={PostType.BUY}>{t("post_type.buy")}</SelectItem>
-                      <SelectItem value={PostType.SPORT}>{t("post_type.transport")}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="grid gap-2">
-                  <Label htmlFor="image">{t("create_modal.label_image")}</Label>
-                  <Input
-                      id="image"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                      className="bg-slate-800/50 border-slate-700 text-slate-100 cursor-pointer file:text-cyan-400 file:bg-slate-900 hover:file:bg-slate-800 focus-visible:ring-cyan-500 rounded-md"
-                  />
-                </div>
+              <div className="grid gap-2">
+                <Label htmlFor="type">{t("create_modal.label_category")}</Label>
+                <Select
+                    onValueChange={(val:any) => setType(val as PostType)}
+                    value={type}
+                >
+                  <SelectTrigger id="type" className="bg-slate-800/50 border-slate-700 text-slate-100 focus-visible:ring-cyan-500 rounded-md">
+                    <SelectValue placeholder={t("create_modal.label_type")} />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-900 border-slate-800 text-slate-200">
+                    <SelectItem value={PostType.ACTIVITY}>{t("post_type.activity")}</SelectItem>
+                    <SelectItem value={PostType.SELL}>{t("post_type.sell")}</SelectItem>
+                    <SelectItem value={PostType.BUY}>{t("post_type.buy")}</SelectItem>
+                    <SelectItem value={PostType.SPORT}>{t("post_type.sport")}</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="flex justify-end pt-4">

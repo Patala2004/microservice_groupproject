@@ -232,8 +232,6 @@ const PostCard = ({ post, user, onDelete }: PostCardProps) => {
                       {!isJoined && <ChevronRight className="w-3 h-3 ml-1" />}
                     </Button>
                 )}
-
-                {/* BOUTON CONTACT SUPPLIMÉ CAR DEPLACÉ DANS LA MODAL DE DETAILS */}
               </div>
             </div>
           </CardContent>
