@@ -100,9 +100,9 @@ const Header = () => {
                     >
                       {avatarLetter}
                     </div>
-                    <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-                  {t('header.profile')}
-                </span>
+                    <span className="text-sm font-bold text-neutral-900 dark:text-neutral-100">
+                      {user?.username ?? t('header.profile')}
+                    </span>
                   </Button>
 
                   <Button

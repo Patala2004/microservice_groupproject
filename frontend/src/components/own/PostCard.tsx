@@ -1,15 +1,16 @@
-import { MapPin, X, Users, ChevronRight, RotateCw } from "lucide-react";
+import { MapPin, X, Users, RotateCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useTranslation } from "react-i18next";
 import { getBadgeStyle, getTypeLabel } from "@/pages/Home/components/homeUtils";
-import type { Post } from "@/Context/PostContext.tsx";
+import { usePost, type Post } from "@/Context/PostContext.tsx";
 import type { User } from "@/Context/userTypes.tsx";
 import { useState, useEffect, useCallback } from "react";
 import PostDeleteModal from "@/pages/Modal/PostDeleteModal.tsx";
 import { useUser } from "@/Context/UserContext.tsx";
 import PostDetailsModal from "@/pages/Home/components/PostDetailsModal.tsx";
+import {toast} from "sonner";
 
 interface PostCardProps {
   post: Post;
@@ -29,6 +30,7 @@ interface DisplayUser {
 const PostCard = ({ post, user, onDelete }: PostCardProps) => {
   const { t } = useTranslation();
   const { getUserById } = useUser();
+  const { joinPost, leavePost } = usePost();
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
@@ -39,7 +41,6 @@ const PostCard = ({ post, user, onDelete }: PostCardProps) => {
   const posterIdString = post.poster.toString();
   const currentUserIdString = user?.id?.toString();
   const isHost = posterIdString === currentUserIdString;
-  const isJoined = user && post.joinedUsers.some(id => id.toString() === currentUserIdString);
 
   const defaultPoster: DisplayUser = {
     id: posterIdString,
@@ -57,7 +58,6 @@ const PostCard = ({ post, user, onDelete }: PostCardProps) => {
   const cardBorderHover = "hover:border-orange-700";
   const accentColor = "text-orange-400";
 
-
   const fetchUserDetails = useCallback(async () => {
     setLoadingUsers(true);
 
@@ -71,14 +71,11 @@ const PostCard = ({ post, user, onDelete }: PostCardProps) => {
         email: fetchedPoster.email || '',
         phone_number: fetchedPoster.phone_number || ''
       } as DisplayUser);
-    } else {
-      setPosterDetails(defaultPoster);
     }
 
     const joinerIdsToFetch = post.joinedUsers.slice(0, 4).map(id => id.toString());
-    const fetchedJoiners = await Promise.all(
-        joinerIdsToFetch.map(id => getUserById(id))
-    );
+    const fetchedJoiners = await Promise.all(joinerIdsToFetch.map(id => getUserById(id)));
+
     setJoinerDetails(fetchedJoiners.filter((u): u is User => u !== null).map(u => ({
       id: u!.id.toString(),
       name: u!.name || `User ID: ${u!.id}`,
@@ -89,7 +86,7 @@ const PostCard = ({ post, user, onDelete }: PostCardProps) => {
     } as DisplayUser)));
 
     setLoadingUsers(false);
-  }, [post.poster, post.joinedUsers, getUserById]);
+  }, [post.poster, post.joinedUsers, getUserById, posterIdString]);
 
   useEffect(() => {
     fetchUserDetails();
@@ -104,22 +101,23 @@ const PostCard = ({ post, user, onDelete }: PostCardProps) => {
     setIsDeleteModalOpen(false);
     onDelete(postId);
   };
+  
+  const handleJoinInModal = async (postId: number, isJoining: boolean) => {
+    if(!user) return;
 
-  const handleJoinLeave = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!user) return;
-  };
+    try {
+      let success = false;
 
-  const handleCardClick = () => {
-    setIsDetailsModalOpen(true);
-  };
-
-  const handleJoinInModal = (postId: number, isJoining: boolean) => {
-    // Logique de join/leave déclenchée par la modal de détails
-    // TODO: Implémenter la logique API de rejoindre/quitter ici.
-    console.log(`Action JOIN/LEAVE sur post ID: ${postId}. Joining: ${isJoining}`);
-    // Mettre à jour l'état local dans PostCard si nécessaire
-    // setIsDetailsModalOpen(false);
+      if(isJoining) {
+        success = await joinPost(postId, user?.id);
+        if (success) toast.success(t("post_actions.join_success"));
+      } else {
+        success = await leavePost(postId, user?.id);
+        if (success) toast.success(t("post_actions.leave_success"));
+      }
+    } catch (e) {
+      console.error("Join/Leave error", e);
+    }
   };
 
   const maxAvatars = 4;
@@ -129,39 +127,27 @@ const PostCard = ({ post, user, onDelete }: PostCardProps) => {
   return (
       <>
         <Card
-            onClick={handleCardClick}
-            className={`group relative border-slate-800 bg-slate-900/60 shadow-lg 
-            ${cardShadowHover} ${cardBorderHover} transition-all duration-300 cursor-pointer overflow-hidden`}
+            onClick={() => setIsDetailsModalOpen(true)}
+            className={`group relative border-slate-800 bg-slate-900/60 shadow-lg ${cardShadowHover} ${cardBorderHover} transition-all duration-300 cursor-pointer overflow-hidden`}
         >
           <CardContent className="p-6 pt-4">
             <div className="flex justify-between items-start mb-4">
               <div className="flex items-center gap-3">
                 <Avatar className="h-10 w-10 border border-slate-700">
                   {displayPoster.avatarUrl && <AvatarImage src={displayPoster.avatarUrl} />}
-                  <AvatarFallback className="bg-slate-800 text-slate-200 font-bold text-xs">
-                    {initials}
-                  </AvatarFallback>
+                  <AvatarFallback className="bg-slate-800 text-slate-200 font-bold text-xs">{initials}</AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col">
-                <span className={`text-sm font-bold text-slate-200 leading-none mb-1 group-hover:${accentColor} transition-colors`}>
-                  {displayPoster.name}
-                </span>
+                  <span className={`text-sm font-bold text-slate-200 leading-none mb-1 group-hover:${accentColor} transition-colors`}>{displayPoster.name}</span>
                   <span className="text-xs text-slate-500 font-medium">{displayPoster.weixinId ? `@${displayPoster.weixinId}` : t('profile.default_weixin_unavailable')}</span>
                 </div>
               </div>
-
               <div className="flex flex-row gap-3">
-                <div className={`flex flex-row items-center justify-center 
-                                rounded-full px-3 py-1 text-xs font-medium border ${getBadgeStyle(post.type)}`}>
+                <div className={`flex flex-row items-center justify-center rounded-full px-3 py-1 text-xs font-medium border ${getBadgeStyle(post.type)}`}>
                   {loadingUsers ? <RotateCw className="size-4 animate-spin" /> : getTypeLabel(post.type, t)}
                 </div>
                 {isHost && (
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={handleDeleteClick}
-                        className="size-8 rounded-full text-red-500/70 hover:text-red-500 hover:bg-red-500/10"
-                    >
+                    <Button variant="ghost" size="icon" onClick={handleDeleteClick} className="size-8 rounded-full text-red-500/70 hover:text-red-500 hover:bg-red-500/10">
                       <X className="size-4" />
                     </Button>
                 )}
@@ -170,9 +156,7 @@ const PostCard = ({ post, user, onDelete }: PostCardProps) => {
 
             <div className="mb-5">
               <h3 className="text-lg font-bold mb-2 text-slate-100">{post.title}</h3>
-              <p className="text-sm text-slate-400 leading-relaxed line-clamp-3 group-hover:text-slate-300 transition-colors">
-                {post.content}
-              </p>
+              <p className="text-sm text-slate-400 leading-relaxed line-clamp-3 group-hover:text-slate-300 transition-colors">{post.content}</p>
             </div>
 
             {post.location && (
@@ -190,9 +174,7 @@ const PostCard = ({ post, user, onDelete }: PostCardProps) => {
                       {avatarsToShow.length > 0 ? avatarsToShow.map((joiner) => (
                           <Avatar key={joiner.id} className="h-6 w-6 ring-2 ring-slate-900">
                             {joiner.avatarUrl && <AvatarImage src={joiner.avatarUrl} />}
-                            <AvatarFallback className="bg-slate-700 text-slate-300 text-[10px] font-bold">
-                              {joiner.name.charAt(0)}
-                            </AvatarFallback>
+                            <AvatarFallback className="bg-slate-700 text-slate-300 text-[10px] font-bold">{joiner.name.charAt(0)}</AvatarFallback>
                           </Avatar>
                       )) : (
                           <div className="h-6 w-6 rounded-full ring-2 ring-slate-900 bg-slate-800/50 flex items-center justify-center">
@@ -200,39 +182,15 @@ const PostCard = ({ post, user, onDelete }: PostCardProps) => {
                           </div>
                       )}
                     </div>
-
                     <div className="flex items-center gap-1.5 text-slate-400">
                       <Users className="w-4 h-4 text-orange-500" />
                       <span className="text-xs font-semibold">
-                                {post.joinedUsers.length > 0
-                                    ? t("post_actions.joined_count", { count: post.joinedUsers.length })
-                                    : t("post_actions.be_first")}
-                            </span>
-                      {remainingCount > 0 && (
-                          <span className="text-xs text-slate-500 ml-1">
-                                    + {remainingCount} {t('post_actions.more')}
-                                </span>
-                      )}
+                        {post.joinedUsers.length > 0 ? t("post_actions.joined_count", { count: post.joinedUsers.length }) : t("post_actions.be_first")}
+                      </span>
+                      {remainingCount > 0 && <span className="text-xs text-slate-500 ml-1">+ {remainingCount} {t('post_actions.more')}</span>}
                     </div>
                   </div>
               )}
-
-              <div className="flex gap-2">
-                {(post.type === "ACTIVITY" || post.type === "SPORT") && !isHost && (
-                    <Button
-                        size="sm"
-                        onClick={handleJoinLeave}
-                        className={`h-8 px-4 rounded-full text-xs font-semibold ${
-                            isJoined
-                                ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20'
-                                : 'bg-orange-600 text-white hover:bg-orange-500'
-                        }`}
-                    >
-                      {isJoined ? t("post_actions.leave") : t("post_actions.join")}
-                      {!isJoined && <ChevronRight className="w-3 h-3 ml-1" />}
-                    </Button>
-                )}
-              </div>
             </div>
           </CardContent>
         </Card>

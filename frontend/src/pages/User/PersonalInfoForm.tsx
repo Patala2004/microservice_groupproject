@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Sparkles, User, Mail, Phone, MessageCircle, Save, MapPin } from "lucide-react";
+import { Sparkles, User, Mail, Phone, MessageCircle, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import ModernInput from "@/components/own/ModernInput";
@@ -129,8 +129,8 @@ const PersonalInfoForm = ({
                         icon={<MessageCircle className="w-4 h-4" />}
                     />
                     <div className="space-y-2 flex flex-col md:col-span-2">
-                        <Label className="flex items-center gap-2 ml-1 mb-1 text-slate-400">
-                            <MapPin className="w-4 h-4" /> {t("create_modal.label_location")}
+                        <Label className="text-xs font-bold uppercase tracking-wider text-slate-500 group-focus-within:text-orange-500 transition-colors ml-1">
+                            {t("create_modal.label_location")}
                         </Label>
                         <Select
                             value={campus?.id?.toString()}
@@ -139,7 +139,9 @@ const PersonalInfoForm = ({
                                 if (selected) setCampus(selected);
                             }}
                         >
-                            <SelectTrigger className="bg-slate-800/50 w-full border-slate-700 text-slate-100 focus:ring-orange-500 rounded-xl h-12">
+                            <SelectTrigger className="bg-black/20 border-slate-800 focus:border-orange-500/50 focus:ring-4 
+                            focus:ring-orange-500/10 text-slate-100 pl-11 py-6 rounded-xl transition-all 
+                                duration-300 placeholder:text-slate-600">
                                 <SelectValue placeholder={t("create_modal.placeholder_location")} />
                             </SelectTrigger>
                             <SelectContent className="bg-slate-900 border-slate-800 text-slate-200">

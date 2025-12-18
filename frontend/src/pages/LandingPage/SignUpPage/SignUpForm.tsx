@@ -144,18 +144,44 @@ const SignupForm = () => {
                     <InputTextField label={t('register.phone_number')} setter={setPhone} valueToDisplay={t('register.placeholder_phone')} />
                     <InputTextField label={t('register.wechat_id')} setter={setWeXinId} valueToDisplay={t('register.placeholder_wechat_id')} />
 
-                    <div className="space-y-2">
-                        <Label className="text-slate-200 ml-1">{t("create_modal.label_location")}</Label>
+                    <div className="flex flex-col gap-1.5 mb-4">
+                        <Label
+                            htmlFor="campus-select"
+                            className="text-base font-medium tracking-wide text-white dark:text-neutral-100"
+                        >
+                            {t("create_modal.label_location")}
+                        </Label>
+
                         <Select
                             onValueChange={setCampusId}
                             value={campusId}
-                        >
-                            <SelectTrigger className="bg-slate-900/50 border-slate-700 text-slate-100 focus:ring-orange-500 rounded-xl h-12">
+                >
+                            <SelectTrigger
+                                id="campus-select"
+                                className="
+                                        w-full h-10
+                                        rounded-xl
+                                        border border-neutral-300/80 dark:border-neutral-700
+                                        bg-white/80 dark:bg-neutral-900/70
+                                        text-sm text-neutral-900 dark:text-neutral-100
+                                        shadow-sm
+                                        focus:outline-none
+                                        focus:ring-2
+                                        focus:ring-[#8B0000]
+                                        focus:border-[#8B0000]
+                                        focus:shadow-md
+                                        transition-all
+                                    "
+                            >
                                 <SelectValue placeholder={t("create_modal.placeholder_location")} />
                             </SelectTrigger>
-                            <SelectContent className="bg-slate-900 border-slate-800 text-slate-200">
+                            <SelectContent className="bg-white dark:bg-neutral-900 border-neutral-300 dark:border-neutral-700 rounded-xl">
                                 {campuses?.map((c) => (
-                                    <SelectItem key={c.id} value={c.id.toString()}>
+                                    <SelectItem
+                                        key={c.id}
+                                        value={c.id.toString()}
+                                        className="focus:bg-neutral-100 dark:focus:bg-neutral-800 cursor-pointer"
+                                    >
                                         {i18n.language === 'cn' ? c.cn_name : c.en_name}
                                     </SelectItem>
                                 ))}

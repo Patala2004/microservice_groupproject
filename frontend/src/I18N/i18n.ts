@@ -84,6 +84,7 @@ const resources = {
         account_inactive: "Your account is inactive. Please contact support.",
         generic_fetch_error: "Error fetching data. Please try again.",
         generic_delete_error: "Error deleting data. Please try again.",
+        generic_error_creation: "Error creating data. Please try again.",
       },
       success: {
         signup_successful: "Registration successful! You can now log in.",
@@ -123,6 +124,9 @@ const resources = {
         contact: "Contact Seller",
         joined_count: "{{count}} joined",
         be_first: "Be the first to join!",
+        no_joiners_yet: "No one has joined your activity yet.",
+        join_success: "Successfully joined the event!",
+        leave_success: "You have left the event.",
         like: "Like",
         comment: "Comment",
         more: "more",
@@ -267,6 +271,7 @@ const resources = {
         account_inactive: "您的账户处于非活动状态。请联系支持人员。",
         generic_fetch_error: "获取数据失败。请重试。",
         generic_delete_error: "删除数据时出错。请重试。",
+        generic_error_creation: "创建数据时出错。请重试。",
       },
       success: {
         signup_successful: "注册成功！您现在可以登录了。",
@@ -274,7 +279,6 @@ const resources = {
         post_created: "帖子创建成功！",
       },
 
-      // --- Home Page ---
       home: {
         trending_topics: "热门话题",
         search_placeholder: "搜索...",
@@ -306,6 +310,9 @@ const resources = {
         leave: "退出",
         contact: "联系卖家",
         joined_count: "{{count}} 人已加入",
+        no_joiners_yet: "还没有人加入您的活动。",
+        join_success: "成功加入活动！",
+        leave_success: "已退出活动。",
         be_first: "成为第一个加入的人！",
         like: "点赞",
         comment: "评论",
