@@ -10,8 +10,8 @@ class TagPost(SQLModel, table=True):
     __tablename__ = "post_tag"
     __table_args__ = {"extend_existing": True}
 
-    tag_id: int = Field(foreign_key="tag_id", primary_key=True)
-    post_id: int = Field(foreign_key="post_id", primary_key=True)
+    tag_id: int = Field(primary_key=True)
+    post_id: int = Field(primary_key=True)
 
 
 def get_session():

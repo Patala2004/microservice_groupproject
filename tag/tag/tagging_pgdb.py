@@ -16,9 +16,10 @@ class Tag(SQLModel, table=True):
 
 
 def init_db():
+    with engine.connect() as conn:
+        conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
+        conn.commit()
     SQLModel.metadata.create_all(engine)
-    with get_session() as session:
-        session.exec(text('CREATE EXTENSION IF NOT EXISTS vector'))
 
 
 def get_session():

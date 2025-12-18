@@ -2,6 +2,14 @@ volumes:
   models:
   pgdata:
 
+networks:
+  posttag_network:
+    external: true
+  backend_network:
+    external: true
+  tagging_network:
+    driver: bridge
+
 services:
   ollama:
     image: ollama/ollama
@@ -44,11 +52,11 @@ services:
       - "8087:8000"
     environment:
       OLLAMA_HOST: "http://ollama-tagging:11434"
-      POSTGRES_TAGGING_DB: "postgresql://user:password@db:5432/tags_db"
-      TAG_POST_DB: "http://host.docker.internal:5440"
+      POSTGRES_TAGGING_DB: "postgresql://user:password@tagging-db:5432/tags_db"
+      TAG_POST_DB: "postgresql://user:password@posttag_db:5432"
       EMBEDDINGS_URL: "http://embeddings_service:8000"
       POST_SERVICE_URL: "http://host.docker.internal:8082"
-      TRANSLATION_URL: "http://host.docker.internal:8088"
+      TRANSLATION_URL: "http://translation:8000"
     deploy:
       resources:
         reservations:
@@ -58,6 +66,8 @@ services:
               capabilities: [gpu]
     networks:
       - tagging_network
+      - posttag_network
+      - backend_network
 
   db:
     image: pgvector/pgvector:pg17-trixie
@@ -70,7 +80,3 @@ services:
       - pgdata:/data
     networks:
       - tagging_network
-
-networks:
-  tagging_network:
-    driver: bridge
