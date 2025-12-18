@@ -1,6 +1,11 @@
 volumes:
   models:
 
+networks:
+  - translation_network
+
+
+
 services:
   ollama:
     image: ollama/ollama
@@ -11,7 +16,7 @@ services:
       - translation_network
   
   translate:
-    build: ./tag/.
+    build: .
     container_name: translate
     depends_on:
       - ollama
