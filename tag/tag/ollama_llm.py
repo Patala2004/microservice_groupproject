@@ -1,10 +1,11 @@
 from ollama import Client
 import os
 
+
 class OllamaLLM:
     _shared_client = None
 
-    def __init__(self, model_name = ""):
+    def __init__(self, model_name=""):
         if OllamaLLM._shared_client == None:
             OllamaLLM._shared_client = Client(
                 host=os.environ['OLLAMA_HOST'],
@@ -12,25 +13,28 @@ class OllamaLLM:
             )
         self.client = OllamaLLM._shared_client
         self.model_name = model_name
-    
+
     def generate_tags(self, input_title, input_content):
         response = self.client.generate(
-            prompt = get_prompt(input_title, input_content),
-            model = self.model_name
+            prompt=get_prompt(input_title, input_content),
+            model=self.model_name
         )
         return response_to_tagnames_list(response.message.content)
 
+
 class Phi3_3b(OllamaLLM):
     def __init__(self):
-        super().__init__(model_name = "phi3:3.8b-mini-4k-instruct-q2_K")
+        super().__init__(model_name="phi3:3.8b-mini-4k-instruct-q2_K")
+
 
 class Qwen3_4b(OllamaLLM):
     def __init__(self):
-        super().__init__(model_name = "qwen3:4b")
+        super().__init__(model_name="qwen3:4b")
+
 
 class Qwen3_8b(OllamaLLM):
     def __init__(self):
-        super().__init__(model_name = "qwen3:8b")
+        super().__init__(model_name="qwen3:8b")
 
 
 def get_prompt(input_title: str, input_content: str):
@@ -52,8 +56,6 @@ def get_prompt(input_title: str, input_content: str):
         """
     )
 
+
 def response_to_tagnames_list(response: str):
     return response.split("$")
-
-
-
