@@ -182,8 +182,7 @@ public class PostController {
     public ResponseEntity<List<Post>> getUserRecomendedPosts(
         @RequestParam(required = false) int userId
     ) {
-        UserRecomResponse externalResponse = externalRecomClient.getUserRecom(userId);
-        List<Integer> postIds = externalResponse.getPostIds();
+        List<Integer> postIds = externalRecomClient.getUserRecom(userId);
 
         List<Post> postList = service.getPostList(postIds.stream().map(Integer::longValue).toList());
 
