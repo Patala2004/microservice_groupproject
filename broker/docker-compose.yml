@@ -5,12 +5,13 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-    environment:
-      RABBITMQ_DEFAULT_USER: admin
-      RABBITMQ_DEFAULT_PASS: adminpassword
+
     volumes:
-      - ./init-users.sh:/docker-entrypoint-initdb.d/init-users.sh:ro
-      - rabbitmq_data:/var/lib/rabbitmq
+      - ./definitions.json:/etc/rabbitmq/definitions.json
+
+    environment:
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: >
+        -rabbitmq_management load_definitions "/etc/rabbitmq/definitions.json"
     networks:
       - ms_network  
 

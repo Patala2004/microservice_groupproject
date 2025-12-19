@@ -1,0 +1,45 @@
+{
+  "users": [
+    {
+      "name": "admin",
+      "password": "adminpassword",
+      "tags": "administrator"
+    },
+    {
+      "name": "upref-user",
+      "password": "uprefpassword",
+      "tags": "management"
+    },
+    {
+      "name": "apig-user",
+      "password": "apigpassword",
+      "tags": "management"
+    }
+  ],
+  "vhosts": [
+    { "name": "/interactions" }
+  ],
+  "permissions": [
+    {
+      "user": "admin",
+      "vhost": "/interactions",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "upref-user",
+      "vhost": "/interactions",
+      "configure": ".*",
+      "write": "^$",
+      "read": ".*"
+    },
+    {
+      "user": "apig-user",
+      "vhost": "/interactions",
+      "configure": ".*",
+      "write": ".*",
+      "read": "^$"
+    }
+  ]
+}
