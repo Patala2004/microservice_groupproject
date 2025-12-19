@@ -17,6 +17,7 @@ import microservices.groupproject.post_api.mapper.PostMapper;
 
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -155,12 +156,26 @@ public class PostController {
 
     @GetMapping("/recomendations")
     public ResponseEntity<List<PostGlobalDTO>> getUserRecomendedPosts(
-        @RequestParam(required = false) int userId
+        @RequestParam(required = true) int userId,
+        @RequestParam(required = false, defaultValue = "10") int limit
     ) {
-        List<Integer> postIds = externalRecomClient.getUserRecom(userId);
+        List<Integer> postIds = externalRecomClient.getUserRecom(userId, limit);
 
-        List<PostGlobalDTO> postList = service.getPostList(postIds.stream().map(Integer::longValue).toList())
-        .stream().map(postMapper::toDTO).toList();
+        List<PostGlobalDTO> postList = new ArrayList<>(service.getPostList(postIds.stream().map(Integer::longValue).toList())
+        .stream()
+        .map(postMapper::toDTO)
+        .toList());
+
+        if(postIds.size() < limit){ // If there are less usefull posts than asked for get the newest ones and add them
+            List<PostGlobalDTO> otherPosts = service.getPostByIdNotOrderedByCreationTime(
+                postIds.stream().map(Integer::longValue).toList(),
+                limit - postIds.size())
+            .stream()
+            .map(postMapper::toDTO)
+            .toList();
+
+            postList.addAll(otherPosts);
+        }
 
         return ResponseEntity.ok(postList);
     }

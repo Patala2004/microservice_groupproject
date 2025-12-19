@@ -6,6 +6,9 @@ import microservices.groupproject.post_api.repository.PostRepository;
 import microservices.groupproject.post_api.specification.PostSpecification;
 import microservices.groupproject.post_api.exception.PostNotFoundException;
 
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -53,6 +56,17 @@ public class PostService {
     public Post getPostById(Long id) {
         return postRepository.findById(id)
                 .orElseThrow(() -> new PostNotFoundException(id));
+    }
+
+    public List<Post> getPostByIdNotOrderedByCreationTime(List<Long> ids, int pageSize){
+        PageRequest pageable = PageRequest.of(0, pageSize, Sort.by("creationTime").descending());
+        
+        if(ids == null || ids.isEmpty()){
+            // If no IDs to exclude, just return the newest posts
+            return postRepository.findAll(pageable).getContent();
+        }
+
+        return postRepository.findByIdNotIn(ids, pageable).getContent();
     }
 
     public Post createPost(Post post) {

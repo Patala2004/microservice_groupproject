@@ -19,10 +19,10 @@ public class ExternalRecomendationServiceClient {
             .baseUrl("http://host.docker.internal:8085") // Recomendations ervice url
             .build();
 
-    public List<Integer> getUserRecom(int userId) {
+    public List<Integer> getUserRecom(int userId, int limit) {
         try{
             return webClient.get()
-                    .uri("/recom/" + userId)
+                    .uri("/recom/" + userId + "?limit=" + limit)
                     .retrieve()
                     .onStatus( // On 4xx error pass it down
                         HttpStatusCode::is4xxClientError,
