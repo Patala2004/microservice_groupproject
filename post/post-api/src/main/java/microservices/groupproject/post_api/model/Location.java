@@ -1,24 +1,18 @@
 package microservices.groupproject.post_api.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
-@Entity
-@Table(name = "locations")
+@Embeddable
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@AttributeOverrides({
+    @AttributeOverride(name = "title", column = @Column(name = "location_title"))
+})
 public class Location {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore 
-    private Long id;
-
     @NotBlank(message = "a title is required")
-    @Column(nullable = false)
     private String title;
 }

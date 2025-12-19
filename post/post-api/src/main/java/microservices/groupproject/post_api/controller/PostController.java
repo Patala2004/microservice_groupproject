@@ -1,11 +1,10 @@
 package microservices.groupproject.post_api.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.Valid;
 import microservices.groupproject.post_api.StorageService.StorageService;
 import microservices.groupproject.post_api.model.*;
-import microservices.groupproject.post_api.repository.LocationRepository;
+import microservices.groupproject.post_api.model.DTO.PostGlobalDTO;
 import microservices.groupproject.post_api.service.ExternalRecomendationServiceClient;
 import microservices.groupproject.post_api.service.PostService;
 
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import microservices.groupproject.post_api.exception.*;
+import microservices.groupproject.post_api.mapper.PostMapper;
 
 import java.net.URI;
 import java.time.LocalDateTime;
@@ -26,8 +26,9 @@ import java.util.List;
 @Tag(name = "Posts", description = "Posts API")
 public class PostController {
 
+    private final PostMapper postMapper;
+
     private final PostService service;
-    private final LocationRepository locationRepository;
 
     // Image storage
     private final StorageService documentStorage;
@@ -35,16 +36,16 @@ public class PostController {
     // External services
     private final ExternalRecomendationServiceClient externalRecomClient;
 
-    public PostController(PostService service, LocationRepository locationRepository,
-            StorageService documentStorage, ExternalRecomendationServiceClient externalRecomClient) {
+    public PostController(PostService service, StorageService documentStorage, 
+            ExternalRecomendationServiceClient externalRecomClient, PostMapper postMapper) {
         this.service = service;
-        this.locationRepository = locationRepository;
         this.documentStorage = documentStorage;
         this.externalRecomClient = externalRecomClient;
+        this.postMapper = postMapper;
     }
 
     @GetMapping
-    public List<Post> all(
+    public List<PostGlobalDTO> all(
         @RequestParam(required = false) String titleStartsWith,
         @RequestParam(required = false) String titleContains,
         @RequestParam(required = false) String contentContains,
@@ -59,12 +60,12 @@ public class PostController {
     ) {
         return service.getAllPosts(titleStartsWith, titleContains, contentContains, type, locationTitle, 
         afterCreationDateStamp, beforeCreationDateStamp, afterEventDateStamp, beforeEventDateStamp, posterId,
-        participantId);
+        participantId).stream().map(postMapper::toDTO).toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Post> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getPostById(id));
+    public ResponseEntity<PostGlobalDTO> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(postMapper.toDTO(service.getPostById(id)));
     }
 
     // In case schedule endpoints wants a boolean "is occupied" endpoint
@@ -79,55 +80,29 @@ public class PostController {
     //     return false;
     // }
 
-    @PostMapping(consumes = "multipart/form-data", produces = "application/json")
-    public ResponseEntity<Post> create(
-            @RequestParam("title") @NotBlank(message = "a title is required") String title,
-            @RequestParam("content") @NotBlank(message = "content is required") String content,
-            @RequestParam("type") PostType type,
-            @RequestParam("locationTitle") String locationTitle,
-            @RequestParam("poster") @Positive(message = "user id of poster must be positive") Long poster,
-            @RequestParam(value = "eventTime", required = false) LocalDateTime eventTime,
-            @RequestParam(value = "image", required = false) MultipartFile imageFile) {
+    @PostMapping
+    public ResponseEntity<PostGlobalDTO> create(@Valid @RequestBody PostGlobalDTO dto) {
 
-        // Create Location
-        Location location = new Location();
-        location.setTitle(locationTitle);
-        locationRepository.save(location);
-
-        // Create Post
-        Post post = new Post();
-        post.setTitle(title);
-        post.setContent(content);
-        post.setType(type);
-        post.setLocation(location);
-        post.setPoster(poster);
-        post.setEventTime(eventTime);
-
-        // Handle image if present
-        if (imageFile != null && !imageFile.isEmpty()) {
-            String imageUrl;
-
-            imageUrl = documentStorage.saveFile(imageFile);
-
-            post.setImageUrl(imageUrl);
-        }
+        Post post = postMapper.toEntity(dto);
 
         Post saved = service.createPost(post);
-        return ResponseEntity.created(URI.create("/api/posts/" + saved.getId())).body(saved);
+
+        PostGlobalDTO returnDTO = postMapper.toDTO(saved);
+        return ResponseEntity.created(URI.create("/api/posts/" + saved.getId())).body(returnDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Post> editPostInfo(
+    public ResponseEntity<PostGlobalDTO> editPostInfo(
             @PathVariable Long id,
-            @RequestBody Post post) {
+            @RequestBody PostGlobalDTO post) {
 
-        Post saved = service.updatePost(id, post);
-        return ResponseEntity.ok(saved);
+        Post saved = service.updatePost(id, postMapper.toEntity(post));
+        return ResponseEntity.ok(postMapper.toDTO(saved));
     }
 
     @PutMapping(value = "/{id}/image", 
             consumes = "multipart/form-data", produces = "application/json")
-    public ResponseEntity<Post> editPostImage(
+    public ResponseEntity<PostGlobalDTO> editPostImage(
         @PathVariable Long id, 
         @RequestPart(value = "image") MultipartFile imageFile) {
 
@@ -153,7 +128,7 @@ public class PostController {
 
         post = service.updatePostImage(id, imageUrl);
 
-        return ResponseEntity.ok(post);
+        return ResponseEntity.ok(postMapper.toDTO(post));
     }
 
     @DeleteMapping("/{id}/image")
@@ -179,12 +154,13 @@ public class PostController {
     }
 
     @GetMapping("/recomendations")
-    public ResponseEntity<List<Post>> getUserRecomendedPosts(
+    public ResponseEntity<List<PostGlobalDTO>> getUserRecomendedPosts(
         @RequestParam(required = false) int userId
     ) {
         List<Integer> postIds = externalRecomClient.getUserRecom(userId);
 
-        List<Post> postList = service.getPostList(postIds.stream().map(Integer::longValue).toList());
+        List<PostGlobalDTO> postList = service.getPostList(postIds.stream().map(Integer::longValue).toList())
+        .stream().map(postMapper::toDTO).toList();
 
         return ResponseEntity.ok(postList);
     }
