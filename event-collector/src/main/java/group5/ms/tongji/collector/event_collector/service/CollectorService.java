@@ -10,6 +10,6 @@ import org.springframework.stereotype.Service;
 public class CollectorService {
     RabbitTemplate rabbitTemplate;
     public void queueUserInteraction(UserInteraction userInteraction){
-        rabbitTemplate.convertAndSend("inter.queue", userInteraction);
+        rabbitTemplate.convertAndSend("","inter.queue", userInteraction);
     }
 }

@@ -44,8 +44,6 @@ public class BrokerQueueConfig {
                 System.err.println("Invalid message detected: discarded");
                 throw new AmqpRejectAndDontRequeueException("Invalid message", cause);
             }
-
-            // ⚠️ Otros errores → se reintenta (red, broker, etc.)
             System.err.println("Temporary error: retry");
             throw new RuntimeException(cause);
         });

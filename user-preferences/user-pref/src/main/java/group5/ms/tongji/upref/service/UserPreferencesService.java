@@ -54,6 +54,7 @@ public class UserPreferencesService {
         Date decayDate = userDecayDateRepository.findDecayDateById(userId);
         if(decayDate == null) {
             userDecayDateRepository.save(new UserDecayDate(userId, timestamp));
+            decayDate = timestamp;
         }
         for(UserFrequentTag u : userFrequentTags.values()) {
             float forgetRate = -0.0231f; //30 days bajará un 50%

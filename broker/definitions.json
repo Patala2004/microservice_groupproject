@@ -39,7 +39,7 @@
       "vhost": "/interactions",
       "configure": ".*",
       "write": ".*",
-      "read": "^$"
+      "read": ".*"
     }
   ]
 }

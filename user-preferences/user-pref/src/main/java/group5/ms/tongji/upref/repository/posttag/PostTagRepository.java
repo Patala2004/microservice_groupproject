@@ -10,7 +10,10 @@ import java.util.List;
 
 @Repository
 public interface PostTagRepository extends JpaRepository<PostTag, PostTagId> {
-    @Query("SELECT p.postTagId.tagId FROM PostTag p WHERE p.postTagId.postId = :postId")
+    @Query(
+            value = "SELECT p.tag_id FROM post_tag p WHERE p.post_id = :postId",
+            nativeQuery = true
+            )
     List<Integer> findAllTagIds(int postId);
 
 }
