@@ -48,7 +48,7 @@ services:
       - "8087:8000"
     environment:
       OLLAMA_HOST: "http://ollama-tagging:11434"
-      POSTGRES_TAGGING_DB: "postgresql://user:password@tagging-db:5432/tags_db"
+      POSTGRES_TAGGING_DB: "postgresql://app_user:app_password@tagging-db:5432/tags_db"
       TAG_POST_DB: "postgresql://posttaguser:password@host.docker.internal:5440/posttagdb"
       EMBEDDINGS_URL: "http://embeddings_service:8000"
       POST_SERVICE_URL: "http://host.docker.internal:8082"
@@ -72,6 +72,7 @@ services:
       POSTGRES_DB: tags_db
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d
     networks:
       - tagging_network
     ports:

@@ -80,6 +80,9 @@ def llm_test_qwenb8():
         input_content="We would like to go to the cinema in Anting this Saturday to watch Zootropolis 2. If someone else also wants to come we could share transport expenses."
     )
 
+@app.post("/tag-db-test")
+def tag_db_test():
+    db.store_tag("test",[0.1]*384)
 
 @app.post("/embeddings-test")
 def embeddings_test():
