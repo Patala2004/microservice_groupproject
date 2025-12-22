@@ -19,17 +19,7 @@ class OllamaLLM:
             prompt=get_prompt(input_title, input_content),
             model=self.model_name
         )
-        return response_to_tagnames_list(response.message.content)
-
-
-class Phi3_3b(OllamaLLM):
-    def __init__(self):
-        super().__init__(model_name="phi3:3.8b-mini-4k-instruct-q2_K")
-
-
-class Qwen3_4b(OllamaLLM):
-    def __init__(self):
-        super().__init__(model_name="qwen3:4b")
+        return response_to_tagnames_list(response.response)
 
 
 class Qwen3_8b(OllamaLLM):
@@ -39,16 +29,26 @@ class Qwen3_8b(OllamaLLM):
 
 def get_prompt(input_title: str, input_content: str):
     return (
-        f"""Task: Extract between 1 and 15 concepts that represent the main topics of the Title and Content.
-        Extraction rules (strict):
-        - Concepts must be nouns or noun phrases.
-        - Concepts must represent the main subjects or high-level themes (e.g., activity, domain, object, event, topic).
-        - Concepts must be explicitly present or clearly implied by the Title or Content.
-        - Ignore all secondary details, including: time, date, location, people, invitations, metadata, opinions, logistics, prices, or any other incidental information.
-        - Do not infer or invent information not grounded in the text.
-        - Do not repeat concepts.
-        - Output strictly in the format: <concept>$<concept>$...<concept> (with $ and no spaces).
+        f"""Task: Extract between 1 and 15 concepts representing the main topics of the Title and Content from Input.
+
+        Concepts:
+        - Should be simple nouns that represents a main subject, object, activity, event, domain, or topic.
+        - Something that captures the essence of what the text is about.
+        - It also includes named works of media (for example, the name of a book).
+
+        Ignore secondary information, which includes:   
+        - Specific dates, times, or periods
+        - Specific addresses (only general categories are okay)
+        - Personal names
+        - Metadata, invitations, prices, logistics, numbers, or incidental details
+        - Opinions or subjective comments
+
+        Output:
+        - Do not repeat exactly the same concepts.
         - Output only the concepts.
+        - Format for multiple concepts: <concept>$<concept>$<concept>
+        - Format for single concept: <concept>
+        - Do not add any extra text or explanation.
 
         Input:
         Title: {input_title}

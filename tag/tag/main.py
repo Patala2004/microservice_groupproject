@@ -1,3 +1,4 @@
+import numpy as np
 from fastapi import FastAPI
 import post_info
 import translation
@@ -8,17 +9,16 @@ import tagpost_pgbd as tagpost_db
 
 app = FastAPI()
 
+
 @app.on_event("startup")
 def on_startup():
     db.init_db()
 
-# --- for test ---
 
-phi3 = llm.Phi3_3b()
-qwen4b = llm.Qwen3_4b()
 qwen8b = llm.Qwen3_8b()
 
 # --- endpoints ---
+
 
 @app.post("/tag")
 def tag(post_id):
@@ -47,54 +47,58 @@ def tag(post_id):
                 embedding=vectors[i]
             )
             final_tag_ids.append(current.id)
-        
+
         tagpost_db.add_relations(tag_ids=final_tag_ids, post_id=post_id)
 
         return {"status": "ok"}
-    
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-
-
 # --- funcs for test ---
 
-def llm_test_1(llm: llm.OllamaLLM):
-    return llm.generate_tags(
-        input_title="Basketball match",
-        input_content="We would want to play a basketball match tomorrw at 8 pm. We still need 4 extra people. Please join in!"
-    )
 
-def llm_test_2(llm: llm.OllamaLLM):
-    return llm.generate_tags(
-        input_title="Selling fridge",
-        input_content="Hi, I'm selling a 66L capacity fridge with a 22L capacity freezer for ¥200. If anyone is interested, please contact me before the end of this month."
-    )
+def cosine_distance(a: np.ndarray, b: np.ndarray) -> float:
+    if a.shape != b.shape:
+        raise ValueError("Los vectores deben tener la misma dimensión")
 
-def llm_test_3(llm: llm.OllamaLLM):
-    return llm.generate_tags(
+    denom = np.linalg.norm(a) * np.linalg.norm(b)
+    if denom == 0:
+        raise ValueError(
+            "No se puede calcular distancia coseno con vector cero")
+
+    return 1.0 - float(np.dot(a, b) / denom)
+
+
+# --- test endpoints ---
+
+@app.post("/llm-test/qwenb8")
+def llm_test_qwenb8():
+    return qwen8b.generate_tags(
         input_title="Zootropolis in Anting cinema this Saturday",
         input_content="We would like to go to the cinema in Anting this Saturday to watch Zootropolis 2. If someone else also wants to come we could share transport expenses."
     )
 
 
-def llm_test(llm: llm.OllamaLLM):
-    return [llm_test_1(llm), llm_test_2(llm), llm_test_3(llm)]
-
-
-# --- test endpoints ---
-
-@app.post("/llm-test/phi3")
-def llm_test_phi3():
-    llm_test(phi3)
-
-@app.post("/llm-test/qwenb4")
-def llm_test_qwenb4():
-    llm_test(qwen4b)
-
-@app.post("/llm-test/qwenb8")
-def llm_test_qwenb8():
-    llm_test(qwen8b)
-
-
+@app.post("/embeddings-test")
+def embeddings_test():
+    embs = embeddings.embed([
+        "Basketball match",
+        "Sports",
+        "Tea"
+    ]),
+    return {
+        "embeddings": embs,
+        "cosine_distances": [
+            {
+                "basket_sports": cosine_distance(embs[0], embs[1])
+            },
+            {
+                "sports_tea": cosine_distance(embs[1], embs[2])
+            },
+            {
+                "tea_basket": cosine_distance(embs[2], embs[0])
+            }
+        ]
+    }

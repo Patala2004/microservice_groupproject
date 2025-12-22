@@ -11,7 +11,7 @@ services:
     image: ollama/ollama
     container_name: ollama-tagging
     volumes:
-      - models:/ollama
+      - models:/root/.ollama
     deploy:
       resources:
         reservations:
@@ -71,6 +71,8 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: tags_db
     volumes:
-      - pgdata:/data
+      - pgdata:/var/lib/postgresql/data
     networks:
       - tagging_network
+    ports:
+      - 5438:5432
