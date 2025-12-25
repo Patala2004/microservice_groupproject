@@ -4,34 +4,40 @@ from pgvector.sqlalchemy import VECTOR
 import os
 
 DATABASE_URL = os.environ['POSTGRES_TAGGING_DB']
-SIMILARITY_THRESHOLD = 0.2
+SIMILARITY_THRESHOLD = 0.35
 
 engine = create_engine(DATABASE_URL)
 
 
 class Tag(SQLModel, table=True):
+    __tablename__ = "tag"
+    __table_args__ = {"extend_existing": True}
+
     id: int | None = Field(default=None, primary_key=True)
-    name: str
-    embedding: list[float] = Field(sa_type=VECTOR(384))
-
-
-def init_db():
-    with engine.connect() as conn:
-        conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
-        conn.commit()
-    SQLModel.metadata.create_all(engine)
+    tag_name: str
+    embedding: list[float] = Field(sa_type=VECTOR(768))
 
 
 def get_session():
     return Session(engine)
 
 
-def similar_tag_exists(embedding: list[float]):
+def similar_tag_exists(embedding):
+    if not isinstance(embedding, np.ndarray):
+        embedding = np.array(embedding, dtype=np.float32)
+    else:
+        embedding = embedding.astype(np.float32)
     with get_session() as session:
+        distance = Tag.embedding.op("<=>")(embedding)
+
         stmt = (
-            select(Tag, func.cosine_distance(
-                Tag.embedding, embedding).label("dist"))
-            .order_by(func.cosine_distance(Tag.embedding, embedding))
+            select(
+                Tag.id,
+                Tag.tag_name,
+                Tag.embedding,
+                distance.label("dist")
+            )
+            .order_by(distance)
             .limit(1)
         )
         result = session.exec(stmt).first()
@@ -41,20 +47,20 @@ def similar_tag_exists(embedding: list[float]):
 
         tag, distance = result
 
-        if distance > SIMILARITY_THRESHOLD:
+        if distance < SIMILARITY_THRESHOLD:
             return tag
 
         return None
 
 
-def store_tag(name: str, embedding: list[float]):
+def store_tag(name: str, embedding):
     existing = similar_tag_exists(embedding)
 
     if existing:
         return existing
 
     else:
-        new_tag = Tag(name=name, embedding=embedding)
+        new_tag = Tag(tag_name=name, embedding=embedding)
 
         with get_session() as session:
             session.add(new_tag)

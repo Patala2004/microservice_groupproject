@@ -1,5 +1,5 @@
 import numpy as np
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 import post_info
 import translation
 import ollama_llm as llm
@@ -8,12 +8,6 @@ import tagging_pgdb as db
 import tagpost_pgbd as tagpost_db
 
 app = FastAPI()
-
-
-@app.on_event("startup")
-def on_startup():
-    db.init_db()
-
 
 qwen8b = llm.Qwen3_8b()
 
@@ -80,28 +74,70 @@ def llm_test_qwenb8():
         input_content="We would like to go to the cinema in Anting this Saturday to watch Zootropolis 2. If someone else also wants to come we could share transport expenses."
     )
 
+
 @app.post("/tag-db-test")
 def tag_db_test():
-    db.store_tag("test",[0.1]*384)
+    db.store_tag("test", [0.1]*768)
+
 
 @app.post("/embeddings-test")
 def embeddings_test():
     embs = embeddings.embed([
         "Basketball match",
-        "Sports",
-        "Tea"
-    ]),
+        "Basketball",
+        "Basket"
+    ])
     return {
         "embeddings": embs,
         "cosine_distances": [
             {
-                "basket_sports": cosine_distance(embs[0], embs[1])
+                "basket_sports": cosine_distance(np.asarray(embs[0]), np.asarray(embs[1]))
             },
             {
-                "sports_tea": cosine_distance(embs[1], embs[2])
+                "sports_tea": cosine_distance(np.asarray(embs[1]), np.asarray(embs[2]))
             },
             {
-                "tea_basket": cosine_distance(embs[2], embs[0])
+                "tea_basket": cosine_distance(np.asarray(embs[2]), np.asarray(embs[0]))
             }
         ]
     }
+
+
+@app.post("/embeddings-db-test-1")
+def embeddings_db_test():
+    tagname_list = [
+        "Basketball",
+        "Basketball match",
+        "Dormitory"
+    ]
+    vectors = embeddings.embed(tagname_list)
+    print("embeddings worked")
+    for i, v in enumerate(vectors):
+        print(f"Vector {i} length:", len(v))
+        print(f"Vector {i} element types:", [type(x) for x in v])
+    for i in range(len(vectors)):
+        current_name = tagname_list[i]
+        current_vector = vectors[i]
+        print("before storing")
+        db.store_tag(
+            name=current_name,
+            embedding=current_vector
+        )
+
+
+@app.post("/embeddings-db-test-2")
+def embeddings_db_test_2():
+    tagname_list = [
+        "Basketball",
+        "Apple",
+        "Dormitory",
+        "Hair dryer"
+    ]
+    vectors = embeddings.embed(tagname_list)
+    final_tag_ids = []
+    for i in range(len(vectors)):
+        current = db.store_tag(
+            name=tagname_list[i],
+            embedding=vectors[i]
+        )
+        final_tag_ids.append(current.id)

@@ -3,10 +3,11 @@ import requests
 
 EMBEDDINGS_URL = f"{os.environ['EMBEDDINGS_URL']}/embed"
 
+
 def embed(sentences):
-    data = {"request": sentences}
+    data = {"sentences": sentences}
     try:
-        response = requests.post(EMBEDDINGS_URL, json=data, timeout=300) 
+        response = requests.post(EMBEDDINGS_URL, json=data, timeout=300)
         response.raise_for_status()
         embeddings = response.json()["embeddings"]
         return embeddings
