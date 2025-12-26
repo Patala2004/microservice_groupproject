@@ -8,7 +8,6 @@ import {
   LayoutGrid,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
 import { useUser } from "@/Context/UserContext.tsx";
 import { usePost, type Post } from "@/Context/PostContext.tsx";
 import UserProfileCard from "./UserProfileCard.tsx";
@@ -16,11 +15,11 @@ import PersonalInfoForm from "./PersonalInfoForm.tsx";
 import SecurityForm from "./SecurityForm.tsx";
 import UserPosts from "./UserPosts.tsx";
 import React from "react";
-
+import { type Campus } from "@/Context/UserContext.tsx";
 
 const UserPage = () => {
   const { t } = useTranslation();
-  const { user, updateUser } = useUser();
+  const { user, updateUser, campuses } = useUser();
   const { getPostsByUserId, setPosts: setGlobalPosts } = usePost();
 
   const [userPosts, setUserPosts] = useState<Post[]>([]);
@@ -42,14 +41,22 @@ const UserPage = () => {
   const [avatar, setAvatar] = useState("https://github.com/shadcn.png");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [campus, setCampus] = useState<Campus | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (user && campuses.length > 0) {
+      const userCampus = campuses.find(c => c.id === user.campus) || campuses[0];
+      setCampus(userCampus);
+    }
+  }, [user, campuses]);
 
   const updatePosts = useCallback((newPosts: Post[]) => {
     setUserPosts(newPosts);
     setGlobalPosts(newPosts);
   }, [setGlobalPosts]);
-  
+
   useEffect(() => {
     const fetchUserPosts = async () => {
       if (!user || !user.id) {
@@ -57,19 +64,14 @@ const UserPage = () => {
         return;
       }
       setPostsLoading(true);
-
-      const userIdNum = parseInt(user.id);
-      const posts = await getPostsByUserId(userIdNum);
-
+      const posts = await getPostsByUserId(user.id);
       if (posts) {
         setUserPosts(posts);
       }
       setPostsLoading(false);
     };
-
     fetchUserPosts();
   }, [user?.id, getPostsByUserId]);
-
 
   const handleAvatarClick = () => fileInputRef.current?.click();
 
@@ -99,9 +101,7 @@ const UserPage = () => {
           />
           <div className="absolute bottom-[-10%] right-[-5%] w-[600px] h-[600px] bg-orange-600/10 blur-[150px] rounded-full opacity-30" />
         </div>
-
         <div className="relative z-10 container mx-auto px-4 py-12 max-w-6xl">
-
           <div className="mb-12 text-center sm:text-left space-y-2 animate-in fade-in slide-in-from-top-4 duration-700">
             <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-rose-600 via-red-600 to-orange-500 drop-shadow-sm">
@@ -112,7 +112,6 @@ const UserPage = () => {
               {t("profile.subtitle")}
             </p>
           </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
             <div className="lg:col-span-4 animate-in fade-in slide-in-from-left-4 duration-700 delay-100">
               <UserProfileCard
@@ -125,7 +124,6 @@ const UserPage = () => {
                   postCount={userPosts.length}
               />
             </div>
-
             <div className="lg:col-span-8 animate-in fade-in slide-in-from-right-4 duration-700 delay-200">
               <Tabs defaultValue="info" className="w-full">
                 <TabsList className="w-full py-3 h-14 bg-slate-900/50 p-1 rounded-xl border border-slate-800 backdrop-blur-md mb-8 grid grid-cols-3">
@@ -143,8 +141,7 @@ const UserPage = () => {
                       data-[state=active]:from-rose-600 data-[state=active]:to-orange-500
                        data-[state=active]:text-white data-[state=active]:shadow-lg transition-all font-medium"
                   >
-                    <ShieldCheck className="w-4 h-4 mr-2" />{" "}
-                    {t("profile.security")}
+                    <ShieldCheck className="w-4 h-4 mr-2" /> {t("profile.security")}
                   </TabsTrigger>
                   <TabsTrigger
                       value="posts"
@@ -152,15 +149,10 @@ const UserPage = () => {
                       data-[state=active]:from-rose-600 data-[state=active]:to-orange-500
                        data-[state=active]:text-white data-[state=active]:shadow-lg transition-all font-medium"
                   >
-                    <LayoutGrid className="w-4 h-4 mr-2" />{" "}
-                    {t("profile.my_posts")}
+                    <LayoutGrid className="w-4 h-4 mr-2" /> {t("profile.my_posts")}
                   </TabsTrigger>
                 </TabsList>
-
-                <TabsContent
-                    value="info"
-                    className="mt-0 focus-visible:outline-none"
-                >
+                <TabsContent value="info" className="mt-0 focus-visible:outline-none">
                   <PersonalInfoForm
                       user={user}
                       updateUser={updateUser}
@@ -172,13 +164,11 @@ const UserPage = () => {
                       setPhone={setPhone}
                       weixinId={weixinId}
                       setWeixinId={setWeixinId}
+                      campus={campus}
+                      setCampus={setCampus}
                   />
                 </TabsContent>
-
-                <TabsContent
-                    value="security"
-                    className="mt-0 focus-visible:outline-none"
-                >
+                <TabsContent value="security" className="mt-0 focus-visible:outline-none">
                   <SecurityForm
                       user={user}
                       updateUser={updateUser}
@@ -188,11 +178,7 @@ const UserPage = () => {
                       setConfirmNewPassword={setConfirmNewPassword}
                   />
                 </TabsContent>
-
-                <TabsContent
-                    value="posts"
-                    className="mt-0 focus-visible:outline-none"
-                >
+                <TabsContent value="posts" className="mt-0 focus-visible:outline-none">
                   <UserPosts
                       posts={userPosts}
                       loading={postsLoading}
@@ -206,6 +192,5 @@ const UserPage = () => {
       </div>
   );
 };
-
 
 export default UserPage;

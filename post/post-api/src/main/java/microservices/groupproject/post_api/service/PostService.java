@@ -81,7 +81,8 @@ public class PostService {
         existing.setContent(post.getContent());
         existing.setEventTime(post.getEventTime());
         existing.setLocation(post.getLocation());
-
+        existing.setType(post.getType());
+        
         return postRepository.save(existing);
     }
 
