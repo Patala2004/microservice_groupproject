@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { usePost, type CreatePostPayload, type Post } from "@/Context/PostContext.tsx";
 import { useUser } from "@/Context/UserContext.tsx";
-import { RotateCw, Edit, Tag, Calendar, ShoppingBag, Dumbbell } from "lucide-react";
+import { RotateCw, Edit, Tag, Calendar, ShoppingBag } from "lucide-react";
 import { PostType } from "@/Context/PostType";
 
 interface CreatePostDialogProps {

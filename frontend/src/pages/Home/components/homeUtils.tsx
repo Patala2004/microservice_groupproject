@@ -1,4 +1,4 @@
-import { ShoppingBag, Dumbbell, Calendar, Tag } from "lucide-react";
+import { ShoppingBag, Calendar, Tag } from "lucide-react";
 import {PostType} from "@/Context/PostType.tsx";
 
 export const getBadgeStyle = (type: PostType) => {
