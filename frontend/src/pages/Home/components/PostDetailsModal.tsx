@@ -4,7 +4,6 @@ import {
   Calendar,
   Tag,
   ShoppingBag,
-  Dumbbell,
   RotateCw,
   UserRoundPlus,
   UserRoundMinus,
@@ -15,7 +14,9 @@ import {
   ChevronUp,
   Pencil,
   Check,
-  X as XIcon
+  X as XIcon,
+  Clock,
+  CalendarDays
 } from "lucide-react";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -26,7 +27,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useTranslation } from "react-i18next";
-import { getTypeLabel } from "./homeUtils";
+import { getTypeLabel, getBadgeStyle } from "./homeUtils";
 import { usePost, type Post } from "@/Context/PostContext.tsx";
 import { PostType } from "@/Context/PostType";
 import { useState, useEffect, useCallback } from "react";
@@ -55,7 +56,7 @@ interface DisplayUser {
   phone_number?: string;
 }
 
-const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUpdated, 
+const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUpdated,
                             posterName, posterAvatarUrl,  canEditPost = false }: PostDetailsModalProps) => {
   const { t } = useTranslation();
   const { getUserById } = useUser();
@@ -73,6 +74,8 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
   const [editLocation, setEditLocation] = useState("");
+  const [editEventTime, setEditEventTime] = useState("");
+  const [editType, setEditType] = useState<PostType>(PostType.ACTIVITY);
   const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
@@ -82,6 +85,8 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
       setEditTitle(post.title);
       setEditContent(post.content);
       setEditLocation(post.location?.title || "");
+      setEditEventTime(post.eventTime ? new Date(post.eventTime).toISOString().slice(0, 16) : "");
+      setEditType(post.type);
       setIsEditing(false);
     }
   }, [post, isOpen]);
@@ -163,7 +168,9 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
     const result = await updatePost(post.id, {
       title: editTitle,
       content: editContent,
-      location: { title: editLocation }
+      type: editType,
+      location: { title: editLocation },
+      eventTime: editType === PostType.ACTIVITY && editEventTime ? new Date(editEventTime).toISOString() : (editType === PostType.ACTIVITY ? post.eventTime : undefined)
     });
     setIsUpdating(false);
     if (result) {
@@ -198,23 +205,29 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
     }
   };
 
-  const getHeaderGradient = () => {
-    switch (post.type) {
-      case PostType.ACTIVITY: return "bg-gradient-to-r from-orange-900 to-amber-900";
-      case PostType.SELL: return "bg-gradient-to-r from-red-900 to-rose-900";
-      case PostType.BUY: return "bg-gradient-to-r from-indigo-900 to-purple-900";
-      case PostType.SPORT: return "bg-gradient-to-r from-pink-900 to-fuchsia-900";
-      default: return "bg-slate-800";
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "";
+    return new Date(dateString).toLocaleString('fr-FR', {
+      day: '2-digit', month: '2-digit', year: 'numeric',
+      hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Shanghai'
+    });
+  };
+
+  const getHeaderGradient = (typeToUse: PostType) => {
+    switch (typeToUse) {
+      case PostType.ACTIVITY: return "from-orange-900 to-amber-900";
+      case PostType.SELL: return "from-red-900 to-rose-900";
+      case PostType.BUY: return "from-indigo-900 to-purple-900";
+      default: return "from-slate-800 to-slate-900";
     }
   };
 
-  const getHeaderIcon = () => {
-    switch (post.type) {
-      case PostType.ACTIVITY: return <Calendar className="w-4 h-4" />;
-      case PostType.SELL: return <Tag className="w-4 h-4" />;
-      case PostType.BUY: return <ShoppingBag className="w-4 h-4" />;
-      case PostType.SPORT: return <Dumbbell className="w-4 h-4" />;
-      default: return <Tag className="w-4 h-4" />;
+  const getHeaderIcon = (typeToUse: PostType, size: string = "w-4 h-4") => {
+    switch (typeToUse) {
+      case PostType.ACTIVITY: return <Calendar className={size} />;
+      case PostType.SELL: return <Tag className={size} />;
+      case PostType.BUY: return <ShoppingBag className={size} />;
+      default: return <Tag className={size} />;
     }
   };
 
@@ -228,18 +241,16 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
           </VisuallyHidden.Root>
           <ScrollArea className="flex-1">
             <div className="relative">
-              <div className={`h-32 w-full flex relative overflow-hidden items-end p-6 ${getHeaderGradient()} rounded-t-xl`}>
+              <div className={`h-32 w-full flex relative overflow-hidden items-end p-6 bg-gradient-to-r ${getHeaderGradient(isEditing ? editType : post.type)} rounded-t-xl transition-colors duration-500`}>
                 <div className="absolute top-0 right-0 p-4 opacity-20">
-                  {post.type === PostType.ACTIVITY && <Calendar className="w-32 h-32" />}
-                  {post.type === PostType.SELL && <Tag className="w-32 h-32" />}
-                  {post.type === PostType.BUY && <ShoppingBag className="w-32 h-32" />}
-                  {post.type === PostType.SPORT && <Dumbbell className="w-32 h-32" />}
+                  {getHeaderIcon(isEditing ? editType : post.type, "w-32 h-32")}
                 </div>
                 <div className="relative z-10 flex w-full justify-between items-end">
-                  <div className="flex flex-row items-center gap-2 bg-black/40 text-white px-4 py-1.5 text-sm rounded-full backdrop-blur-md">
-                    <span className="opacity-80">{getHeaderIcon()}</span>
-                    <span>{getTypeLabel(post.type, t)}</span>
-                  </div>
+                  {!isEditing ? (
+                      <div className="flex flex-row items-center gap-2 bg-black/40 text-white px-4 py-1.5 text-sm rounded-full backdrop-blur-md">
+                        {getTypeLabel(post.type, t)}
+                      </div>
+                  ) : <div />}
                   {canEditPost && isHost && !isEditing && (
                       <Button size="sm" variant="secondary" className="h-8 rounded-full bg-white/10 hover:bg-white/20 border-none text-white backdrop-blur-sm" onClick={() => setIsEditing(true)}>
                         <Pencil className="w-3.5 h-3.5 mr-1.5" /> {t('post_actions.edit')}
@@ -248,16 +259,42 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
                 </div>
               </div>
               <div className="p-8 pb-4">
-                <div className="flex items-center gap-4 mb-6">
-                  <Avatar className="h-14 w-14 border-4 border-slate-900 -mt-12 shadow-md">
-                    {posterAvatarUrl && <AvatarImage src={posterAvatarUrl} />}
-                    <AvatarFallback className="bg-slate-800 text-slate-200 font-bold text-lg">{initials}</AvatarFallback>
-                  </Avatar>
-                  <div className="-mt-2"><h4 className="text-lg font-bold text-white">{posterName}</h4></div>
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-4">
+                    <Avatar className="h-14 w-14 border-4 border-slate-900 -mt-12 shadow-md">
+                      {posterAvatarUrl && <AvatarImage src={posterAvatarUrl} />}
+                      <AvatarFallback className="bg-slate-800 text-slate-200 font-bold text-lg">{initials}</AvatarFallback>
+                    </Avatar>
+                    <div className="-mt-2"><h4 className="text-lg font-bold text-white">{posterName}</h4></div>
+                  </div>
+                  {!isEditing && post.creationTime && (
+                      <div className="text-sm flex items-center text-[10px] text-slate-500 font-medium italic -mt-2">
+                        <Clock className="size-3 mr-1 opacity-50" />
+                        {formatDate(post.creationTime)}
+                      </div>
+                  )}
                 </div>
 
                 {isEditing ? (
                     <div className="space-y-4 mb-6">
+                      <div className="space-y-2">
+                        <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('create_modal.label_category')}</label>
+                        <div className="flex flex-wrap gap-2 pt-1">
+                          {[PostType.ACTIVITY, PostType.SELL, PostType.BUY].map((type) => (
+                              <button
+                                  key={type}
+                                  type="button"
+                                  onClick={() => setEditType(type)}
+                                  className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium border transition-all
+                                ${editType === type
+                                      ? `${getBadgeStyle(type)} scale-105 border-white/20`
+                                      : 'bg-slate-800/50 text-slate-500 border-slate-700 hover:border-slate-600'}`}
+                              >
+                                {getTypeLabel(type, t)}
+                              </button>
+                          ))}
+                        </div>
+                      </div>
                       <div className="space-y-2">
                         <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('create_modal.label_title')}</label>
                         <Input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} className="bg-slate-800/50 border-slate-700 focus-visible:ring-orange-500" />
@@ -266,12 +303,20 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
                         <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('create_modal.label_location')}</label>
                         <Input value={editLocation} onChange={(e) => setEditLocation(e.target.value)} className="bg-slate-800/50 border-slate-700 focus-visible:ring-orange-500" />
                       </div>
+                      {editType === PostType.ACTIVITY && (
+                          <div className="space-y-2">
+                            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('create_modal.label_event_time')}</label>
+                            <Input type="datetime-local" value={editEventTime} onChange={(e) => setEditEventTime(e.target.value)} className="bg-slate-800/50 border-slate-700 focus-visible:ring-orange-500" />
+                          </div>
+                      )}
                       <div className="space-y-2">
                         <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('create_modal.label_content')}</label>
                         <Textarea value={editContent} onChange={(e) => setEditContent(e.target.value)} className="bg-slate-800/50 border-slate-700 min-h-[100px] focus-visible:ring-orange-500" />
                       </div>
-                      <div className="flex gap-2 justify-end">
-                        <Button size="sm" variant="ghost" onClick={() => setIsEditing(false)} disabled={isUpdating} className="text-slate-400 hover:text-white hover:bg-slate-800"><XIcon className="w-4 h-4 mr-1" /> {t('post_actions.cancel')}</Button>
+                      <div className="flex gap-2 justify-end pt-2">
+                        <Button size="sm" variant="ghost" onClick={() => setIsEditing(false)} disabled={isUpdating} className="text-slate-400 hover:text-white hover:bg-slate-800">
+                          <XIcon className="w-4 h-4 mr-1" /> {t('post_actions.cancel')}
+                        </Button>
                         <Button size="sm" className="bg-orange-600 hover:bg-orange-500 text-white" onClick={handleUpdate} disabled={isUpdating}>
                           {isUpdating ? <RotateCw className="w-4 h-4 animate-spin mr-1" /> : <Check className="w-4 h-4 mr-1" />} {t('post_actions.save')}
                         </Button>
@@ -286,12 +331,17 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
                               <MapPin className="w-4 h-4 mr-1"/> {locationTitle}
                             </div>
                         )}
+                        {post.eventTime && (
+                            <div className="inline-flex items-center text-sm font-medium text-orange-400 bg-orange-500/10 px-3 py-1.5 rounded-lg border border-orange-500/20">
+                              <CalendarDays className="w-4 h-4 mr-1"/> {formatDate(post.eventTime)}
+                            </div>
+                        )}
                       </div>
                       <div className="prose prose-invert max-w-none text-slate-300 mb-8"><p>{post.content}</p></div>
                     </>
                 )}
 
-                {isActivity && (
+                {isActivity && !isEditing && (
                     <div className="bg-slate-950/50 rounded-2xl p-6 border border-slate-800 mb-6">
                       <div className="flex justify-between items-center mb-4">
                         <h4 className="font-semibold text-slate-200 flex items-center gap-2">

@@ -15,6 +15,8 @@ export interface Post {
     type: PostType;
     poster: number;
     location?: Location;
+    creationTime: string;
+    eventTime?: string;
     imageUrl?: string;
     joinedUsers: number[];
 }
@@ -25,6 +27,7 @@ export interface CreatePostPayload {
     type: PostType;
     locationTitle: string;
     poster: number;
+    eventTime?: string;
     imageFile?: File | null;
 }
 
@@ -33,6 +36,7 @@ export interface UpdatePostPayload {
     content?: string;
     type?: PostType;
     location?: Location;
+    eventTime?: string;
 }
 
 interface PostContextType {
@@ -138,15 +142,17 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
     }, []);
 
     const createPost = useCallback(async ({ imageFile, ...postData }: CreatePostPayload): Promise<Post | null> => {
-        const formData = new FormData();
-        formData.append('title', postData.title);
-        formData.append('content', postData.content);
-        formData.append('type', postData.type);
-        formData.append('locationTitle', postData.locationTitle);
-        formData.append('poster', postData.poster.toString());
-        if (imageFile) formData.append('image', imageFile);
         try {
-            const response = await postApi.post("/post", formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+            const response = await postApi.post("/post", {
+                title: postData.title,
+                content: postData.content,
+                type: postData.type,
+                location: { title: postData.locationTitle },
+                poster: postData.poster,
+                eventTime: postData.eventTime
+            }, {
+                headers: { 'Content-Type': 'application/json' }
+            });
             if (response.status === 201) {
                 setPosts(prev => [response.data, ...prev]);
                 return response.data;
@@ -160,7 +166,16 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
 
     const updatePost = useCallback(async (id: number, data: UpdatePostPayload): Promise<Post | null> => {
         try {
-            const response = await postApi.put(`/post/${id}`, data);
+            console.log(data);
+            const response = await postApi.put(`/post/${id}`, {
+                title: data.title,
+                content: data.content,
+                type: data.type,
+                location: data.location,
+                eventTime: data.eventTime
+            }, {
+                headers: { 'Content-Type': 'application/json' }
+            });
             if (response.status === 200) {
                 setPosts(prev => prev.map(p => p.id === id ? response.data : p));
                 return response.data;
@@ -201,23 +216,7 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
     }, []);
 
     return (
-        <PostContext.Provider
-            value={{
-                posts,
-                setPosts,
-                createPost,
-                updatePost,
-                deletePost,
-                getAllPosts,
-                getPostById,
-                getPostsByUserId,
-                getPostsByType,
-                getRecentPosts,
-                getPostRecommendations,
-                joinPost,
-                leavePost
-            }}
-        >
+        <PostContext.Provider value={{ posts, setPosts, createPost, updatePost, deletePost, getAllPosts, getPostById, getPostsByUserId, getPostsByType, getRecentPosts, getPostRecommendations, joinPost, leavePost }}>
             {children}
         </PostContext.Provider>
     );

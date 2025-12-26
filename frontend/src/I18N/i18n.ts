@@ -163,7 +163,7 @@ const resources = {
         placeholder_content: "Provide details...",
         placeholder_price: "Free / $20",
         placeholder_location: "e.g. Library",
-
+        label_event_time: "Event Time",
       },
       profile: {
         title: "My Profile",
@@ -355,6 +355,7 @@ const resources = {
         placeholder_content: "提供详细信息...",
         placeholder_price: "免费 / 20元",
         placeholder_location: "例如：图书馆",
+        label_event_time: "活动时间",
       },
       profile: {
         title: "我的个人资料",

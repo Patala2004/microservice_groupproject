@@ -39,12 +39,14 @@ const HomePage = () => {
         setPostsToDisplay(recent);
       }
 
+      /**
       if (user?.id) {
         const recs = await getPostRecommendations(user.id);
         if (recs) {
           setRecommendedPosts(recs);
         }
       }
+          **/
 
       setLoading(false);
     };
@@ -186,6 +188,7 @@ const HomePage = () => {
                       post={post}
                       user={user}
                       onDelete={handleConfirmDelete}
+                      canEditPost={user?.id === post?.poster}
                   />
               ))}
             </div>
