@@ -95,7 +95,7 @@ public class PostController {
     @PutMapping("/{id}")
     public ResponseEntity<PostGlobalDTO> editPostInfo(
             @PathVariable Long id,
-            @RequestBody PostGlobalDTO post) {
+            @Valid @RequestBody PostGlobalDTO post) {
 
         Post saved = service.updatePost(id, postMapper.toEntity(post));
         return ResponseEntity.ok(postMapper.toDTO(saved));

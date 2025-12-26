@@ -6,7 +6,6 @@ import microservices.groupproject.post_api.repository.PostRepository;
 import microservices.groupproject.post_api.specification.PostSpecification;
 import microservices.groupproject.post_api.exception.PostNotFoundException;
 
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
