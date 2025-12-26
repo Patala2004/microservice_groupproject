@@ -22,12 +22,22 @@ const SignupForm = () => {
     const [visibleConfirmPassword, setVisibleConfirmPassword] = useState<boolean>(false);
     const [phone, setPhone] = useState<string>('');
     const [weXinId, setWeXinId] = useState<string>('');
-    const [campusId, setCampusId] = useState<string>(''); // On stocke l'ID en string pour le Select
+    const [campusId, setCampusId] = useState<string>('');
     const [preferedLanguage, setPreferedLanguage] = useState<LanguageEnum>(LanguageEnum.EN);
+    const [selectedTopics, setSelectedTopics] = useState<number[]>([]);
 
     const navigate = useNavigate();
     const { t, i18n } = useTranslation();
     const { campuses } = useUser();
+
+    const topics = [
+        { id: 1, label: t('register.topics.sports') },
+        { id: 2, label: t('register.topics.music') },
+        { id: 3, label: t('register.topics.arts') },
+        { id: 4, label: t('register.topics.crafting') },
+        { id: 5, label: t('register.topics.reading') },
+        { id: 6, label: t('register.topics.studying') },
+    ];
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^[0-9]{11}$/;
@@ -39,9 +49,20 @@ const SignupForm = () => {
         }
     }, [campuses]);
 
+    const toggleTopic = (id: number) => {
+        setSelectedTopics(prev =>
+            prev.includes(id) ? prev.filter(t => t !== id) : [...prev, id]
+        );
+    };
+
     const handleSignup = async () => {
         if (!username || !name || !email || !password || !confirmPassword || !phone || !weXinId || !campusId) {
             toast.error(t('errors.all_fields_required'));
+            return;
+        }
+
+        if (selectedTopics.length === 0) {
+            toast.error(t('register.interested_topics'));
             return;
         }
 
@@ -74,11 +95,10 @@ const SignupForm = () => {
                 phone_number: phone,
                 weixinId: weXinId,
                 campus: parseInt(campusId),
-                preferedLanguage
+                preferedLanguage,
+                interested_topics: selectedTopics
             }, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: { 'Content-Type': 'application/json' }
             });
 
             if (response.status === 201) {
@@ -106,10 +126,11 @@ const SignupForm = () => {
         setWeXinId('');
         setCampusId('');
         setPreferedLanguage(LanguageEnum.EN);
+        setSelectedTopics([]);
     }
 
     return (
-        <div className="w-full flex justify-center">
+        <div className="w-full flex justify-center py-10">
             <Card variant="form-theme">
                 <div className="w-full flex flex-col items-center mb-4">
                     <span className="text-4xl font-bold tracking-tight bg-gradient-to-r 
@@ -121,72 +142,76 @@ const SignupForm = () => {
                     </p>
                 </div>
 
-                <div className="w-full space-y-4 mt-2 mb-4">
+                <div className="w-full space-y-4 mt-2 mb-6">
                     <InputTextField label={t('register.name')} setter={setName} valueToDisplay={t('register.placeholder_name')} />
-                    <InputTextField label={t('register.username')} setter={setUsername} valueToDisplay={t('register.placeholder_username')} />
-                    <InputTextField label={t('register.email')} setter={setEmail} valueToDisplay={t('register.placeholder_email')} />
-                    <InputTextField
-                        label={t('register.password')}
-                        setter={setPassword}
-                        password={true}
-                        showPassword={visiblePassword}
-                        valueToDisplay={t('register.placeholder_password')}
-                        toggleShowPassword={() => setVisiblePassword((prev) => !prev)}
-                    />
-                    <InputTextField
-                        label={t('register.confirm_password')}
-                        setter={setConfirmPassword}
-                        password={true}
-                        showPassword={visibleConfirmPassword}
-                        valueToDisplay={t('register.placeholder_confirm_password')}
-                        toggleShowPassword={() => setVisibleConfirmPassword((prev) => !prev)}
-                    />
-                    <InputTextField label={t('register.phone_number')} setter={setPhone} valueToDisplay={t('register.placeholder_phone')} />
-                    <InputTextField label={t('register.wechat_id')} setter={setWeXinId} valueToDisplay={t('register.placeholder_wechat_id')} />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <InputTextField label={t('register.username')} setter={setUsername} valueToDisplay={t('register.placeholder_username')} />
+                        <InputTextField label={t('register.email')} setter={setEmail} valueToDisplay={t('register.placeholder_email')} />
+                    </div>
 
-                    <div className="flex flex-col gap-1.5 mb-4">
-                        <Label
-                            htmlFor="campus-select"
-                            className="text-base font-medium tracking-wide text-white dark:text-neutral-100"
-                        >
-                            {t("create_modal.label_location")}
-                        </Label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <InputTextField
+                            label={t('register.password')}
+                            setter={setPassword}
+                            password={true}
+                            showPassword={visiblePassword}
+                            valueToDisplay={t('register.placeholder_password')}
+                            toggleShowPassword={() => setVisiblePassword((prev) => !prev)}
+                        />
+                        <InputTextField
+                            label={t('register.confirm_password')}
+                            setter={setConfirmPassword}
+                            password={true}
+                            showPassword={visibleConfirmPassword}
+                            valueToDisplay={t('register.placeholder_confirm_password')}
+                            toggleShowPassword={() => setVisibleConfirmPassword((prev) => !prev)}
+                        />
+                    </div>
 
-                        <Select
-                            onValueChange={setCampusId}
-                            value={campusId}
-                >
-                            <SelectTrigger
-                                id="campus-select"
-                                className="
-                                        w-full h-10
-                                        rounded-xl
-                                        border border-neutral-300/80 dark:border-neutral-700
-                                        bg-white/80 dark:bg-neutral-900/70
-                                        text-sm text-neutral-900 dark:text-neutral-100
-                                        shadow-sm
-                                        focus:outline-none
-                                        focus:ring-2
-                                        focus:ring-[#8B0000]
-                                        focus:border-[#8B0000]
-                                        focus:shadow-md
-                                        transition-all
-                                    "
-                            >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <InputTextField label={t('register.phone_number')} setter={setPhone} valueToDisplay={t('register.placeholder_phone')} />
+                        <InputTextField label={t('register.wechat_id')} setter={setWeXinId} valueToDisplay={t('register.placeholder_wechat_id')} />
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                        <Label className="text-base font-medium text-white">{t("create_modal.label_location")}</Label>
+                        <Select onValueChange={setCampusId} value={campusId}>
+                            <SelectTrigger className="w-full h-10 rounded-xl border border-neutral-700 bg-neutral-900/70 text-white transition-all">
                                 <SelectValue placeholder={t("create_modal.placeholder_location")} />
                             </SelectTrigger>
-                            <SelectContent className="bg-white dark:bg-neutral-900 border-neutral-300 dark:border-neutral-700 rounded-xl">
+                            <SelectContent className="bg-neutral-900 border-neutral-700 rounded-xl text-white">
                                 {campuses?.map((c) => (
-                                    <SelectItem
-                                        key={c.id}
-                                        value={c.id.toString()}
-                                        className="focus:bg-neutral-100 dark:focus:bg-neutral-800 cursor-pointer"
-                                    >
+                                    <SelectItem key={c.id} value={c.id.toString()} className="cursor-pointer">
                                         {i18n.language === 'cn' ? c.cn_name : c.en_name}
                                     </SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>
+                    </div>
+                    <div className="flex flex-col gap-3 mt-4">
+                        <Label className="text-base font-medium text-white">
+                            {t('register.interested_topics')}
+                        </Label>
+                        <div className="flex flex-wrap gap-2">
+                            {topics.map((topic) => {
+                                const isSelected = selectedTopics.includes(topic.id);
+                                return (
+                                    <div
+                                        key={topic.id}
+                                        onClick={() => toggleTopic(topic.id)}
+                                        className={`
+                                            px-4 py-2 rounded-full text-sm font-semibold cursor-pointer select-none transition-all duration-200 border
+                                            ${isSelected
+                                            ? "bg-gradient-to-r from-rose-600 to-orange-500 text-white border-transparent shadow-lg scale-105"
+                                            : "bg-neutral-800/50 text-neutral-400 border-neutral-700 hover:border-neutral-500 hover:text-neutral-200"
+                                        }
+                                        `}
+                                    >
+                                        {topic.label}
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
                 </div>
 

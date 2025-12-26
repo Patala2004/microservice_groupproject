@@ -57,6 +57,16 @@ const resources = {
         submit_btn: "Create the account",
         login_link_prefix: "Already have an account?",
         login_link: "Log in here.",
+
+        interested_topics: "Interests (select at least 1)",
+        topics: {
+          sports: "Sports",
+          music: "Music",
+          arts: "Arts",
+          crafting: "Crafting",
+          reading: "Reading",
+          studying: "Studying"
+        }
       },
       login: {
         title: "Connection",
@@ -252,6 +262,15 @@ const resources = {
         submit_btn: "创建账户",
         login_link_prefix: "已有账户?",
         login_link: "在此登录。",
+        interested_topics: "兴趣爱好 (至少选择1个)",
+        topics: {
+          sports: "运动",
+          music: "音乐",
+          arts: "艺术",
+          crafting: "手工",
+          reading: "阅读",
+          studying: "学习"
+        }
       },
       login: {
         title: "登录",
