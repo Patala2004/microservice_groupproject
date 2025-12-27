@@ -1,7 +1,6 @@
 package group5.ms.tongji.recommendation.repository.posttag;
 
 import group5.ms.tongji.recommendation.dto.RecommendableItem;
-import group5.ms.tongji.recommendation.dto.UserFrequentTag;
 import group5.ms.tongji.recommendation.model.posttag.PostTag;
 import group5.ms.tongji.recommendation.model.posttag.PostTagId;
 import org.springframework.data.jpa.repository.JpaRepository;

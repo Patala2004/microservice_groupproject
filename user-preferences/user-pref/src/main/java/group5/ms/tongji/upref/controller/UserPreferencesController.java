@@ -2,6 +2,7 @@ package group5.ms.tongji.upref.controller;
 
 import group5.ms.tongji.upref.domain.InteractionTypes;
 import group5.ms.tongji.upref.dto.ErrorResponse;
+import group5.ms.tongji.upref.dto.FrequentTag;
 import group5.ms.tongji.upref.dto.UserInteraction;
 import group5.ms.tongji.upref.dto.UserRegisterTags;
 import group5.ms.tongji.upref.exceptions.InteractionTypeException;
@@ -30,6 +31,7 @@ import java.util.List;
 public class UserPreferencesController {
 
     private UserPreferencesService userPreferencesService;
+    
 
 
     @RabbitListener(queues = "inter.queue")
@@ -45,6 +47,27 @@ public class UserPreferencesController {
         }
 
         userPreferencesService.updateRecommendations(userId, itemId, timestamp, interactionType);
+    }
+
+    @Operation(summary = "Get user frequent tags")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Tags found",
+                    content = @Content(
+                        mediaType = "application/json",
+                        array = @ArraySchema(schema = @Schema(implementation = FrequentTag.class))
+            )),
+            @ApiResponse(responseCode = "404", description = "User not found",
+                    content = @Content(
+                        mediaType = "application/json",
+                        schema = @Schema(implementation = ErrorResponse.class)
+            ))
+    })
+    @GetMapping("/{userId}")
+    public List<FrequentTag> getUserFrequentTags(@PathVariable int userId) {
+        List<FrequentTag> frequents =  userPreferencesService.getUserFrequentTags(userId);
+        if(frequents.isEmpty())
+            throw new NotFoundException("User", userId);
+        return frequents;
     }
 
     @Operation(summary = "Establish first user frequent tags after registering")

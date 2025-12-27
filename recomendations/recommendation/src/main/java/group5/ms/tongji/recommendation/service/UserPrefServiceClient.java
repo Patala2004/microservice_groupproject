@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
 
-import group5.ms.tongji.recommendation.dto.UserFrequentTag;
+import group5.ms.tongji.recommendation.dto.FrequentTag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
@@ -17,7 +17,7 @@ public class UserPrefServiceClient {
 
     WebClient client;
 
-    public UserFrequentTag[] getUserFrequentTags(int id) {
+    public FrequentTag[] getUserFrequentTags(int id) {
         return client.get()
                 .uri("/upref/{id}", id
                 )
@@ -32,7 +32,7 @@ public class UserPrefServiceClient {
                             )
                         ))
                 )
-                .bodyToMono(UserFrequentTag[].class).block();
+                .bodyToMono(FrequentTag[].class).block();
     }
 
 

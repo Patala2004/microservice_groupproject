@@ -2,6 +2,7 @@ package group5.ms.tongji.upref.service;
 
 import group5.ms.tongji.upref.domain.InteractionTypes;
 import group5.ms.tongji.upref.domain.InteractionTypesWeights;
+import group5.ms.tongji.upref.dto.FrequentTag;
 import group5.ms.tongji.upref.exceptions.AlreadyExistsException;
 import group5.ms.tongji.upref.exceptions.NotFoundException;
 import group5.ms.tongji.upref.model.primary.UserDecayDate;
@@ -81,8 +82,13 @@ public class UserPreferencesService {
         return tagWeight;
     }
 
-    public List<UserFrequentTag> getUserFrequentTags(int userId) {
-        return userTagsRepository.findByUserTag_UserId(userId);
+    public List<FrequentTag> getUserFrequentTags(int userId) {
+        List<UserFrequentTag> userFrequentTags =  userTagsRepository.findByUserTag_UserId(userId);
+        List<FrequentTag> tags = new ArrayList<>();
+        for(UserFrequentTag u : userFrequentTags){
+            tags.add(new FrequentTag(u.getUserTag().getTagId(), u.getWeight()));
+        }
+        return tags;
     }
 
 
