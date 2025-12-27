@@ -19,7 +19,7 @@ type SortOption = "recent" | "popular" | "recommended";
 const HomePage = () => {
   const { t } = useTranslation();
   const { user } = useUser();
-  const { getRecentPosts, getPostRecommendations, searchPosts, deletePost } = usePost();
+  const { getRecentPosts, getPostRecommendations, searchPosts, deletePost, getPostById } = usePost();
 
   const [initialLoading, setInitialLoading] = useState(true);
   const [postsLoading, setPostsLoading] = useState(false);
@@ -49,7 +49,7 @@ const HomePage = () => {
     const fetchRecommendations = async () => {
       if (sortView === "recommended" && user?.id) {
         if (recommendedPosts.length === 0) setPostsLoading(true);
-        const recs = await getPostRecommendations(user.id);
+        const recs = await getPostRecommendations(parseInt(user.id));
         if (recs) setRecommendedPosts(recs);
         setPostsLoading(false);
       }
@@ -59,13 +59,21 @@ const HomePage = () => {
 
   useEffect(() => {
     const handler = setTimeout(async () => {
-      setIsSearching(true);
-      const results = await searchPosts(searchQuery, filterType);
-      if (results) setSearchResults(results);
-      setIsSearching(false);
+      if (user?.id) {
+        setIsSearching(true);
+        const results = await searchPosts(searchQuery, user.id, filterType);
+        if (results) setSearchResults(results);
+        setIsSearching(false);
+      }
     }, 400);
     return () => clearTimeout(handler);
-  }, [searchQuery, filterType, searchPosts]);
+  }, [searchQuery, filterType, searchPosts, user?.id]);
+
+  const handlePostClick = async (postId: number) => {
+    if (user?.id) {
+      await getPostById(postId, user.id);
+    }
+  };
 
   const handlePostCreated = (newPost: Post) => {
     setPostsToDisplay((prev) => [newPost, ...prev]);
@@ -189,14 +197,15 @@ const HomePage = () => {
                   </div>
               ) : (
                   processedPosts.map((post) => (
-                      <PostCard
-                          key={`${sortView}-${post.id}`}
-                          post={post}
-                          user={user}
-                          onDelete={handleConfirmDelete}
-                          canEditPost={user?.id === post?.poster?.toString()}
-                          onPostUpdated={handlePostUpdated}
-                      />
+                      <div key={`${sortView}-${post.id}`} onClick={() => handlePostClick(post.id)}>
+                        <PostCard
+                            post={post}
+                            user={user}
+                            onDelete={handleConfirmDelete}
+                            canEditPost={user?.id === post?.poster?.toString()}
+                            onPostUpdated={handlePostUpdated}
+                        />
+                      </div>
                   ))
               )}
             </div>
