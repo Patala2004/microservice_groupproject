@@ -79,6 +79,11 @@ services:
       file: broker/docker-compose.yml
       service: interaction-brk
   
+  notif:
+    extends:
+      file: notif/docker-compose.yml
+      service: notif
+  
 
 
   frontend:

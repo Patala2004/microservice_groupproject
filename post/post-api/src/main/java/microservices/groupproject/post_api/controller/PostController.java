@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import microservices.groupproject.post_api.StorageService.StorageService;
 import microservices.groupproject.post_api.model.*;
 import microservices.groupproject.post_api.model.DTO.PostGlobalDTO;
+import microservices.groupproject.post_api.service.ExternalNotificationServiceClient;
 import microservices.groupproject.post_api.service.ExternalRecomendationServiceClient;
 import microservices.groupproject.post_api.service.PostService;
 
@@ -41,12 +42,15 @@ public class PostController {
 
     // External services
     private final ExternalRecomendationServiceClient externalRecomClient;
+    private final ExternalNotificationServiceClient externalNotifClient;
 
     public PostController(PostService service, StorageService documentStorage, 
-            ExternalRecomendationServiceClient externalRecomClient, PostMapper postMapper) {
+            ExternalRecomendationServiceClient externalRecomClient,
+            ExternalNotificationServiceClient externalNotifClient, PostMapper postMapper) {
         this.service = service;
         this.documentStorage = documentStorage;
         this.externalRecomClient = externalRecomClient;
+        this.externalNotifClient = externalNotifClient;
         this.postMapper = postMapper;
     }
 
@@ -200,6 +204,16 @@ public class PostController {
         boolean joined = service.joinEvent(id, userId);
         
         String message = joined? "Succesfully joined the event" : "User is already signed up for the event";
+
+        // send notification to poster
+        Post event = service.getPostById(id);
+        Long poster = event.getPoster();
+        final String NOTIF_MESSAGE = "A new user has joined your event \"" + event.getTitle() + "\". Enter the App to see who it is!"; 
+        externalNotifClient.sendWechatNotification(poster, NOTIF_MESSAGE)
+        .subscribe(
+            null,
+            ex -> System.out.println("Error sending notification:\n" + ex.getMessage())
+        );
 
         return ResponseEntity.ok(message);
     }
