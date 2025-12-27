@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+
+  evcollapp:
+    build:
+      context: .
+      args:
+        - DOCKER_BUILD_FLAGS=--progress=plain
+    container_name: evcoll_app
+    networks:
+      - ms_network
+    ports:
+      - "8089:8080"
+
+
+volumes:
+  evcolldata:
+
+networks:
+  ms_network:

@@ -28,7 +28,8 @@ const ModernInput = ({
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder={placeholder}
-                className="bg-black/20 border-slate-800 focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 text-slate-100 pl-11 py-6 rounded-xl transition-all duration-300 placeholder:text-slate-600"
+                className="bg-black/20 border-slate-800 focus:border-orange-500/50 focus:ring-4 
+                focus:ring-orange-500/10 text-slate-100 pl-11 py-6 rounded-xl transition-all duration-300 placeholder:text-slate-600"
             />
             {icon && (
                 <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-white transition-colors duration-300">

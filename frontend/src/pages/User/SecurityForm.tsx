@@ -98,8 +98,8 @@ const SecurityForm = ({
                 <div className="flex justify-end pt-4">
                     <Button
                         onClick={handleUpdatePassword}
-                        variant="destructive"
-                        className="bg-red-600 hover:bg-red-700 shadow-lg shadow-red-900/20 px-8 py-6 rounded-xl font-bold w-full md:w-auto transition-all hover:scale-[1.02]"
+                        variant="gradient-fire"
+                        size="lg"
                     >
                         {t("profile.update_password")}
                     </Button>

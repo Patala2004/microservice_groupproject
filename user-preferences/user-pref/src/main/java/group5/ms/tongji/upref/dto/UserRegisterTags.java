@@ -1,0 +1,18 @@
+package group5.ms.tongji.upref.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.Date;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class UserRegisterTags {
+    int userId;
+    Date timestamp;
+    int[] tags;
+}

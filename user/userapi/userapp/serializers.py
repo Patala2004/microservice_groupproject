@@ -3,20 +3,45 @@ from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 
+from .services import create_user_and_register_in_upref
+import requests
+
+from .exceptions import ExternalServiceUnavailable, ExternalServiceError
+
 class UserModelSerializer(serializers.ModelSerializer):
 
     password = serializers.CharField(min_length=8, max_length=64, write_only=True, required=False)
+    interested_topics = serializers.ListField(child=serializers.IntegerField(), write_only=True, required=False)
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'password', 'name', 'weixinId', 'email', 'phone_number', 'campus', 'preferedLanguage']
+        fields = ['id', 'username', 'password', 'name', 'weixinId', 'email', 'phone_number', 'campus', 
+                  'preferedLanguage', 'interested_topics']
     
     def create(self, validated_data):
         password = validated_data.pop('password', None)
+        topics:serializers.ListField = validated_data.pop('interested_topics', None)
+        if not topics:
+            raise serializers.ValidationError({"interested_topics": "This field is required when creating a user."})
+        
         user = User(**validated_data)
+        
         if password:
             user.set_password(password)   # hash the password
-        user.save()
+            
+        # user.save()
+        try:
+            create_user_and_register_in_upref(user, topics)
+        except requests.HTTPError as e:
+            if 500  <= e.response.status_code < 600: # error 5xx
+                raise ExternalServiceUnavailable(f"Upref service not available. Error: {e}")
+            if 400 <= e.response.status_code < 500:
+                raise serializers.ValidationError(f"Upref client error {e.response.status_code}: {e}")
+            else:
+                raise ExternalServiceUnavailable(f"Unexpected error: {e}", )
+        except requests.RequestException as e:
+            raise ExternalServiceUnavailable(f"Upref service request failed: {e}")
+        
         return user
 
     def update(self, instance, validated_data):

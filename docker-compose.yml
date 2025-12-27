@@ -2,7 +2,7 @@ services:
   gateway:
     extends:
       file: api_gateway/docker-compose.yml
-      service: postapp
+      service: gateway
 
   userapi:
     extends:
@@ -33,6 +33,58 @@ services:
     extends:
       file: post/docker-compose.yml
       service: post-nginx
+  
+  uprefapp:
+    extends:
+      file: user-preferences/docker-compose.yml
+      service: uprefapp
+
+  upref_pg:
+    extends:
+      file: user-preferences/docker-compose.yml
+      service: upref_pg
+
+  recapp:
+    extends:
+      file: recomendations/docker-compose.yml
+      service: recapp
+  
+  rec_pg:
+    extends:
+      file: recomendations/docker-compose.yml
+      service: rec_pg
+
+  posttag_pg:
+    extends: 
+      file: common-db/docker-compose.yml
+      service: posttag_pg
+
+  evcollapp:
+    extends:
+      file: event-collector/docker-compose.yml
+      service: evcollapp
+
+  scheudleapp:
+    extends: 
+      file: schedule/docker-compose.yml
+      service: scheduleapp
+
+  schedule_pg:
+    extends: 
+      file: schedule/docker-compose.yml
+      service: schedule_pg
+
+  interaction-brk:
+    extends:
+      file: broker/docker-compose.yml
+      service: interaction-brk
+  
+  notif:
+    extends:
+      file: notif/docker-compose.yml
+      service: notif
+  
+
 
   frontend:
     extends:
@@ -40,14 +92,31 @@ services:
       service: frontend
     networks:
       - userapp_network
+      - postapp_network
+      - ms_network
+    environment:
+      - VITE_API_URL=http://localhost:8000/api/v1
 
 networks:
   postapp_network:
     driver: bridge
   userapp_network:
     driver: bridge
+  ms_network:
+    driver: bridge
+  recdb_network:
+    driver: bridge
+  uprefdb_network:
+    driver: bridge
+  scheduledb_network:
+    driver: bridge
 
 volumes:
   pgdata:
   staticfiles:
   postpgdata:
+  uprefpgdata:
+  recpgdata:
+  schedulepgdata:
+  posttagpgdata:
+  rabbitmq_data:

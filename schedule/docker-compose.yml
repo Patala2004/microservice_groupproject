@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  schedule_pg:
+    image: postgres:15
+    container_name: schedule_db
+    environment:
+      POSTGRES_DB: scheduledb
+      POSTGRES_USER: scheduleuser
+      POSTGRES_PASSWORD: password
+    volumes:
+      - schedulepgdata:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - scheduledb_network
+
+  scheduleapp:
+    build:
+      context: ./schedule
+      args:
+        - DOCKER_BUILD_FLAGS=--progress=plain
+    container_name: schedule_app
+    depends_on:
+      - schedule_pg
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://schedule_pg:5432/scheduledb
+      SPRING_DATASOURCE_USERNAME: scheduleuser
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    networks:
+      - scheduledb_network
+      - ms_network
+    ports:
+      - "8083:8080"
+
+
+volumes:
+  schedulepgdata:
+
+networks:
+  scheduledb_network:
+    driver: bridge
+  ms_network:

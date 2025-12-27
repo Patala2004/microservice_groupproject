@@ -2,21 +2,27 @@ import {createContext, useContext, useEffect, useState} from "react";
 import {LanguageEnum, type User} from "@/Context/userTypes.tsx";
 import i18n from "i18next";
 import axios, {type AxiosResponse} from "axios";
-import api from "@/lib/api/axios.ts";
+import userApi from "@/lib/api/userApi.ts";
 
+export interface Campus {
+    id: number;
+    en_name: string;
+    cn_name: string;
+}
 
 interface UserContextType {
     user: User | null;
     isLoggedIn: boolean;
     language: LanguageEnum;
+    campuses: Campus[];
     setLanguage: (lang: LanguageEnum) => void;
     login: (userData: User, token: string, refreshToken: string) => void;
     logout: () => void;
-    authFetch: (
-        input: string
-    ) => Promise<AxiosResponse | null>;
+    authFetch: (input: string) => Promise<AxiosResponse | null>;
     checkAuth: () => Promise<boolean>;
     updateUser: (updatedData: Partial<User>) => Promise<boolean>;
+    getUserById: (userId: string) => Promise<User | null>;
+    getAllCampuses: () => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -36,33 +42,29 @@ const getInitialLanguage = (): LanguageEnum => {
     if (storedUser) {
         try {
             const parsed = JSON.parse(storedUser) as User;
-            if (parsed.preferedLanguage) {
-                return parsed.preferedLanguage;
-            }
-        } catch {
-        }
+            if (parsed.preferedLanguage) return parsed.preferedLanguage;
+        } catch {}
     }
-
     const storedLang = localStorage.getItem("language") as LanguageEnum | null;
-    if (storedLang === LanguageEnum.EN || storedLang === LanguageEnum.CN) {
-        return storedLang;
-    }
-
+    if (storedLang === LanguageEnum.EN || storedLang === LanguageEnum.CN) return storedLang;
     return LanguageEnum.EN;
 };
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(() => getInitialUser());
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => !!getInitialUser());
-    const [language, setLanguageState] = useState<LanguageEnum>(
-        () => getInitialLanguage()
-    );
+    const [language, setLanguageState] = useState<LanguageEnum>(() => getInitialLanguage());
+    const [campuses, setCampuses] = useState<Campus[]>([]);
 
     useEffect(() => {
         if (i18n.language !== language) {
             i18n.changeLanguage(language);
         }
     }, [language]);
+
+    useEffect(() => {
+        getAllCampuses();
+    }, []);
 
     const login = (userData: User, token: string, refreshToken: string) => {
         localStorage.setItem("token", token);
@@ -86,9 +88,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const setLanguage = (lang: LanguageEnum) => {
         setLanguageState(lang);
         localStorage.setItem("language", lang);
-
         i18n.changeLanguage(lang);
-
         if (user) {
             const updatedUser: User = { ...user, preferedLanguage: lang };
             setUser(updatedUser);
@@ -96,49 +96,50 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
-    const authFetch = async (
-        input: string
-    ): Promise<AxiosResponse | null> => {
+    const authFetch = async (input: string): Promise<AxiosResponse | null> => {
         try {
-            return await api.get(input, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
+            return await userApi.get(input, {
+                headers: { "Content-Type": "application/json" },
             });
         } catch (error) {
-            if (axios.isAxiosError(error) && error.response) {
-                return error.response;
-            }
+            if (axios.isAxiosError(error) && error.response) return error.response;
             return null;
         }
     };
 
-    const updateUser = async (updatedData: Partial<User>): Promise<boolean> => {
-        if (!user || !user.id) {
-            console.error("Cannot update user: User ID missing.");
-            return false;
-        }
-        
-        const newUserData = { ...updatedData, username : user.username };
-
-        const token = localStorage.getItem("token");
-        const url = `user/api/users/${user.id}/`;
-
+    const getUserById = async (userId: string): Promise<User | null> => {
         try {
-            const response = await api.put(url, newUserData, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
+            const response = await userApi.get(`user/users/${userId}/`);
+            if (response.status === 200) return response.data as User;
+            return null;
+        } catch (error) {
+            console.error(`Error fetching user ${userId}:`, error);
+            return null;
+        }
+    };
 
+    const getAllCampuses = async (): Promise<void> => {
+        try {
+            const response = await userApi.get(`user/campus/`);
             if (response.status === 200) {
-                const updatedUser = response.data;
+                setCampuses(response.data);
+            }
+        } catch (error) {
+            console.error("Error fetching campuses:", error);
+        }
+    };
 
-                login(
-                    updatedUser as User,
-                    token || '',
-                    localStorage.getItem("refreshToken") || ''
-                );
+    const updateUser = async (updatedData: Partial<User>): Promise<boolean> => {
+        if (!user || !user.id) return false;
+        const newUserData = { ...updatedData, username : user.username };
+        const token = localStorage.getItem("token");
+        const url = `user/users/${user.id}/`;
+        try {
+            const response = await userApi.put(url, newUserData, {
+                headers: { 'Content-Type': 'application/json' },
+            });
+            if (response.status === 200) {
+                login(response.data as User, token || '', localStorage.getItem("refreshToken") || '');
                 return true;
             }
             return false;
@@ -153,24 +154,17 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
             if (isLoggedIn) logout();
             return false;
         }
-
         try {
-            const response = await authFetch("user/api/users/auth/");
-
+            const response = await authFetch("user/users/auth/");
             if (response && response.status === 200) {
                 let userData = response.data;
-
-                if (userData && userData.user && userData.user.id) {
-                    userData = userData.user;
-                }
-
-                if (userData && userData.id) {
-                    if (!user || user.id !== userData.id) {
-                        login(
-                            userData as User,
+                if (userData?.user?.id) userData = userData.user;
+                if (userData?.id) {
+                    const userId = userData.id.toString();
+                    if (!user || user.id !== userId) {
+                        login({ ...userData, id: userId, preferedLanguage: userData.preferedLanguage || language },
                             localStorage.getItem("token") || '',
-                            localStorage.getItem("refreshToken") || ''
-                        );
+                            localStorage.getItem("refreshToken") || '');
                     }
                     return true;
                 }
@@ -189,12 +183,15 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
                 user,
                 isLoggedIn,
                 language,
+                campuses,
                 setLanguage,
                 login,
                 logout,
                 authFetch,
                 checkAuth,
                 updateUser,
+                getUserById,
+                getAllCampuses,
             }}
         >
             {children}
@@ -204,8 +201,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
 export const useUser = () => {
     const context = useContext(UserContext);
-    if (!context) {
-        throw new Error("useCurrentUser must be used within a UserProvider");
-    }
+    if (!context) throw new Error("useUser must be used within a UserProvider");
     return context;
 };

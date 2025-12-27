@@ -4,7 +4,11 @@ import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import ModernInput from "@/components/own/ModernInput";
 import { toast } from "sonner";
-import type {User as UserType} from "@/Context/userTypes";
+import type { User as UserType } from "@/Context/userTypes";
+import type { Campus } from "@/Context/UserContext.tsx";
+import { useUser } from "@/Context/UserContext.tsx";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface PersonalInfoFormProps {
     user: UserType;
@@ -17,6 +21,8 @@ interface PersonalInfoFormProps {
     setPhone: (value: string) => void;
     weixinId: string;
     setWeixinId: (value: string) => void;
+    campus: Campus | null;
+    setCampus: (value: Campus) => void;
 }
 
 const PersonalInfoForm = ({
@@ -30,8 +36,11 @@ const PersonalInfoForm = ({
                               setPhone,
                               weixinId,
                               setWeixinId,
+                              campus,
+                              setCampus
                           }: PersonalInfoFormProps) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const { campuses } = useUser();
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^[0-9]{11}$/;
@@ -41,12 +50,13 @@ const PersonalInfoForm = ({
             user.name !== name ||
             user.email !== email ||
             user.phone_number !== phone ||
-            user.weixinId !== weixinId
+            user.weixinId !== weixinId ||
+            user.campus !== campus?.id
         );
     };
 
     const handleSaveChanges = async () => {
-        if (!name || !email || !phone || !weixinId) {
+        if (!name || !email || !phone || !weixinId || !campus) {
             toast.error(t('errors.all_fields_required'));
             return;
         }
@@ -65,22 +75,18 @@ const PersonalInfoForm = ({
             email,
             phone_number: phone,
             weixinId: weixinId,
-            campus: user.campus,
+            campus: campus.id,
             preferedLanguage: user.preferedLanguage
         };
 
         const success = await updateUser(payload);
-
         if (success) {
             toast.success(t("profile.update_success"));
         } else {
-            // NOTE: This generic error is likely hiding API validation failure messages.
-            // In a real app, you would parse error.response.data from updateUser call.
             toast.error(t("errors.generic_signup_error"));
         }
     };
 
-    // Determine if the button should be disabled
     const isDisabled = !hasChanges();
 
     return (
@@ -96,7 +102,6 @@ const PersonalInfoForm = ({
                     <span className="text-base">{t("profile.personal_info_desc")}</span>
                 </CardDescription>
             </CardHeader>
-
             <CardContent className="space-y-8 pt-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                     <ModernInput
@@ -123,16 +128,40 @@ const PersonalInfoForm = ({
                         onChange={setWeixinId}
                         icon={<MessageCircle className="w-4 h-4" />}
                     />
+                    <div className="space-y-2 flex flex-col md:col-span-2">
+                        <Label className="text-xs font-bold uppercase tracking-wider text-slate-500 group-focus-within:text-orange-500 transition-colors ml-1">
+                            {t("create_modal.label_location")}
+                        </Label>
+                        <Select
+                            value={campus?.id?.toString()}
+                            onValueChange={(id) => {
+                                const selected = campuses.find(c => c.id.toString() === id);
+                                if (selected) setCampus(selected);
+                            }}
+                        >
+                            <SelectTrigger className="bg-black/20 border-slate-800 focus:border-orange-500/50 focus:ring-4 
+                            focus:ring-orange-500/10 text-slate-100 pl-11 py-6 rounded-xl transition-all 
+                                duration-300 placeholder:text-slate-600">
+                                <SelectValue placeholder={t("create_modal.placeholder_location")} />
+                            </SelectTrigger>
+                            <SelectContent className="bg-slate-900 border-slate-800 text-slate-200">
+                                {campuses.map((c) => (
+                                    <SelectItem key={c.id} value={c.id.toString()}>
+                                        {i18n.language === 'cn' ? c.cn_name : c.en_name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </div>
-
                 <div className="flex justify-end pt-4">
                     <Button
                         onClick={handleSaveChanges}
                         disabled={isDisabled}
-                        className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 text-white shadow-lg shadow-orange-900/20 transition-all hover:scale-[1.02] active:scale-[0.98] px-8 py-6 rounded-xl font-bold w-full md:w-auto"
+                        variant="gradient-fire"
+                        size="lg"
                     >
-                        <Save className="w-4 h-4 mr-2" />{" "}
-                        {t("profile.save_btn")}
+                        <Save className="w-4 h-4 mr-2" /> {t("profile.save_btn")}
                     </Button>
                 </div>
             </CardContent>

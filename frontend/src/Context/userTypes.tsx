@@ -12,5 +12,6 @@ export interface User {
     email: string;
     phone_number: string;
     campus: number;
+    avatarUrl: string;
     preferedLanguage: LanguageEnum;
 }

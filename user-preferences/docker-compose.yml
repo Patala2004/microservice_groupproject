@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  upref_pg:
+    image: postgres:15
+    container_name: upref_db
+    environment:
+      POSTGRES_DB: uprefdb
+      POSTGRES_USER: uprefuser
+      POSTGRES_PASSWORD: password
+    volumes:
+      - uprefpgdata:/var/lib/postgresql/data
+    ports:
+      - "5436:5432"
+    networks:
+      - uprefdb_network
+
+  uprefapp:
+    build:
+      context: ./user-pref
+      args:
+        - DOCKER_BUILD_FLAGS=--progress=plain
+    container_name: upref_app
+    depends_on:
+      - upref_pg
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://upref_pg:5432/uprefdb
+      SPRING_DATASOURCE_USERNAME: uprefuser
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    networks:
+      - uprefdb_network
+      - ms_network
+    ports:
+      - "8086:8080"
+
+
+volumes:
+  uprefpgdata:
+
+networks:
+  uprefdb_network:
+    driver: bridge
+  ms_network:
