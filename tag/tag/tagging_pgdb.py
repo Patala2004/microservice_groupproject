@@ -1,10 +1,12 @@
 from sqlmodel import SQLModel, Session, Field, create_engine, select
 from sqlalchemy import text, func
 from pgvector.sqlalchemy import VECTOR
+import numpy as np
 import os
 
 DATABASE_URL = os.environ['POSTGRES_TAGGING_DB']
-SIMILARITY_THRESHOLD = 0.35
+SIMILARITY_THRESHOLD = 0.20
+RELATED_TAG_THRESHOLD = 0.45
 
 engine = create_engine(DATABASE_URL)
 
@@ -22,42 +24,59 @@ def get_session():
     return Session(engine)
 
 
-def similar_tag_exists(embedding):
-    if not isinstance(embedding, np.ndarray):
-        embedding = np.array(embedding, dtype=np.float32)
-    else:
-        embedding = embedding.astype(np.float32)
+def similar_tag_exists(embedding: list[float]) -> int | None:
     with get_session() as session:
-        distance = Tag.embedding.op("<=>")(embedding)
+        stmt = text("""
+            SELECT id
+            FROM tag
+            WHERE embedding <=> CAST(:embedding AS vector) < :threshold
+            ORDER BY embedding <=> CAST(:embedding AS vector)
+            LIMIT 1
+        """)
 
-        stmt = (
-            select(
-                Tag.id,
-                Tag.tag_name,
-                Tag.embedding,
-                distance.label("dist")
-            )
-            .order_by(distance)
-            .limit(1)
-        )
-        result = session.exec(stmt).first()
+        row = session.exec(
+            stmt,
+            params={
+                "embedding": embedding,
+                "threshold": SIMILARITY_THRESHOLD
+            }
+        ).first()
 
-        if result is None:
+        if row is None:
             return None
 
-        tag, distance = result
+        return row[0]
 
-        if distance < SIMILARITY_THRESHOLD:
-            return tag
 
-        return None
+def get_top3_related_tags(tag_id: int) -> list[int]:
+    with get_session() as session:
+        stmt = text("""
+            SELECT t2.id
+            FROM tag t1
+            JOIN tag t2
+                ON t1.embedding <=> t2.embedding < :threshold
+            WHERE t1.id = :tag_id
+                AND t2.id != :tag_id
+            ORDER BY t1.embedding <=> t2.embedding
+            LIMIT 3
+        """)
+
+        rows = session.exec(
+            stmt,
+            params={
+                "tag_id": tag_id,
+                "threshold": RELATED_TAG_THRESHOLD
+            }
+        ).all()
+
+        return [row[0] for row in rows]
 
 
 def store_tag(name: str, embedding):
-    existing = similar_tag_exists(embedding)
+    existing_id = similar_tag_exists(embedding)
 
-    if existing:
-        return existing
+    if existing_id:
+        return existing_id
 
     else:
         new_tag = Tag(tag_name=name, embedding=embedding)
@@ -66,4 +85,4 @@ def store_tag(name: str, embedding):
             session.add(new_tag)
             session.commit()
             session.refresh(new_tag)
-            return new_tag
+            return new_tag.id

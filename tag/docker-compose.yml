@@ -12,6 +12,8 @@ services:
     container_name: ollama-tagging
     volumes:
       - models:/root/.ollama
+      - ./init/ollama/entrypoint.sh:/entrypoint.sh
+    entrypoint: ["/bin/sh", "/entrypoint.sh"]
     deploy:
       resources:
         reservations:
@@ -25,8 +27,6 @@ services:
   embeddings:
     build: ./embeddings/.
     container_name: embeddings_service
-    volumes:
-      - models:/sentencetransformers
     deploy:
       resources:
         reservations:
@@ -36,6 +36,8 @@ services:
               capabilities: [gpu]
     networks:
       - tagging_network
+    ports:
+      - "8091:8000"
 
   tag:
     build: ./tag/.
@@ -49,7 +51,7 @@ services:
     environment:
       OLLAMA_HOST: "http://ollama-tagging:11434"
       POSTGRES_TAGGING_DB: "postgresql://app_user:app_password@tagging-db:5432/tags_db"
-      TAG_POST_DB: "postgresql://posttaguser:password@host.docker.internal:5440/posttagdb"
+      POST_TAG_DB: "postgresql://posttaguser:password@host.docker.internal:5440/posttagdb"
       EMBEDDINGS_URL: "http://embeddings_service:8000"
       POST_SERVICE_URL: "http://host.docker.internal:8082"
       TRANSLATION_URL: "http://host.docker.internal:8088"
@@ -72,7 +74,7 @@ services:
       POSTGRES_DB: tags_db
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./db-init:/docker-entrypoint-initdb.d
+      - ./init/postgres:/docker-entrypoint-initdb.d
     networks:
       - tagging_network
     ports:

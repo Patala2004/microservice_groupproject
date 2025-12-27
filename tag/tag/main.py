@@ -5,7 +5,7 @@ import translation
 import ollama_llm as llm
 import embeddings
 import tagging_pgdb as db
-import tagpost_pgbd as tagpost_db
+import posttag_pgbd as posttag_db
 
 app = FastAPI()
 
@@ -42,7 +42,7 @@ def tag(post_id):
             )
             final_tag_ids.append(current.id)
 
-        tagpost_db.add_relations(tag_ids=final_tag_ids, post_id=post_id)
+        posttag_db.add_relations(tag_ids=final_tag_ids, post_id=post_id)
 
         return {"status": "ok"}
 
@@ -111,18 +111,16 @@ def embeddings_db_test():
         "Dormitory"
     ]
     vectors = embeddings.embed(tagname_list)
-    print("embeddings worked")
-    for i, v in enumerate(vectors):
-        print(f"Vector {i} length:", len(v))
-        print(f"Vector {i} element types:", [type(x) for x in v])
+    id_list = []
     for i in range(len(vectors)):
         current_name = tagname_list[i]
         current_vector = vectors[i]
-        print("before storing")
-        db.store_tag(
+        id_list.append(db.store_tag(
             name=current_name,
             embedding=current_vector
-        )
+        ))
+
+    return id_list
 
 
 @app.post("/embeddings-db-test-2")
@@ -134,10 +132,54 @@ def embeddings_db_test_2():
         "Hair dryer"
     ]
     vectors = embeddings.embed(tagname_list)
-    final_tag_ids = []
+    id_list = []
     for i in range(len(vectors)):
-        current = db.store_tag(
-            name=tagname_list[i],
-            embedding=vectors[i]
-        )
-        final_tag_ids.append(current.id)
+        current_name = tagname_list[i]
+        current_vector = vectors[i]
+        id_list.append(db.store_tag(
+            name=current_name,
+            embedding=current_vector
+        ))
+
+
+@app.post("/embedding-db-similarity-test")
+def embeddings_db_similarity_test():
+    tagnames = [
+        "Basketball"
+    ]
+    vectors = embeddings.embed(tagnames)
+    id_list = []
+    for i in range(len(vectors)):
+        current_name = tagnames[i]
+        current_vector = vectors[i]
+        id_list.append(db.store_tag(
+            name=current_name,
+            embedding=current_vector
+        ))
+    related_id_list: set[int] = set()
+    related_id_list.update(id_list)
+    for tag_id in id_list:
+        related_ids = db.get_top3_related_tags(tag_id)
+        related_id_list.update(related_ids)
+    final_list = list(related_id_list)
+    return final_list
+
+
+@app.post("/post-tag-test-1")
+def posttag_test_1():
+    post = 1
+    tags = [1, 2, 3, 4, 5]
+    posttag_db.add_relations(tag_ids=tags, post_id=post)
+
+
+@app.post("/post-tag-test-2")
+def posttag_test_2():
+    post = 1
+    tags = [3, 4, 5, 6, 7, 8]
+    posttag_db.add_relations(tag_ids=tags, post_id=post)
+
+
+@app.post("/post-tag-test-3")
+def posttag_test_2():
+    post = 1
+    posttag_db.delete_relations(post)

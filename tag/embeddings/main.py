@@ -5,19 +5,20 @@ from sentence_transformers import SentenceTransformer
 
 app = FastAPI()
 
-MODEL_NAME = "all-mpnet-base-v2" # dimensions: 384
+MODEL_NAME = "all-mpnet-base-v2"  # dimensions: 768
 
 model = SentenceTransformer(MODEL_NAME)
 
+
 class SentencesRequest(BaseModel):
     sentences: List[str]
+
 
 @app.post("/embed")
 def embed(request: SentencesRequest):
     sentences = request.sentences
     embeddings = model.encode(
-        sentences, 
+        sentences,
         convert_to_numpy=True,
         normalize_embeddings=True)
     return {"embeddings": [e.tolist() for e in embeddings]}
-    
