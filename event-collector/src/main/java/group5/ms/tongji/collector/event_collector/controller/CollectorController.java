@@ -1,10 +1,10 @@
 package group5.ms.tongji.collector.event_collector.controller;
 
 import group5.ms.tongji.collector.event_collector.dto.ErrorResponse;
+import group5.ms.tongji.collector.event_collector.dto.UserInteractions;
 import group5.ms.tongji.collector.event_collector.dto.UserInteraction;
 import group5.ms.tongji.collector.event_collector.service.CollectorService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,7 +23,21 @@ import org.springframework.web.bind.annotation.RestController;
 public class CollectorController {
     CollectorService collectorService;
 
-    @Operation(summary = "Queue interactions for updating user frequent tags")
+    @Operation(summary = "Queue a multi-post interaction for updating user frequent tags")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Correctly queued."),
+            @ApiResponse(responseCode = "502", description = "External service unavailable",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    ))
+    })
+    @PostMapping("/multi")
+    public void postUserInteractions(@RequestBody UserInteractions userInteraction) {
+        collectorService.queueUserInteractions(userInteraction);
+    }
+
+    @Operation(summary = "Queue single interactions for updating user frequent tags")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Correctly queued."),
             @ApiResponse(responseCode = "502", description = "External service unavailable",
@@ -36,4 +50,7 @@ public class CollectorController {
     public void postUserInteraction(@RequestBody UserInteraction userInteraction) {
         collectorService.queueUserInteraction(userInteraction);
     }
+
+
+    
 }

@@ -7,13 +7,14 @@ import lombok.Setter;
 
 import java.util.Date;
 
+@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class UserInteraction {
+public class UserInteractions {
 
     private int userId;
-    private int itemId;
+    private int[] itemId;
     private Date timestamp;
     private String type;
 
