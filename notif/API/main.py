@@ -11,8 +11,9 @@ WECHAT_API_BASE = "http://unknown.example.com"
 async def send_wechat_notif(weixinId : int):
     async with httpx.AsyncClient(timeout=5.0) as client:
         try:
-            notif_response = await client.get(f"{WECHAT_API_BASE}/{weixinId}") # For example
-            notif_response.raise_for_status()
+            # notif_response = await client.get(f"{WECHAT_API_BASE}/{weixinId}") # For example
+            # notif_response.raise_for_status()
+            print(f"Sent fake notification to weixin id {weixinId}")
         except httpx.HTTPError as e:
             raise HTTPException(status_code=502, detail=str(e))
 
