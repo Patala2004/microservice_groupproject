@@ -56,7 +56,7 @@ const SignupForm = () => {
     };
 
     const handleSignup = async () => {
-        if (!username || !name || !email || !password || !confirmPassword || !phone || !weXinId || !campusId) {
+        if (!username || !name || !password || !confirmPassword || !campusId) {
             toast.error(t('errors.all_fields_required'));
             return;
         }
@@ -66,12 +66,12 @@ const SignupForm = () => {
             return;
         }
 
-        if (!emailRegex.test(email)) {
+        if (email && !emailRegex.test(email)) {
             toast.error(t('errors.invalid_email'));
             return;
         }
 
-        if (!phoneRegex.test(phone)) {
+        if (phone && !phoneRegex.test(phone)) {
             toast.error(t('errors.invalid_phone'));
             return;
         }
@@ -107,9 +107,21 @@ const SignupForm = () => {
                 cleanStates();
             }
         } catch (error) {
-            console.error("An error occurred during signup:", error);
             if (axios.isAxiosError(error) && error.response) {
-                toast.error(error.response.data?.message || t('errors.generic_signup_error'));
+                const apiErrors = error.response.data;
+
+                if (typeof apiErrors === 'object' && apiErrors !== null) {
+                    Object.keys(apiErrors).forEach((field) => {
+                        const messages = apiErrors[field];
+                        if (Array.isArray(messages)) {
+                            messages.forEach(msg => toast.error(`${msg}`));
+                        } else {
+                            toast.error(messages);
+                        }
+                    });
+                } else {
+                    toast.error(t('errors.generic_signup_error'));
+                }
             } else {
                 toast.error(t('errors.generic_signup_error'));
             }
