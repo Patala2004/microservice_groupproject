@@ -19,9 +19,10 @@ type SortOption = "recent" | "popular" | "recommended";
 const HomePage = () => {
   const { t } = useTranslation();
   const { user } = useUser();
-  const { getRecentPosts, getPostRecommendations, deletePost } = usePost();
+  const { getRecentPosts, getPostRecommendations, searchPosts, deletePost } = usePost();
 
-  const [loading, setLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [postsLoading, setPostsLoading] = useState(false);
   const [sortView, setSortView] = useState<SortOption>("recent");
   const [filterType, setFilterType] = useState<PostType | "all">("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -29,78 +30,82 @@ const HomePage = () => {
 
   const [postsToDisplay, setPostsToDisplay] = useState<Post[]>([]);
   const [recommendedPosts, setRecommendedPosts] = useState<Post[]>([]);
+  const [searchResults, setSearchResults] = useState<Post[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+
+  const topics = [PostType.ACTIVITY, PostType.SELL, PostType.BUY];
 
   useEffect(() => {
     const fetchInitialData = async () => {
-      setLoading(true);
-
+      setInitialLoading(true);
       const recent = await getRecentPosts();
-      if (recent) {
-        setPostsToDisplay(recent);
-      }
-
-      /**
-      if (user?.id) {
-        const recs = await getPostRecommendations(user.id);
-        if (recs) {
-          setRecommendedPosts(recs);
-        }
-      }
-          **/
-
-      setLoading(false);
+      if (recent) setPostsToDisplay(recent);
+      setInitialLoading(false);
     };
-
     fetchInitialData();
-  }, [getRecentPosts, getPostRecommendations, user?.id]);
+  }, [getRecentPosts]);
+
+  useEffect(() => {
+    const fetchRecommendations = async () => {
+      if (sortView === "recommended" && user?.id) {
+        if (recommendedPosts.length === 0) setPostsLoading(true);
+        const recs = await getPostRecommendations(user.id);
+        if (recs) setRecommendedPosts(recs);
+        setPostsLoading(false);
+      }
+    };
+    fetchRecommendations();
+  }, [sortView, user?.id, getPostRecommendations]);
+
+  useEffect(() => {
+    const handler = setTimeout(async () => {
+      setIsSearching(true);
+      const results = await searchPosts(searchQuery, filterType);
+      if (results) setSearchResults(results);
+      setIsSearching(false);
+    }, 400);
+    return () => clearTimeout(handler);
+  }, [searchQuery, filterType, searchPosts]);
 
   const handlePostCreated = (newPost: Post) => {
     setPostsToDisplay((prev) => [newPost, ...prev]);
   };
 
+  const handlePostUpdated = (updatedPost: Post) => {
+    const updateList = (list: Post[]) => list.map(p => p.id === updatedPost.id ? updatedPost : p);
+    setPostsToDisplay(prev => updateList(prev));
+    setRecommendedPosts(prev => updateList(prev));
+    setSearchResults(prev => updateList(prev));
+  };
+
   const handleConfirmDelete = async (postId: number) => {
     const success = await deletePost(postId);
-
     if (success) {
-      setPostsToDisplay(prev => prev.filter(p => p.id !== postId));
-      setRecommendedPosts(prev => prev.filter(p => p.id !== postId));
+      const filterOut = (list: Post[]) => list.filter(p => p.id !== postId);
+      setPostsToDisplay(prev => filterOut(prev));
+      setRecommendedPosts(prev => filterOut(prev));
+      setSearchResults(prev => filterOut(prev));
       toast.success(t("profile.delete_modal_title"));
-    } else {
-      toast.error(t("errors.generic_delete_error"));
     }
   };
 
   const processedPosts = useMemo(() => {
-    const listToFilter = sortView === "recommended" ? recommendedPosts : postsToDisplay;
-
-    if (!Array.isArray(listToFilter)) return [];
-
-    const result = listToFilter.filter((post) => {
-      if (!post) return false;
-
+    let baseList: Post[] = [];
+    if (searchQuery.trim().length > 0) {
+      baseList = searchResults;
+    } else {
+      baseList = sortView === "recommended" ? recommendedPosts : postsToDisplay;
+    }
+    const result = baseList.filter((post) => {
       const matchesType = filterType === "all" || post.type === filterType;
-      const searchLower = (searchQuery || "").toLowerCase();
-
-      const matchesSearch =
-          (post.title?.toLowerCase() || "").includes(searchLower) ||
-          (post.content?.toLowerCase() || "").includes(searchLower);
-
+      const searchLower = searchQuery.toLowerCase();
+      const matchesSearch = !searchQuery || post.title?.toLowerCase().includes(searchLower) || post.content?.toLowerCase().includes(searchLower);
       return matchesType && matchesSearch;
     });
+    return [...result].sort((a, b) => b.id - a.id);
+  }, [postsToDisplay, recommendedPosts, searchResults, filterType, searchQuery, sortView]);
 
-    result.sort((a, b) => b.id - a.id);
-    return result;
-  }, [postsToDisplay, recommendedPosts, filterType, searchQuery, sortView]);
-
-  const availableTypes = useMemo(() => {
-    const types = new Set<PostType>();
-    postsToDisplay.forEach(post => {
-      if (post?.type) types.add(post.type);
-    });
-    return Array.from(types);
-  }, [postsToDisplay]);
-
-  if (loading) {
+  if (initialLoading) {
     return (
         <div className="min-h-screen w-full flex items-center justify-center bg-slate-950">
           <RotateCw className="animate-spin text-orange-500 size-12" />
@@ -120,10 +125,10 @@ const HomePage = () => {
             <RecommendationsSidebar />
           </div>
 
-          <main className="lg:col-span-6 lg:order-2 order-3 min-h-[200vh]">
+          <main className="lg:col-span-6 lg:order-2 order-3 min-h-screen">
             <div className="sticky top-0 z-30 pb-4 pt-2 -mx-4 px-4 bg-slate-950/80 backdrop-blur-lg mb-6 space-y-4 border-b border-slate-800/60">
               <div className="relative group">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-orange-500 transition-colors" />
+                <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors ${isSearching ? 'text-orange-500 animate-pulse' : 'text-slate-500'}`} />
                 <Input
                     placeholder={t("home.search_placeholder")}
                     value={searchQuery}
@@ -150,21 +155,17 @@ const HomePage = () => {
                         onClick={() => setFilterType("all")}
                         variant="tag"
                         size="tag-size"
-                        className={filterType === "all" ?
-                            "bg-orange-600 text-white border-orange-600 hover:bg-orange-700" :
-                            "bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-400"}
+                        className={filterType === "all" ? "bg-orange-600 text-white border-orange-600" : "bg-slate-900 text-slate-400 border-slate-800"}
                     >
                       {t("filters.all")}
                     </Button>
-                    {availableTypes.map((cat) => (
+                    {topics.map((cat) => (
                         <Button
                             key={cat}
                             onClick={() => setFilterType(cat)}
                             variant="tag"
                             size="tag-size"
-                            className={filterType === cat ?
-                                "bg-orange-600 text-white border-orange-600 hover:bg-orange-700" :
-                                "bg-slate-900 hover:bg-slate-800 border-slate-800 text-slate-400"}
+                            className={filterType === cat ? "bg-orange-600 text-white border-orange-600" : "bg-slate-900 text-slate-400 border-slate-800"}
                         >
                           {t(`filters.${cat.toLowerCase()}`)}
                         </Button>
@@ -176,21 +177,28 @@ const HomePage = () => {
             </div>
 
             <div className="space-y-6 pb-20">
-              {processedPosts.length === 0 && (
+              {postsLoading && recommendedPosts.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-20 space-y-4">
+                    <RotateCw className="animate-spin text-orange-500 size-10" />
+                    <p className="text-slate-400 text-sm animate-pulse">{t("sort.recommended")}...</p>
+                  </div>
+              ) : processedPosts.length === 0 ? (
                   <div className="text-center py-16 text-slate-500 border border-dashed border-slate-800 rounded-2xl">
                     <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
                     <p>{t("home.no_posts")}</p>
                   </div>
+              ) : (
+                  processedPosts.map((post) => (
+                      <PostCard
+                          key={`${sortView}-${post.id}`}
+                          post={post}
+                          user={user}
+                          onDelete={handleConfirmDelete}
+                          canEditPost={user?.id === post?.poster?.toString()}
+                          onPostUpdated={handlePostUpdated}
+                      />
+                  ))
               )}
-              {processedPosts.map((post) => (
-                  <PostCard
-                      key={post.id}
-                      post={post}
-                      user={user}
-                      onDelete={handleConfirmDelete}
-                      canEditPost={user?.id === post?.poster}
-                  />
-              ))}
             </div>
           </main>
 

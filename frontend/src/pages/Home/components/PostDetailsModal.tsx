@@ -106,9 +106,9 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
             id: u.id.toString(),
             name: u.name || `User ID: ${u.id}`,
             avatarUrl: u.avatarUrl,
-            weixinId: u.weixinId || '',
-            email: u.email || '',
-            phone_number: u.phone_number || ''
+            weixinId: u.weixinId,
+            email: u.email,
+            phone_number: u.phone_number
           }));
       setJoinerDetails(validUsers);
     } catch (error) {
@@ -371,8 +371,8 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
                                         <TooltipContent className="bg-slate-800 border-slate-700 text-slate-100 p-3 rounded-lg shadow-xl">
                                           <p className="font-bold text-orange-400 mb-1">{joiner.name}</p>
                                           <div className="flex flex-col gap-1 text-xs text-slate-300">
-                                            <span className="flex items-center gap-1.5"><MessageSquare className="size-3 text-slate-500" />@{joiner.weixinId || 'N/A'}</span>
-                                            <span className="flex items-center gap-1.5"><Mail className="size-3 text-slate-500" />{joiner.email || 'N/A'}</span>
+                                            {joiner.weixinId && <span className="flex items-center gap-1.5"><MessageSquare className="size-3 text-slate-500" />@{joiner.weixinId}</span>}
+                                            {joiner.email && <span className="flex items-center gap-1.5"><Mail className="size-3 text-slate-500" />{joiner.email}</span>}
                                           </div>
                                         </TooltipContent>
                                       </Tooltip>
@@ -392,7 +392,7 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
                             {fullJoinerList.map(j => (
                                 <div key={j.id} className="flex flex-col items-start justify-start p-2 rounded-lg bg-slate-900/40">
                                   <div className="flex items-center gap-3"><span className="text-sm font-medium">{j.name}</span></div>
-                                  <span className="text-xs text-slate-400">@{j.weixinId || 'N/A'}</span>
+                                  {j.weixinId && <span className="text-xs text-slate-400">@{j.weixinId}</span>}
                                 </div>
                             ))}
                           </div>
@@ -414,9 +414,9 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
                 onClose={() => setIsContactModalOpen(false)}
                 posterDetails={{
                   name: posterContactDetails.name,
-                  email: posterContactDetails.email || t('profile.default_email_unavailable'),
-                  phone_number: posterContactDetails.phone_number || t('profile.default_phone_unavailable'),
-                  weixinId: posterContactDetails.weixinId || t('profile.default_weixin_unavailable')
+                  email: posterContactDetails.email || "",
+                  phone_number: posterContactDetails.phone_number || "",
+                  weixinId: posterContactDetails.weixinId || ""
                 }}
             />
         )}

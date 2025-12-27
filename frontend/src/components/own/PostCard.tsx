@@ -1,4 +1,4 @@
-import { MapPin, X, RotateCw, Clock, CalendarDays } from "lucide-react";
+import { MapPin, X, RotateCw, Clock, CalendarDays, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -11,6 +11,7 @@ import PostDeleteModal from "@/pages/Modal/PostDeleteModal.tsx";
 import { useUser } from "@/Context/UserContext.tsx";
 import PostDetailsModal from "@/pages/Home/components/PostDetailsModal.tsx";
 import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface PostCardProps {
   post: Post;
@@ -48,13 +49,6 @@ const PostCard = ({ post, user, onDelete, canEditPost = false, onPostUpdated }: 
   const posterIdString = localPost?.poster?.toString();
   const currentUserIdString = user?.id?.toString();
   const isHost = posterIdString === currentUserIdString;
-  const displayPoster = posterDetails || {
-    id: posterIdString || "",
-    name: `User ID: ${localPost?.poster}`,
-    weixinId: "",
-    email: "",
-    phone_number: ""
-  };
 
   const fetchUserDetails = useCallback(async () => {
     if (!localPost?.poster) return;
@@ -100,14 +94,25 @@ const PostCard = ({ post, user, onDelete, canEditPost = false, onPostUpdated }: 
             <div className="flex justify-between items-start mb-4">
               <div className="flex items-center gap-3">
                 <Avatar className="h-10 w-10 border border-slate-700">
-                  <AvatarImage src={displayPoster.avatarUrl} />
-                  <AvatarFallback className="bg-slate-800 text-slate-200">
-                    {displayPoster.name.charAt(0)}
+                  <AvatarImage src={posterDetails?.avatarUrl} />
+                  <AvatarFallback className="bg-slate-800 text-slate-200 font-bold">
+                    {posterDetails ? posterDetails.name.charAt(0) : <RotateCw className="size-3 animate-spin" />}
                   </AvatarFallback>
                 </Avatar>
-                <div className="flex flex-col">
-                  <span className="text-sm font-bold text-slate-200">{displayPoster.name}</span>
-                  <span className="text-xs text-slate-500">@{displayPoster.weixinId || "N/A"}</span>
+                <div className="flex flex-col gap-1">
+                  {loadingUsers ? (
+                      <>
+                        <Skeleton className="h-4 w-24 bg-slate-800" />
+                        <Skeleton className="h-3 w-16 bg-slate-800" />
+                      </>
+                  ) : (
+                      <>
+                        <span className="text-sm font-bold text-slate-200">{posterDetails?.name}</span>
+                        {posterDetails?.weixinId && (
+                            <span className="text-xs text-slate-500">@{posterDetails.weixinId}</span>
+                        )}
+                      </>
+                  )}
                 </div>
               </div>
               <div className="flex flex-row gap-3">
@@ -131,7 +136,7 @@ const PostCard = ({ post, user, onDelete, canEditPost = false, onPostUpdated }: 
             </div>
 
             <div className="mb-5">
-              <h3 className="text-lg font-bold text-slate-100">{localPost.title}</h3>
+              <h3 className="text-lg font-bold mb-2 text-slate-100">{localPost.title}</h3>
               <p className="text-sm text-slate-400 line-clamp-3">{localPost.content}</p>
             </div>
 
@@ -153,12 +158,20 @@ const PostCard = ({ post, user, onDelete, canEditPost = false, onPostUpdated }: 
             <div className="mt-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="flex -space-x-2">
-                  {joinerDetails.map(j => (
-                      <Avatar key={j.id} className="h-6 w-6 ring-2 ring-slate-900">
-                        <AvatarImage src={j.avatarUrl} />
-                        <AvatarFallback>{j.name.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                  ))}
+                  {loadingUsers ? (
+                      <Skeleton className="h-6 w-6 rounded-full bg-slate-800" />
+                  ) : joinerDetails.length > 0 ? (
+                      joinerDetails.map(j => (
+                          <Avatar key={j.id} className="h-6 w-6 ring-2 ring-slate-900">
+                            <AvatarImage src={j.avatarUrl} />
+                            <AvatarFallback className="text-[10px]">{j.name.charAt(0)}</AvatarFallback>
+                          </Avatar>
+                      ))
+                  ) : (
+                      <div className="h-6 w-6 rounded-full ring-2 ring-slate-900 bg-slate-800/50 flex items-center justify-center">
+                        <Users className="w-3 h-3 text-slate-600" />
+                      </div>
+                  )}
                 </div>
                 <span className="text-xs text-slate-400 font-semibold">
                 {localPost.joinedUsers?.length || 0} attending
@@ -182,8 +195,8 @@ const PostCard = ({ post, user, onDelete, canEditPost = false, onPostUpdated }: 
               setLocalPost(updatedPost);
               onPostUpdated?.(updatedPost);
             }}
-            posterName={displayPoster.name}
-            posterAvatarUrl={displayPoster.avatarUrl}
+            posterName={posterDetails?.name || ""}
+            posterAvatarUrl={posterDetails?.avatarUrl}
             canEditPost={canEditPost}
         />
 

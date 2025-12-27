@@ -4,6 +4,7 @@ import { useUser } from "@/Context/UserContext.tsx";
 import { LanguageEnum } from "@/Context/userTypes.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {useTranslation} from "react-i18next";
+import { Languages } from 'lucide-react';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ const Header = () => {
   const avatarLetter =
       user?.name?.[0]?.toUpperCase() || user?.username?.[0]?.toUpperCase() || "?";
 
-  const currentLanguageKey = language === LanguageEnum.EN ? 'language.english' : 'language.chinese';
+  const otherDisponibleLanguage = language === LanguageEnum.EN ? 'language.chinese' : 'language.english';
 
   return (
       <header
@@ -82,7 +83,7 @@ const Header = () => {
                 onClick={handleToggleLanguage}
                 variant="gradient-fire"
             >
-              {t(currentLanguageKey)}
+              <Languages/> {t(otherDisponibleLanguage)}
             </Button>
 
             {isLoggedIn ? (
