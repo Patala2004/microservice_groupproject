@@ -8,6 +8,11 @@ import microservices.groupproject.post_api.model.DTO.PostGlobalDTO;
 import microservices.groupproject.post_api.service.ExternalRecomendationServiceClient;
 import microservices.groupproject.post_api.service.PostService;
 
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,11 +62,18 @@ public class PostController {
         @RequestParam(required = false) LocalDateTime beforeEventDateStamp,
         @RequestParam(required = false) LocalDateTime afterEventDateStamp,
         @RequestParam(required = false) Long posterId,
-        @RequestParam(required = false) Long participantId
+        @RequestParam(required = false) Long participantId,
+        @ParameterObject
+        @PageableDefault(
+            size = 20,
+            page = 0,
+            sort = "creationTime",
+            direction = Sort.Direction.DESC
+        ) Pageable pageable
     ) {
         return service.getAllPosts(titleStartsWith, titleContains, contentContains, type, locationTitle, 
         afterCreationDateStamp, beforeCreationDateStamp, afterEventDateStamp, beforeEventDateStamp, posterId,
-        participantId).stream().map(postMapper::toDTO).toList();
+        participantId, pageable).map(postMapper::toDTO).toList();
     }
 
     @GetMapping("/{id}")
