@@ -41,24 +41,17 @@ public class  ClassService {
     };
     private final int PERIOD_DURATION = 45;
 
-    public List<ScheduleItem> getClassCoincidences(Integer userId, LocalDateTime start, LocalDateTime end) {
-        log.info("looking by user id");
+    public List<ScheduleItem> getClassCoincidences(Integer userId, Integer studentId, LocalDateTime start, LocalDateTime end) {
         if(userClassesRepository.existsByUserClassUserId(userId)){
-            log.info("userid not found");
-            getUserClasses(userId);
+            getUserClasses(userId, studentId);
         }
-        log.info("proceeding to find coincidences");
         return userClassesRepository.findUserCoincidences(start, end, userId);
     }
 
-    private void getUserClasses(Integer userId) {
-        List<ClassResponse> classResponses = fakeApiData.getClassResponses(userId);
-        log.info("-------------------------");
-        log.info("got class responses");
-        log.info("-------------------------");
+    private void getUserClasses(Integer userId, Integer studentId) {
+        List<ClassResponse> classResponses = fakeApiData.getClassResponses(studentId);
         extractExistingClasses(classResponses, userId);
         List<ClassSession> newClasses = classSessionMapper.mapClassResponsesToScheduleItem(classResponses, START_DATE, PERIODS, PERIOD_DURATION);
-        log.info("SAVING NEW CLASSES");
         classesRepository.saveAll(newClasses);
         saveUserClasses(newClasses, userId);
     }
@@ -66,10 +59,6 @@ public class  ClassService {
     private void extractExistingClasses(List<ClassResponse> classResponses, Integer userId) {
         List<ClassSession> userExistingClasses = new ArrayList<>();
         for(ClassResponse c : classResponses) {
-            log.info("---------------------------");
-            log.info("getting class response by code");
-            log.info("---------------------------");
-
             List<ClassSession> classSession = classesRepository.findByCode(c.getClassCode());
             if(!classSession.isEmpty()){
                 classResponses.remove(c);

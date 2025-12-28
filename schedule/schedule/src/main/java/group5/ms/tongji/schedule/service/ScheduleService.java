@@ -27,16 +27,9 @@ public class ScheduleService {
     ClassService classService;
     PostService postService;
 
-    public List<ScheduleItem> checkAvailability(Integer userId, LocalDateTime start, LocalDateTime end){
-        log.info("---------------------------------------------------------------------");
-        log.info("searching for post coincidences");
-        log.info("---------------------------------------------------------------------");
+    public List<ScheduleItem> checkAvailability(Integer userId, Integer studentId, LocalDateTime start, LocalDateTime end){
         List<ScheduleItem> coincidences = postService.getPostCoincidences(userId, start, end);
-
-        log.info("---------------------------------------------------------------------");
-        log.info("searching for class coincidences");
-        log.info("---------------------------------------------------------------------");
-        List<ScheduleItem> classCoincidences = classService.getClassCoincidences(userId, start, end);
+        List<ScheduleItem> classCoincidences = classService.getClassCoincidences(userId, studentId, start, end);
         return Stream.concat(coincidences.stream(), classCoincidences.stream()).toList();
     }
 
