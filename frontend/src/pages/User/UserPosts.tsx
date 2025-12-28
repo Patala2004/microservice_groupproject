@@ -13,7 +13,7 @@ import { toast } from "sonner";
 const UserPosts = () => {
     const { t } = useTranslation();
     const { user } = useUser();
-    const { getPostsByUserId } = usePost();
+    const { getPostsByUserId, deletePost } = usePost();
 
     const [posts, setPostsState] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
@@ -62,12 +62,12 @@ const UserPosts = () => {
         });
     }, [posts, filterType, searchQuery]);
 
-    const handleConfirmDelete = (postId: number) => {
+    const handleConfirmDelete = async (postId: number) => {
         console.log(`LOGIC DELETE: Post ID ${postId} confirmed for deletion.`);
-        toast.info(t("profile.delete_modal_title"));
-
+        await deletePost(postId);
         const updatedPosts = posts.filter(p => p.id !== postId);
         updatePosts(updatedPosts);
+        toast.success(t("profile.delete_modal_title"));
     };
 
     if (loading) {
@@ -138,6 +138,7 @@ const UserPosts = () => {
                         post={post}
                         user={user}
                         onDelete={handleConfirmDelete}
+                        canEditPost={true}
                     />
                 ))}
             </div>

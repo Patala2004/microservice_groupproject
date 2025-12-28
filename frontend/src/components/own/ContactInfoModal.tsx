@@ -11,15 +11,19 @@ interface ContactInfoModalProps {
 const ContactInfoModal = ({ isOpen, onClose, posterDetails }: ContactInfoModalProps) => {
     const { t } = useTranslation();
 
-    const ContactDetail = ({ icon, label, value}) => (
-        <div className="flex items-center justify-between py-2 border-b border-slate-700 last:border-b-0">
-            <div className="flex items-center gap-3 text-slate-400">
-                {icon}
-                <span className="font-medium">{label}</span>
+    const ContactDetail = ({ icon, label, value }) => {
+        if (!value) return null;
+
+        return (
+            <div className="flex items-center justify-between py-2 border-b border-slate-700 last:border-b-0">
+                <div className="flex items-center gap-3 text-slate-400">
+                    {icon}
+                    <span className="font-medium">{label}</span>
+                </div>
+                <span className="font-semibold text-white">{value}</span>
             </div>
-            <span className="font-semibold text-white">{value || t('profile.default_contact_unavailable')}</span>
-        </div>
-    );
+        );
+    };
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>

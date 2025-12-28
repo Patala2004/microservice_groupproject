@@ -1,0 +1,39 @@
+volumes:
+  models:
+
+networks:
+  translation_network:
+    driver: bridge
+
+
+
+services:
+  ollama:
+    image: ollama/ollama
+    container_name: ollama-translate
+    volumes:
+      - models:/root/.ollama
+      - ./ollama-init/entrypoint.sh:/entrypoint.sh
+    entrypoint: ["/bin/sh", "/entrypoint.sh"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    networks:
+      - translation_network
+  
+  translate:
+    build: .
+    container_name: translate
+    depends_on:
+      - ollama
+    ports:
+      - "8088:8000"
+    environment:
+      OLLAMA_HOST: "http://ollama-translate:11434"
+    networks:
+      - translation_network
+

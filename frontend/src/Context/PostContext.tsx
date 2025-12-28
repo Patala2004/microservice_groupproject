@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback } from "react";
-import type {PostType} from "@/Context/PostType.tsx";
+import type { PostType } from "@/Context/PostType.tsx";
 import postApi from "@/lib/api/postApi.ts";
 import i18n from "i18next";
 import type { Dispatch, SetStateAction } from "react";
@@ -15,6 +15,8 @@ export interface Post {
     type: PostType;
     poster: number;
     location?: Location;
+    creationTime: string;
+    eventTime?: string;
     imageUrl?: string;
     joinedUsers: number[];
 }
@@ -25,19 +27,34 @@ export interface CreatePostPayload {
     type: PostType;
     locationTitle: string;
     poster: number;
+    eventTime?: string;
     imageFile?: File | null;
+}
+
+export interface UpdatePostPayload {
+    title?: string;
+    content?: string;
+    type?: PostType;
+    location?: Location;
+    eventTime?: string;
 }
 
 interface PostContextType {
     posts: Post[];
     setPosts: Dispatch<SetStateAction<Post[]>>;
     createPost: (data: CreatePostPayload) => Promise<Post | null>;
+    updatePost: (id: number, data: UpdatePostPayload) => Promise<Post | null>;
+    deletePost: (id: number) => Promise<boolean>;
     getAllPosts: (filters?: {type?: PostType, posterId?: number}) => Promise<void>;
-    getPostById: (id: number) => Promise<Post | null>;
+    getPostById: (id: number, userId: string | number) => Promise<Post | null>;
     getPostsByUserId: (userId: number) => Promise<Post[] | null>;
     getPostsByType: (type: PostType) => Promise<Post[] | null>;
-    getRecentPosts: () => Promise<void>;
+    getRecentPosts: () => Promise<Post[] | null>;
     getPostRecommendations: (userId: number) => Promise<Post[] | null>;
+    searchPosts: (query: string, userId: string | number, type?: PostType | "all") => Promise<Post[] | null>;
+    joinPost: (postId: number, userId: number) => Promise<boolean>;
+    leavePost: (postId: number, userId: number) => Promise<boolean>;
+    collectEvent: (userId: string | number, itemIds: number | number[], type: "POST" | "CLICK" | "JOIN" | "SEARCH") => Promise<void>;
 }
 
 const PostContext = createContext<PostContextType | undefined>(undefined);
@@ -45,66 +62,177 @@ const PostContext = createContext<PostContextType | undefined>(undefined);
 export const PostProvider = ({ children }: { children: React.ReactNode }) => {
     const [posts, setPosts] = useState<Post[]>([]);
 
+    const collectEvent = useCallback(async (userId: string | number, itemIds: number | number[], type: "POST" | "CLICK" | "JOIN" | "SEARCH") => {
+        try {
+            const isMulti = type === "SEARCH" || Array.isArray(itemIds);
+            const endpoint = isMulti ? "/evcollector/multi" : "/evcollector";
+            const payload = {
+                userId,
+                itemId: itemIds,
+                timestamp: new Date().toISOString(),
+                type
+            };
+            await postApi.post(endpoint, payload);
+        } catch (error) {
+            console.error("Event collection failed", error);
+        }
+    }, []);
+
     const getAllPosts = useCallback(async (filters?: {type?: PostType, posterId?: number}) => {
         try {
             const params = new URLSearchParams();
-            if (filters?.type) {
-                params.append('type', filters.type);
-            }
-            if (filters?.posterId) {
-                params.append('posterId', filters.posterId.toString());
-            }
-
-            const queryString = params.toString();
-            const url = queryString ? `/post?${queryString}` : "/post";
-
+            if (filters?.type) params.append('type', filters.type);
+            if (filters?.posterId) params.append('posterId', filters.posterId.toString());
+            const url = params.toString() ? `/post?${params.toString()}` : "/post";
             const response = await postApi.get(url);
-
-            if (response.status === 200) {
-                setPosts(response.data);
-            }
+            if (response.status === 200) setPosts(response.data);
         } catch (error) {
-            console.error(i18n.t("errors.generic_fetch_error") || "Error fetching all posts:", error);
+            console.error(i18n.t("errors.generic_fetch_error"), error);
         }
-    }, [setPosts]);
+    }, []);
 
-    const getRecentPosts = useCallback(async () => {
+    const getRecentPosts = useCallback(async (): Promise<Post[] | null> => {
         try {
             const response = await postApi.get("/post");
-
             if (response.status === 200) {
-                setPosts(response.data);
-            }
-        } catch (error) {
-            console.error(i18n.t("errors.generic_fetch_error") || "Error fetching recent posts:", error);
-        }
-    }, [setPosts]);
-
-    const getPostRecommendations = useCallback(async (userId: number): Promise<Post[] | null> => {
-        try {
-            const response = await postApi.get(`/post/recommendations?userId=${userId}`);
-
-            if (response.status === 200) {
-                return response.data;
+                const postsData: Post[] = Array.isArray(response.data) ? response.data : [];
+                const limited = postsData.slice(0, 15);
+                setPosts(limited);
+                return limited;
             }
             return null;
         } catch (error) {
-            console.error(i18n.t("errors.generic_fetch_error") || `Error fetching recommendations for user ${userId}:`, error);
+            console.error(i18n.t("errors.generic_fetch_error"), error);
             return null;
         }
     }, []);
 
-
-    const getPostsByUserId = useCallback(async (userId: number): Promise<Post[] | null> => {
+    const getPostRecommendations = useCallback(async (userId: number): Promise<Post[] | null> => {
         try {
-            const response = await postApi.get(`/post?posterId=${userId}`);
+            const response = await postApi.get(`/post/recomendations?userId=${userId}&limit=5`);
+            return response.status === 200 ? response.data : null;
+        } catch (error) {
+            console.error(i18n.t("errors.generic_fetch_error"), error);
+            return null;
+        }
+    }, []);
 
+    const searchPosts = useCallback(async (query: string, userId: string | number, type?: PostType | "all"): Promise<Post[] | null> => {
+        try {
+            const params = new URLSearchParams();
+            if (query) params.append('titleContains', query);
+            if (type && type !== "all") params.append('type', type);
+            const response = await postApi.get(`/post?${params.toString()}`);
             if (response.status === 200) {
+                const results = Array.isArray(response.data) ? response.data.slice(0, 15) : [];
+                if (results.length > 0 && userId) {
+                    collectEvent(userId, results.map((p: Post) => p.id), "SEARCH");
+                }
+                return results;
+            }
+            return null;
+        } catch (error) {
+            console.error(i18n.t("errors.generic_fetch_error"), error);
+            return null;
+        }
+    }, [collectEvent]);
+
+    const getPostById = useCallback(async (id: number, userId: string | number): Promise<Post | null> => {
+        try {
+            const response  = await postApi.get(`/post/${id}`);
+            if (response.status === 200) {
+                if (userId) collectEvent(userId, id, "CLICK");
                 return response.data;
             }
             return null;
         } catch (error) {
-            console.error(i18n.t("errors.generic_fetch_error") || `Error fetching posts for user ${userId}:`, error);
+            console.error(i18n.t("errors.generic_fetch_error"), error);
+            return null;
+        }
+    }, [collectEvent]);
+
+    const createPost = useCallback(async ({ imageFile, ...postData }: CreatePostPayload): Promise<Post | null> => {
+        try {
+            const response = await postApi.post("/post", {
+                title: postData.title,
+                content: postData.content,
+                type: postData.type,
+                location: { title: postData.locationTitle },
+                poster: postData.poster,
+                eventTime: postData.eventTime
+            }, {
+                headers: { 'Content-Type': 'application/json' }
+            });
+            if (response.status === 201) {
+                const newPost = response.data;
+                setPosts(prev => [newPost, ...prev]);
+                collectEvent(postData.poster, newPost.id, "POST");
+                return newPost;
+            }
+            return null;
+        } catch (error) {
+            console.error(i18n.t("errors.generic_fetch_error"), error);
+            return null;
+        }
+    }, [collectEvent]);
+
+    const joinPost = useCallback(async (postId: number, userId: number): Promise<boolean> => {
+        try {
+            const response = await postApi.post(`/post/${postId}/join?userId=${userId}`);
+            if (response.status === 200) {
+                setPosts(prev => prev.map(p => p.id === postId ? { ...p, ...response.data } : p));
+                collectEvent(userId, postId, "JOIN");
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error("Error joining post", error);
+            return false;
+        }
+    }, [collectEvent]);
+
+    const updatePost = useCallback(async (id: number, data: UpdatePostPayload): Promise<Post | null> => {
+        try {
+            const response = await postApi.put(`/post/${id}`, {
+                title: data.title,
+                content: data.content,
+                type: data.type,
+                location: data.location,
+                eventTime: data.eventTime
+            }, {
+                headers: { 'Content-Type': 'application/json' }
+            });
+            if (response.status === 200) {
+                setPosts(prev => prev.map(p => p.id === id ? response.data : p));
+                return response.data;
+            }
+            return null;
+        } catch (error) {
+            console.error(i18n.t("errors.generic_fetch_error"), error);
+            return null;
+        }
+    }, []);
+
+    const deletePost = useCallback(async (id: number): Promise<boolean> => {
+        try {
+            const response = await postApi.delete(`/post/${id}`);
+            if (response.status === 200 || response.status === 204) {
+                setPosts(prev => prev.filter(p => p.id !== id));
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error(i18n.t("errors.generic_delete_error"), error);
+            return false;
+        }
+    }, []);
+
+    const getPostsByUserId = useCallback(async (userId: number): Promise<Post[] | null> => {
+        try {
+            const response = await postApi.get(`/post?posterId=${userId}`);
+            return response.status === 200 ? response.data : null;
+        } catch (error) {
+            console.error(i18n.t("errors.generic_fetch_error"), error);
             return null;
         }
     }, []);
@@ -112,78 +240,29 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
     const getPostsByType = useCallback(async (type: PostType): Promise<Post[] | null> => {
         try {
             const response = await postApi.get(`/post?type=${type}`);
-
-            if (response.status === 200) {
-                return response.data;
-            }
-            return null;
+            return response.status === 200 ? response.data : null;
         } catch (error) {
-            console.error(i18n.t("errors.generic_fetch_error") || `Error fetching posts by type ${type}:`, error);
+            console.error(i18n.t("errors.generic_fetch_error"), error);
             return null;
         }
     }, []);
 
-    const getPostById = useCallback(async (id: number): Promise<Post | null> => {
+    const leavePost = useCallback(async (postId: number, userId: number): Promise<boolean> => {
         try {
-            const response  = await postApi.get(`/post/${id}`);
-
+            const response = await postApi.post(`/post/${postId}/leave?userId=${userId}`);
             if (response.status === 200) {
-                return response.data;
+                setPosts(prev => prev.map(p => p.id === postId ? { ...p, ...response.data } : p));
+                return true;
             }
-            return null;
+            return false;
         } catch (error) {
-            console.error(i18n.t("errors.generic_fetch_error") || `Error fetching post ${id}:`, error);
-            return null;
+            console.error("Error leaving post", error);
+            return false;
         }
     }, []);
-
-
-    const createPost = useCallback(async ({ imageFile, ...postData }: CreatePostPayload): Promise<Post | null> => {
-        const formData = new FormData();
-
-        formData.append('title', postData.title);
-        formData.append('content', postData.content);
-        formData.append('type', postData.type);
-        formData.append('locationTitle', postData.locationTitle);
-        formData.append('poster', postData.poster.toString());
-        if (imageFile) {
-            formData.append('image', imageFile);
-        }
-
-        try {
-            const response = await postApi.post(
-                "/post",
-                formData,
-                { headers: { 'Content-Type': 'multipart/form-data' } }
-            );
-
-            if (response.status === 201) {
-                const newPost = response.data;
-                setPosts(prev => [newPost, ...prev]);
-                return newPost;
-            }
-            return null;
-
-        } catch (error) {
-            console.error(i18n.t("errors.generic_fetch_error") || "Error creating post:", error);
-            return null;
-        }
-    }, [setPosts]);
 
     return (
-        <PostContext.Provider
-            value={{
-                posts,
-                setPosts,
-                createPost,
-                getAllPosts,
-                getPostById,
-                getPostsByUserId,
-                getPostsByType,
-                getRecentPosts,
-                getPostRecommendations,
-            }}
-        >
+        <PostContext.Provider value={{ posts, setPosts, createPost, updatePost, deletePost, getAllPosts, getPostById, getPostsByUserId, getPostsByType, getRecentPosts, getPostRecommendations, searchPosts, joinPost, leavePost, collectEvent }}>
             {children}
         </PostContext.Provider>
     );
@@ -191,8 +270,6 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
 
 export const usePost = () => {
     const context = useContext(PostContext);
-    if (!context) {
-        throw new Error("usePost must be used within a PostProvider");
-    }
+    if (!context) throw new Error("usePost must be used within a PostProvider");
     return context;
 };

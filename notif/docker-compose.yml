@@ -1,0 +1,5 @@
+services:
+  notif:
+    build: ./API/
+    ports:
+      - 8084:8084

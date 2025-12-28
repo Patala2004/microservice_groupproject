@@ -6,6 +6,10 @@ import microservices.groupproject.post_api.repository.PostRepository;
 import microservices.groupproject.post_api.specification.PostSpecification;
 import microservices.groupproject.post_api.exception.PostNotFoundException;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +26,7 @@ public class PostService {
         this.postRepository = postRepository;
     }
 
-    public List<Post> getAllPosts(
+    public Page<Post> getAllPosts(
             String titleStartsWith,
             String titleContains,
             String contentContains,
@@ -33,7 +37,8 @@ public class PostService {
             LocalDateTime afterEventTime,
             LocalDateTime beforeEventTime,
             Long posterId,
-            Long participantId) {
+            Long participantId,
+            Pageable pageable) {
         Specification<Post> spec = Specification.<Post>unrestricted()
                 .and(PostSpecification.titleStartsWith(titleStartsWith))
                 .and(PostSpecification.titleContains(titleContains))
@@ -47,12 +52,23 @@ public class PostService {
                 .and(PostSpecification.eventAfter(afterEventTime))
                 .and(PostSpecification.hasJoined(participantId));
 
-        return postRepository.findAll(spec);
+        return postRepository.findAll(spec, pageable);
     }
 
     public Post getPostById(Long id) {
         return postRepository.findById(id)
                 .orElseThrow(() -> new PostNotFoundException(id));
+    }
+
+    public List<Post> getPostByIdNotOrderedByCreationTime(List<Long> ids, int pageSize){
+        PageRequest pageable = PageRequest.of(0, pageSize, Sort.by("creationTime").descending());
+        
+        if(ids == null || ids.isEmpty()){
+            // If no IDs to exclude, just return the newest posts
+            return postRepository.findAll(pageable).getContent();
+        }
+
+        return postRepository.findByIdNotIn(ids, pageable).getContent();
     }
 
     public Post createPost(Post post) {
@@ -67,7 +83,8 @@ public class PostService {
         existing.setContent(post.getContent());
         existing.setEventTime(post.getEventTime());
         existing.setLocation(post.getLocation());
-
+        existing.setType(post.getType());
+        
         return postRepository.save(existing);
     }
 

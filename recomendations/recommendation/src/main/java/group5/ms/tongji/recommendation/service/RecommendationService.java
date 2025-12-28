@@ -1,7 +1,7 @@
 package group5.ms.tongji.recommendation.service;
 
 import group5.ms.tongji.recommendation.dto.RecommendableItem;
-import group5.ms.tongji.recommendation.dto.UserFrequentTag;
+import group5.ms.tongji.recommendation.dto.FrequentTag;
 import group5.ms.tongji.recommendation.exceptions.NotFoundException;
 import group5.ms.tongji.recommendation.repository.posttag.PostTagRepository;
 import lombok.AllArgsConstructor;
@@ -21,7 +21,7 @@ public class   RecommendationService {
     private PostTagRepository postTagRepository;
 
     public int[] getRecommendedItems(int userId, int limit) {
-        UserFrequentTag[] userFrequentTagsInfo = userPrefServiceClient.getUserFrequentTags(userId);
+        FrequentTag[] userFrequentTagsInfo = userPrefServiceClient.getUserFrequentTags(userId);
         log.info(Arrays.toString(userFrequentTagsInfo));
         HashMap<Integer, Float> userTags = tagMapper.toWeightMap(userFrequentTagsInfo);
         if(userTags.isEmpty())
@@ -68,11 +68,11 @@ public class   RecommendationService {
         return recommendationsId;
     }
 
-    private Integer[] extractUserFrequentTags(UserFrequentTag[] userFrequentTags) {
+    private Integer[] extractUserFrequentTags(FrequentTag[] userFrequentTags) {
         Integer[] tags = new Integer[userFrequentTags.length];
         int i = 0;
-        for(UserFrequentTag u : userFrequentTags) {
-            tags[i] = u.getUserTag().getTagId();
+        for(FrequentTag u : userFrequentTags) {
+            tags[i] = u.getTagId();
             i++;
         }
         return tags;

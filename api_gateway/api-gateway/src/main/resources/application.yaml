@@ -32,10 +32,10 @@ spring:
               filters:
                 - StripPrefix=2
 
-            - id: user-preferences-service
-              uri: http://host.docker.internal:8086
+            - id: schedule-service
+              uri: http://host.docker.internal:8083
               predicates:
-                - Path=/api/v1/upref/**
+                - Path=/api/v1/schedule/**
               filters:
                 - StripPrefix=2
 
@@ -51,8 +51,8 @@ springdoc:
         url: "/api/v1/post/v3/api-docs"
       - name: "Event Collector Service"
         url: "api/v1/evcollector/v3/api-docs"
-      - name: "User Preferences Service"
-        url: "api/v1/upref/v3/api-docs"
+      - name: "Schedule Service"
+        url: "api/v1/schedule/v3/api-docs"
     doc-expansion: list
     urls-primary-name: "User Service"
   

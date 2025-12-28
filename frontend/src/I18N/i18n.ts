@@ -57,6 +57,16 @@ const resources = {
         submit_btn: "Create the account",
         login_link_prefix: "Already have an account?",
         login_link: "Log in here.",
+
+        interested_topics: "Interests (select at least 1)",
+        topics: {
+          sports: "Sports",
+          music: "Music",
+          arts: "Arts",
+          crafting: "Crafting",
+          reading: "Reading",
+          studying: "Studying"
+        }
       },
       login: {
         title: "Connection",
@@ -83,6 +93,8 @@ const resources = {
         invalid_credentials: "Invalid username or password.",
         account_inactive: "Your account is inactive. Please contact support.",
         generic_fetch_error: "Error fetching data. Please try again.",
+        generic_delete_error: "Error deleting data. Please try again.",
+        generic_error_creation: "Error creating data. Please try again.",
       },
       success: {
         signup_successful: "Registration successful! You can now log in.",
@@ -122,8 +134,16 @@ const resources = {
         contact: "Contact Seller",
         joined_count: "{{count}} joined",
         be_first: "Be the first to join!",
+        no_joiners_yet: "No one has joined your activity yet.",
+        join_success: "Successfully joined the event!",
+        leave_success: "You have left the event.",
         like: "Like",
         comment: "Comment",
+        edit: "Edit informations",
+        save: "Save changes",
+        cancel: "Cancel",
+        update_success: "Post updated successfully!",
+        update_error: "Error updating post. Please try again.",
         more: "more",
         more_users: "users",
         show_contact: "Show Contact Info",
@@ -153,7 +173,7 @@ const resources = {
         placeholder_content: "Provide details...",
         placeholder_price: "Free / $20",
         placeholder_location: "e.g. Library",
-
+        label_event_time: "Event Time",
       },
       profile: {
         title: "My Profile",
@@ -242,6 +262,15 @@ const resources = {
         submit_btn: "创建账户",
         login_link_prefix: "已有账户?",
         login_link: "在此登录。",
+        interested_topics: "兴趣爱好 (至少选择1个)",
+        topics: {
+          sports: "运动",
+          music: "音乐",
+          arts: "艺术",
+          crafting: "手工",
+          reading: "阅读",
+          studying: "学习"
+        }
       },
       login: {
         title: "登录",
@@ -265,6 +294,8 @@ const resources = {
         invalid_credentials: "用户名或密码无效。",
         account_inactive: "您的账户处于非活动状态。请联系支持人员。",
         generic_fetch_error: "获取数据失败。请重试。",
+        generic_delete_error: "删除数据时出错。请重试。",
+        generic_error_creation: "创建数据时出错。请重试。",
       },
       success: {
         signup_successful: "注册成功！您现在可以登录了。",
@@ -272,7 +303,6 @@ const resources = {
         post_created: "帖子创建成功！",
       },
 
-      // --- Home Page ---
       home: {
         trending_topics: "热门话题",
         search_placeholder: "搜索...",
@@ -304,7 +334,15 @@ const resources = {
         leave: "退出",
         contact: "联系卖家",
         joined_count: "{{count}} 人已加入",
+        no_joiners_yet: "还没有人加入您的活动。",
+        join_success: "成功加入活动！",
+        leave_success: "已退出活动。",
         be_first: "成为第一个加入的人！",
+        edit: "编辑信息",
+        save: "保存更改",
+        cancel: "取消",
+        update_success: "帖子更新成功！",
+        update_error: "更新帖子时出错。请重试。",
         like: "点赞",
         comment: "评论",
         more: "更多",
@@ -336,6 +374,7 @@ const resources = {
         placeholder_content: "提供详细信息...",
         placeholder_price: "免费 / 20元",
         placeholder_location: "例如：图书馆",
+        label_event_time: "活动时间",
       },
       profile: {
         title: "我的个人资料",

@@ -27,5 +27,9 @@ public class RecommendationAdvice {
         return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(Map.of("error", "external service unavailable", "timestamp", Instant.now().toString()));
     }
 
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<Object> handleAlreadyExists (AlreadyExistsException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(Map.of("error", ex.getMessage(), "timestamp", Instant.now().toString()));
+    }
 
 }
