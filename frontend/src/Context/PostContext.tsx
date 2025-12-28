@@ -85,7 +85,7 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
             if (filters?.posterId) params.append('posterId', filters.posterId.toString());
             const url = params.toString() ? `/post?${params.toString()}` : "/post";
             const response = await postApi.get(url);
-            if (response.status === 200) setPosts(response.data);
+            if (response.status === 200) setPosts(response.data.content);
         } catch (error) {
             console.error(i18n.t("errors.generic_fetch_error"), error);
         }
@@ -95,7 +95,7 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
         try {
             const response = await postApi.get("/post");
             if (response.status === 200) {
-                const postsData: Post[] = Array.isArray(response.data) ? response.data : [];
+                const postsData: Post[] = Array.isArray(response.data.content) ? response.data.content : [];
                 const limited = postsData.slice(0, 15);
                 setPosts(limited);
                 return limited;
@@ -110,7 +110,7 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
     const getPostRecommendations = useCallback(async (userId: number): Promise<Post[] | null> => {
         try {
             const response = await postApi.get(`/post/recomendations?userId=${userId}&limit=5`);
-            return response.status === 200 ? response.data : null;
+            return response.status === 200 ? response.data.content : null;
         } catch (error) {
             console.error(i18n.t("errors.generic_fetch_error"), error);
             return null;
@@ -124,7 +124,7 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
             if (type && type !== "all") params.append('type', type);
             const response = await postApi.get(`/post?${params.toString()}`);
             if (response.status === 200) {
-                const results = Array.isArray(response.data) ? response.data.slice(0, 15) : [];
+                const results = Array.isArray(response.data.content) ? response.data.content.slice(0, 15) : [];
                 if (results.length > 0 && userId) {
                     collectEvent(userId, results.map((p: Post) => p.id), "SEARCH");
                 }
@@ -230,7 +230,7 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
     const getPostsByUserId = useCallback(async (userId: number): Promise<Post[] | null> => {
         try {
             const response = await postApi.get(`/post?posterId=${userId}`);
-            return response.status === 200 ? response.data : null;
+            return response.status === 200 ? response.data.content : null;
         } catch (error) {
             console.error(i18n.t("errors.generic_fetch_error"), error);
             return null;
@@ -240,7 +240,7 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
     const getPostsByType = useCallback(async (type: PostType): Promise<Post[] | null> => {
         try {
             const response = await postApi.get(`/post?type=${type}`);
-            return response.status === 200 ? response.data : null;
+            return response.status === 200 ? response.data.content : null;
         } catch (error) {
             console.error(i18n.t("errors.generic_fetch_error"), error);
             return null;
