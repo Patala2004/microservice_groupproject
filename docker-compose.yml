@@ -55,7 +55,7 @@ services:
       service: rec_pg
 
   posttag_pg:
-    extends: 
+    extends:
       file: common-db/docker-compose.yml
       service: posttag_pg
 
@@ -65,12 +65,12 @@ services:
       service: evcollapp
 
   scheudleapp:
-    extends: 
+    extends:
       file: schedule/docker-compose.yml
       service: scheduleapp
 
   schedule_pg:
-    extends: 
+    extends:
       file: schedule/docker-compose.yml
       service: schedule_pg
 
@@ -83,8 +83,35 @@ services:
     extends:
       file: notif/docker-compose.yml
       service: notif
-  
 
+  ollama:
+    image: ollama/ollama
+    container_name: ollama-translate
+    volumes:
+      - ollama_models:/root/.ollama
+      - ./translation/ollama-init/entrypoint.sh:/entrypoint.sh
+    entrypoint: ["/bin/sh", "/entrypoint.sh"]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    networks:
+      - ms_network
+
+  translate:
+    build: ./translation
+    container_name: translate
+    depends_on:
+      - ollama
+    ports:
+      - "8088:8000"
+    environment:
+      OLLAMA_HOST: "http://ollama-translate:11434"
+    networks:
+      - ms_network
 
   frontend:
     extends:
@@ -120,3 +147,4 @@ volumes:
   schedulepgdata:
   posttagpgdata:
   rabbitmq_data:
+  ollama_models:
