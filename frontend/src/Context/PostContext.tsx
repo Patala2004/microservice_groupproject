@@ -32,6 +32,7 @@ export interface CreatePostPayload {
 }
 
 export interface UpdatePostPayload {
+    poster: number;
     title?: string;
     content?: string;
     type?: PostType;
@@ -45,11 +46,11 @@ interface PostContextType {
     createPost: (data: CreatePostPayload) => Promise<Post | null>;
     updatePost: (id: number, data: UpdatePostPayload) => Promise<Post | null>;
     deletePost: (id: number) => Promise<boolean>;
-    getAllPosts: (filters?: {type?: PostType, posterId?: number}) => Promise<void>;
+    getAllPosts: (filters?: {type?: PostType, posterId?: number, page?: number, size?: number}) => Promise<Post[] | null>;
     getPostById: (id: number, userId: string | number) => Promise<Post | null>;
     getPostsByUserId: (userId: number) => Promise<Post[] | null>;
     getPostsByType: (type: PostType) => Promise<Post[] | null>;
-    getRecentPosts: () => Promise<Post[] | null>;
+    getRecentPosts: (page?: number) => Promise<Post[] | null>;
     getPostRecommendations: (userId: number) => Promise<Post[] | null>;
     searchPosts: (query: string, userId: string | number, type?: PostType | "all") => Promise<Post[] | null>;
     joinPost: (postId: number, userId: number) => Promise<boolean>;
@@ -67,7 +68,7 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
             const isMulti = type === "SEARCH" || Array.isArray(itemIds);
             const endpoint = isMulti ? "/evcollector/multi" : "/evcollector";
             const payload = {
-                userId,
+                userId: userId,
                 itemId: itemIds,
                 timestamp: new Date().toISOString(),
                 type
@@ -78,27 +79,33 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }, []);
 
-    const getAllPosts = useCallback(async (filters?: {type?: PostType, posterId?: number}) => {
+    const getAllPosts = useCallback(async (filters?: {type?: PostType, posterId?: number, page?: number, size?: number}) => {
         try {
             const params = new URLSearchParams();
             if (filters?.type) params.append('type', filters.type);
             if (filters?.posterId) params.append('posterId', filters.posterId.toString());
-            const url = params.toString() ? `/post?${params.toString()}` : "/post";
+            if (filters?.page !== undefined) params.append('page', filters.page.toString());
+            if (filters?.size !== undefined) params.append('size', filters.size.toString());
+            params.append('sort', 'creationTime,DESC');
+            const url = `/post?${params.toString()}`;
             const response = await postApi.get(url);
-            if (response.status === 200) setPosts(response.data);
+            if (response.status === 200) {
+                return response.data.content;
+            }
+            return null;
         } catch (error) {
             console.error(i18n.t("errors.generic_fetch_error"), error);
+            return null;
         }
     }, []);
 
-    const getRecentPosts = useCallback(async (): Promise<Post[] | null> => {
+    const getRecentPosts = useCallback(async (page: number = 0): Promise<Post[] | null> => {
         try {
-            const response = await postApi.get("/post");
+            const response = await postApi.get(`/post?page=${page}&size=15&sort=creationTime,DESC`);
             if (response.status === 200) {
-                const postsData: Post[] = Array.isArray(response.data) ? response.data : [];
-                const limited = postsData.slice(0, 15);
-                setPosts(limited);
-                return limited;
+                const postsData: Post[] = Array.isArray(response.data.content) ? response.data.content : [];
+                if (page === 0) setPosts(postsData);
+                return postsData;
             }
             return null;
         } catch (error) {
@@ -122,9 +129,10 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
             const params = new URLSearchParams();
             if (query) params.append('titleContains', query);
             if (type && type !== "all") params.append('type', type);
+            params.append('sort', 'creationTime,DESC');
             const response = await postApi.get(`/post?${params.toString()}`);
             if (response.status === 200) {
-                const results = Array.isArray(response.data) ? response.data.slice(0, 15) : [];
+                const results = Array.isArray(response.data.content) ? response.data.content.slice(0, 15) : [];
                 if (results.length > 0 && userId) {
                     collectEvent(userId, results.map((p: Post) => p.id), "SEARCH");
                 }
@@ -194,6 +202,7 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
     const updatePost = useCallback(async (id: number, data: UpdatePostPayload): Promise<Post | null> => {
         try {
             const response = await postApi.put(`/post/${id}`, {
+                poster: data.poster,
                 title: data.title,
                 content: data.content,
                 type: data.type,
@@ -230,7 +239,7 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
     const getPostsByUserId = useCallback(async (userId: number): Promise<Post[] | null> => {
         try {
             const response = await postApi.get(`/post?posterId=${userId}`);
-            return response.status === 200 ? response.data : null;
+            return response.status === 200 ? response.data.content : null;
         } catch (error) {
             console.error(i18n.t("errors.generic_fetch_error"), error);
             return null;
@@ -240,7 +249,7 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
     const getPostsByType = useCallback(async (type: PostType): Promise<Post[] | null> => {
         try {
             const response = await postApi.get(`/post?type=${type}`);
-            return response.status === 200 ? response.data : null;
+            return response.status === 200 ? response.data.content : null;
         } catch (error) {
             console.error(i18n.t("errors.generic_fetch_error"), error);
             return null;
