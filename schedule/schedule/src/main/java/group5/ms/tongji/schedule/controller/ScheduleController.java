@@ -41,10 +41,9 @@ public class ScheduleController {
     })
     public List<ScheduleItem> checkAvailability(
             @PathVariable Integer userId,
-            @RequestParam Integer studentId,
             @RequestParam LocalDateTime start,
             @RequestParam LocalDateTime end
             ){
-        return scheduleService.checkAvailability(userId,studentId,start,end);
+        return scheduleService.checkAvailability(userId,start,end);
     }
 }

@@ -9,7 +9,10 @@ import group5.ms.tongji.schedule.repository.ClassesRepository;
 import group5.ms.tongji.schedule.repository.UserClassesRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -24,6 +27,7 @@ public class  ClassService {
     UserClassesRepository userClassesRepository;
     ClassesRepository classesRepository;
     ClassSessionMapper classSessionMapper;
+    UserClient userClient;
 
     private final LocalDate START_DATE = LocalDate.of(2025,9,15);
     private final LocalTime[] PERIODS = new LocalTime[]{
@@ -41,14 +45,15 @@ public class  ClassService {
     };
     private final int PERIOD_DURATION = 45;
 
-    public List<ScheduleItem> getClassCoincidences(Integer userId, Integer studentId, LocalDateTime start, LocalDateTime end) {
+    public List<ScheduleItem> getClassCoincidences(Integer userId, LocalDateTime start, LocalDateTime end) {
         if(userClassesRepository.existsByUserClassUserId(userId)){
-            getUserClasses(userId, studentId);
+            getUserClasses(userId);
         }
         return userClassesRepository.findUserCoincidences(start, end, userId);
     }
 
-    private void getUserClasses(Integer userId, Integer studentId) {
+    private void getUserClasses(Integer userId) {
+        Integer studentId = userClient.getUserStudentId(userId);
         List<ClassResponse> classResponses = fakeApiData.getClassResponses(studentId);
         extractExistingClasses(classResponses, userId);
         List<ClassSession> newClasses = classSessionMapper.mapClassResponsesToScheduleItem(classResponses, START_DATE, PERIODS, PERIOD_DURATION);
