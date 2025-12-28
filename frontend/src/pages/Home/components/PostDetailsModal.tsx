@@ -166,6 +166,7 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
     if (!post) return;
     setIsUpdating(true);
     const result = await updatePost(post.id, {
+      poster: post.poster,
       title: editTitle,
       content: editContent,
       type: editType,

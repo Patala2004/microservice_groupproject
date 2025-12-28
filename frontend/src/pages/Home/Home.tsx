@@ -49,7 +49,7 @@ const HomePage = () => {
     const fetchRecommendations = async () => {
       if (sortView === "recommended" && user?.id) {
         if (recommendedPosts.length === 0) setPostsLoading(true);
-        const recs = await getPostRecommendations(parseInt(user.id));
+        const recs = await getPostRecommendations(user.id);
         if (recs) setRecommendedPosts(recs);
         setPostsLoading(false);
       }
@@ -123,17 +123,10 @@ const HomePage = () => {
 
   return (
       <div className="dark relative min-h-screen w-full flex justify-center bg-slate-950 text-slate-100 selection:bg-orange-500/30">
-        <div className="fixed inset-0 -z-10 pointer-events-none">
-          <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-red-600/10 blur-[120px] rounded-full" />
-          <div className="absolute bottom-[0%] left-[-10%] w-[500px] h-[500px] bg-orange-600/5 blur-[120px] rounded-full" />
-        </div>
-
         <div className="container mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
-          <div className="hidden lg:block lg:col-span-3 lg:order-1 order-1 space-y-6">
-            <RecommendationsSidebar />
-          </div>
+          <div className="hidden lg:block lg:col-span-3" />
 
-          <main className="lg:col-span-6 lg:order-2 order-3 min-h-screen">
+          <main className="lg:col-span-6 min-h-screen">
             <div className="sticky top-0 z-30 pb-4 pt-2 -mx-4 px-4 bg-slate-950/80 backdrop-blur-lg mb-6 space-y-4 border-b border-slate-800/60">
               <div className="relative group">
                 <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors ${isSearching ? 'text-orange-500 animate-pulse' : 'text-slate-500'}`} />
@@ -211,7 +204,7 @@ const HomePage = () => {
             </div>
           </main>
 
-          <aside className="hidden lg:block lg:col-span-3 lg:order-3 order-2">
+          <aside className="hidden lg:block lg:col-span-3">
             <UserDashboard onOpenCreatePost={() => setIsCreateOpen(true)} />
           </aside>
         </div>
