@@ -14,7 +14,6 @@ services:
     volumes:
       - models:/root/.ollama
       - ./ollama-init/entrypoint.sh:/entrypoint.sh
-    entrypoint: ["/bin/sh", "/entrypoint.sh"]
     deploy:
       resources:
         reservations:

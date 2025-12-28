@@ -14,7 +14,7 @@ def callback(ch, method, properties, body):
         post_id = data["post_id"]
 
         print(f"Processing post_id={post_id}")
-        # process_post(post_id)
+        tag_post(post_id)
 
         ch.basic_ack(delivery_tag=method.delivery_tag)
 

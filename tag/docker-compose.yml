@@ -90,6 +90,7 @@ services:
       RABBIT_QUEUE_NAME: "tag_posts"
       RABBIT_EXCHANGE: "tag_exchange"
       RABBIT_ROUTING_KEY: "tag"
+      PYTHONUNBUFFERED: "1"
     networks:
       - tagging_network
 
