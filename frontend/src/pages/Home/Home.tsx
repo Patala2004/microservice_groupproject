@@ -1,4 +1,4 @@
-import { Search, Clock, Sparkles, RotateCw } from "lucide-react";
+import { Search, Clock, Sparkles, RotateCw, Plus } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
@@ -23,10 +23,13 @@ const HomePage = () => {
 
   const [initialLoading, setInitialLoading] = useState(true);
   const [postsLoading, setPostsLoading] = useState(false);
+  const [moreLoading, setMoreLoading] = useState(false);
   const [sortView, setSortView] = useState<SortOption>("recent");
   const [filterType, setFilterType] = useState<PostType | "all">("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
 
   const [postsToDisplay, setPostsToDisplay] = useState<Post[]>([]);
   const [recommendedPosts, setRecommendedPosts] = useState<Post[]>([]);
@@ -38,18 +41,22 @@ const HomePage = () => {
   useEffect(() => {
     const fetchInitialData = async () => {
       setInitialLoading(true);
-      const recent = await getRecentPosts();
-      if (recent) setPostsToDisplay(recent);
+      const recent = await getRecentPosts(0);
+      if (recent) {
+        setPostsToDisplay(recent);
+        setHasMore(recent.length === 15);
+      }
       setInitialLoading(false);
     };
     fetchInitialData();
+    setCurrentPage(0);
   }, [getRecentPosts]);
 
   useEffect(() => {
     const fetchRecommendations = async () => {
       if (sortView === "recommended" && user?.id) {
         if (recommendedPosts.length === 0) setPostsLoading(true);
-        const recs = await getPostRecommendations(parseInt(user.id));
+        const recs = await getPostRecommendations(user.id);
         if (recs) setRecommendedPosts(recs);
         setPostsLoading(false);
       }
@@ -68,6 +75,21 @@ const HomePage = () => {
     }, 400);
     return () => clearTimeout(handler);
   }, [searchQuery, filterType, searchPosts, user?.id]);
+
+  const handleSeeMore = async () => {
+    if (moreLoading || !hasMore) return;
+    setMoreLoading(true);
+    const nextPage = currentPage + 1;
+    const morePosts = await getRecentPosts(nextPage);
+    if (morePosts) {
+      setPostsToDisplay(prev => [...prev, ...morePosts]);
+      setCurrentPage(nextPage);
+      setHasMore(morePosts.length === 15);
+    } else {
+      setHasMore(false);
+    }
+    setMoreLoading(false);
+  };
 
   const handlePostClick = async (postId: number) => {
     if (user?.id) {
@@ -110,7 +132,11 @@ const HomePage = () => {
       const matchesSearch = !searchQuery || post.title?.toLowerCase().includes(searchLower) || post.content?.toLowerCase().includes(searchLower);
       return matchesType && matchesSearch;
     });
-    return [...result].sort((a, b) => b.id - a.id);
+
+    if (searchQuery.trim().length > 0 || sortView === "recommended") {
+      return [...result].sort((a, b) => b.id - a.id);
+    }
+    return result;
   }, [postsToDisplay, recommendedPosts, searchResults, filterType, searchQuery, sortView]);
 
   if (initialLoading) {
@@ -128,12 +154,12 @@ const HomePage = () => {
           <div className="absolute bottom-[0%] left-[-10%] w-[500px] h-[500px] bg-orange-600/5 blur-[120px] rounded-full" />
         </div>
 
-        <div className="container mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
-          <div className="hidden lg:block lg:col-span-3 lg:order-1 order-1 space-y-6">
+        <div className="container max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
+          <div className="hidden lg:block lg:col-span-3 space-y-6">
             <RecommendationsSidebar />
           </div>
 
-          <main className="lg:col-span-6 lg:order-2 order-3 min-h-screen">
+          <main className="lg:col-span-6 min-h-screen">
             <div className="sticky top-0 z-30 pb-4 pt-2 -mx-4 px-4 bg-slate-950/80 backdrop-blur-lg mb-6 space-y-4 border-b border-slate-800/60">
               <div className="relative group">
                 <Search className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors ${isSearching ? 'text-orange-500 animate-pulse' : 'text-slate-500'}`} />
@@ -196,22 +222,36 @@ const HomePage = () => {
                     <p>{t("home.no_posts")}</p>
                   </div>
               ) : (
-                  processedPosts.map((post) => (
-                      <div key={`${sortView}-${post.id}`} onClick={() => handlePostClick(post.id)}>
-                        <PostCard
-                            post={post}
-                            user={user}
-                            onDelete={handleConfirmDelete}
-                            canEditPost={user?.id === post?.poster?.toString()}
-                            onPostUpdated={handlePostUpdated}
-                        />
-                      </div>
-                  ))
+                  <>
+                    {processedPosts.map((post) => (
+                        <div key={`${sortView}-${post.id}`} onClick={() => handlePostClick(post.id)}>
+                          <PostCard
+                              post={post}
+                              user={user}
+                              onDelete={handleConfirmDelete}
+                              canEditPost={user?.id === post?.poster}
+                              onPostUpdated={handlePostUpdated}
+                          />
+                        </div>
+                    ))}
+                    {sortView === "recent" && searchQuery.trim().length === 0 && hasMore && (
+                        <div className="flex justify-center pt-4">
+                          <Button
+                              onClick={handleSeeMore}
+                              disabled={moreLoading}
+                              variant="gradient-fire"
+                          >
+                            {moreLoading ? <RotateCw className="animate-spin size-4 mr-2" /> : <Plus className="size-4 mr-2" />}
+                            {t("post_actions.more")}
+                          </Button>
+                        </div>
+                    )}
+                  </>
               )}
             </div>
           </main>
 
-          <aside className="hidden lg:block lg:col-span-3 lg:order-3 order-2">
+          <aside className="hidden lg:block lg:col-span-3">
             <UserDashboard onOpenCreatePost={() => setIsCreateOpen(true)} />
           </aside>
         </div>

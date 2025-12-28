@@ -11,6 +11,7 @@ import microservices.groupproject.post_api.service.PostService;
 
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -55,7 +56,7 @@ public class PostController {
     }
 
     @GetMapping
-    public List<PostGlobalDTO> all(
+    public Page<PostGlobalDTO> all(
         @RequestParam(required = false) String titleStartsWith,
         @RequestParam(required = false) String titleContains,
         @RequestParam(required = false) String contentContains,
@@ -77,7 +78,7 @@ public class PostController {
     ) {
         return service.getAllPosts(titleStartsWith, titleContains, contentContains, type, locationTitle, 
         afterCreationDateStamp, beforeCreationDateStamp, afterEventDateStamp, beforeEventDateStamp, posterId,
-        participantId, pageable).map(postMapper::toDTO).toList();
+        participantId, pageable).map(postMapper::toDTO);
     }
 
     @GetMapping("/{id}")
@@ -171,10 +172,17 @@ public class PostController {
     }
 
     @GetMapping("/recomendations")
-    public ResponseEntity<List<PostGlobalDTO>> getUserRecomendedPosts(
+    public ResponseEntity<Page<PostGlobalDTO>> getUserRecomendedPosts(
         @RequestParam(required = true) int userId,
-        @RequestParam(required = false, defaultValue = "10") int limit
+        @ParameterObject
+        @PageableDefault(
+            size = 20,
+            page = 0,
+            sort = "creationTime",
+            direction = Sort.Direction.DESC
+        ) Pageable pageable
     ) {
+        int limit = pageable.getPageSize() * (pageable.getPageNumber()+1);
         List<Integer> postIds = externalRecomClient.getUserRecom(userId, limit);
 
         List<PostGlobalDTO> postList = new ArrayList<>(service.getPostList(postIds.stream().map(Integer::longValue).toList())
@@ -192,8 +200,17 @@ public class PostController {
 
             postList.addAll(otherPosts);
         }
+        int fromIndex = pageable.getPageNumber() * pageable.getPageSize();
+        int toIndex = Math.min(fromIndex + pageable.getPageSize(), postList.size());
 
-        return ResponseEntity.ok(postList);
+        List<PostGlobalDTO> pageContent =
+                fromIndex >= postList.size()
+                        ? List.of()
+                        : postList.subList(fromIndex, toIndex);
+
+        Page<PostGlobalDTO> page = new PageImpl<>(pageContent, pageable, service.getPostAmm());
+
+        return ResponseEntity.ok(page);
     }
 
     @PostMapping("/{id}/join")

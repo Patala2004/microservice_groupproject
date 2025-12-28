@@ -55,6 +55,11 @@ public class PostService {
         return postRepository.findAll(spec, pageable);
     }
 
+    public long getPostAmm(){
+        long count = postRepository.count();
+        return count;
+    }
+
     public Post getPostById(Long id) {
         return postRepository.findById(id)
                 .orElseThrow(() -> new PostNotFoundException(id));

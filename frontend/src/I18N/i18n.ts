@@ -144,7 +144,7 @@ const resources = {
         cancel: "Cancel",
         update_success: "Post updated successfully!",
         update_error: "Error updating post. Please try again.",
-        more: "more",
+        more: "More posts",
         more_users: "users",
         show_contact: "Show Contact Info",
         contact_poster_title: "Contact {{name}}",
