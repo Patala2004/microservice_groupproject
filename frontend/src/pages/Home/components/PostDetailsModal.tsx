@@ -16,7 +16,8 @@ import {
   Check,
   X as XIcon,
   Clock,
-  CalendarDays
+  CalendarDays,
+  Languages
 } from "lucide-react";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -78,6 +79,11 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
   const [editType, setEditType] = useState<PostType>(PostType.ACTIVITY);
   const [isUpdating, setIsUpdating] = useState(false);
 
+  const [isTranslated, setIsTranslated] = useState(false);
+  const [displayTitle, setDisplayTitle] = useState("");
+  const [displayContent, setDisplayContent] = useState("");
+  const [displayLocation, setDisplayLocation] = useState("");
+
   useEffect(() => {
     if (post && isOpen) {
       setLocalJoinedUsersIds(post.joinedUsers || []);
@@ -88,8 +94,29 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
       setEditEventTime(post.eventTime ? new Date(post.eventTime).toISOString().slice(0, 16) : "");
       setEditType(post.type);
       setIsEditing(false);
+
+      setIsTranslated(false);
+      setDisplayTitle(post.title);
+      setDisplayContent(post.content);
+      setDisplayLocation(post.location?.title || t('post_actions.no_location'));
     }
-  }, [post, isOpen]);
+  }, [post, isOpen, t]);
+
+  const handleToggleTranslation = () => {
+    if (!post) return;
+
+    if (!isTranslated) {
+      setDisplayTitle("翻译功能测试");
+      setDisplayContent("这是即将推出的 AI 翻译服务的演示。点击按钮查看中文版本。");
+      setDisplayLocation("同济大学嘉定校区嘉园广场");
+      setIsTranslated(true);
+    } else {
+      setDisplayTitle(post.title);
+      setDisplayContent(post.content);
+      setDisplayLocation(post.location?.title || t('post_actions.no_location'));
+      setIsTranslated(false);
+    }
+  };
 
   const fetchJoinerDetails = useCallback(async (ids: number[]) => {
     if (!post || post.type !== PostType.ACTIVITY || ids.length === 0) {
@@ -166,6 +193,7 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
     if (!post) return;
     setIsUpdating(true);
     const result = await updatePost(post.id, {
+      poster: post.poster,
       title: editTitle,
       content: editContent,
       type: editType,
@@ -187,7 +215,6 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
   const isHost = post.poster.toString() === currentUser;
   const isJoined = localJoinedUsersIds.includes(parseInt(currentUser));
   const initials = posterName?.charAt(0).toUpperCase() || '?';
-  const locationTitle = post.location?.title || t('post_actions.no_location');
   const isActivity = post.type === PostType.ACTIVITY;
 
   const handleJoinActivity = () => {
@@ -237,7 +264,7 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
       <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
         <DialogContent className="max-w-2xl p-0 overflow-hidden bg-slate-900 border-slate-800 shadow-2xl text-slate-200 rounded-xl max-h-[90vh] flex flex-col">
           <VisuallyHidden.Root>
-            <DialogHeader><DialogTitle>{post.title}</DialogTitle></DialogHeader>
+            <DialogHeader><DialogTitle>{displayTitle}</DialogTitle></DialogHeader>
           </VisuallyHidden.Root>
           <ScrollArea className="flex-1">
             <div className="relative">
@@ -248,14 +275,27 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
                 <div className="relative z-10 flex w-full justify-between items-end">
                   {!isEditing ? (
                       <div className="flex flex-row items-center gap-2 bg-black/40 text-white px-4 py-1.5 text-sm rounded-full backdrop-blur-md">
-                        {getTypeLabel(post.type, t)}
+                        {isTranslated && isActivity ? "活动" : getTypeLabel(post.type, t)}
                       </div>
                   ) : <div />}
-                  {canEditPost && isHost && !isEditing && (
-                      <Button size="sm" variant="secondary" className="h-8 rounded-full bg-white/10 hover:bg-white/20 border-none text-white backdrop-blur-sm" onClick={() => setIsEditing(true)}>
-                        <Pencil className="w-3.5 h-3.5 mr-1.5" /> {t('post_actions.edit')}
-                      </Button>
-                  )}
+                  <div className="flex gap-2">
+                    {!isEditing && (
+                        <Button
+                            size="sm"
+                            variant="secondary"
+                            className={`h-8 rounded-full border-none text-white backdrop-blur-sm transition-all ${isTranslated ? 'bg-orange-500 hover:bg-orange-600' : 'bg-white/10 hover:bg-white/20'}`}
+                            onClick={handleToggleTranslation}
+                        >
+                          <Languages className="w-3.5 h-3.5 mr-1.5" />
+                          {isTranslated ? "Original" : "Translate"}
+                        </Button>
+                    )}
+                    {canEditPost && isHost && !isEditing && (
+                        <Button size="sm" variant="secondary" className="h-8 rounded-full bg-white/10 hover:bg-white/20 border-none text-white backdrop-blur-sm" onClick={() => setIsEditing(true)}>
+                          <Pencil className="w-3.5 h-3.5 mr-1.5" /> {t('post_actions.edit')}
+                        </Button>
+                    )}
+                  </div>
                 </div>
               </div>
               <div className="p-8 pb-4">
@@ -324,11 +364,11 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
                     </div>
                 ) : (
                     <>
-                      <h2 className="text-2xl font-bold text-white mb-4 leading-tight">{post.title}</h2>
+                      <h2 className="text-2xl font-bold text-white mb-4 leading-tight">{displayTitle}</h2>
                       <div className="flex flex-wrap gap-3 mb-6">
                         {post.location && (
                             <div className="inline-flex items-center text-sm font-medium text-slate-300 bg-slate-800/50 px-3 py-1.5 rounded-lg border border-slate-700">
-                              <MapPin className="w-4 h-4 mr-1"/> {locationTitle}
+                              <MapPin className="w-4 h-4 mr-1"/> {displayLocation}
                             </div>
                         )}
                         {post.eventTime && (
@@ -337,7 +377,7 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
                             </div>
                         )}
                       </div>
-                      <div className="prose prose-invert max-w-none text-slate-300 mb-8"><p>{post.content}</p></div>
+                      <div className="prose prose-invert max-w-none text-slate-300 mb-8"><p>{displayContent}</p></div>
                     </>
                 )}
 

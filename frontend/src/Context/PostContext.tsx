@@ -32,6 +32,7 @@ export interface CreatePostPayload {
 }
 
 export interface UpdatePostPayload {
+    poster: number;
     title?: string;
     content?: string;
     type?: PostType;
@@ -201,6 +202,7 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
     const updatePost = useCallback(async (id: number, data: UpdatePostPayload): Promise<Post | null> => {
         try {
             const response = await postApi.put(`/post/${id}`, {
+                poster: data.poster,
                 title: data.title,
                 content: data.content,
                 type: data.type,
