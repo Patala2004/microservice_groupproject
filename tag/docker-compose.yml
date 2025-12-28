@@ -1,0 +1,110 @@
+volumes:
+  models:
+  pgdata:
+
+networks:
+  tagging_network:
+    driver: bridge
+
+services:
+  ollama:
+    image: ollama/ollama
+    container_name: ollama-tagging
+    volumes:
+      - models:/root/.ollama
+      - ./init/ollama/entrypoint.sh:/entrypoint.sh
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    networks:
+      - tagging_network
+
+  embeddings:
+    build: ./embeddings/.
+    container_name: embeddings_service
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    networks:
+      - tagging_network
+    ports:
+      - "8091:8000"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: tagging-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: app_user
+      RABBITMQ_DEFAULT_PASS: supersecret
+      RABBITMQ_DEFAULT_VHOST: /
+    volumes:
+      - ./init/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+      - ./init/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+    ports:
+      - "5678:5672"
+      - "15678:15672"
+    networks:
+      - tagging_network
+
+  tag:
+    build: ./tag-api/.
+    container_name: tag-service
+    depends_on:
+      - rabbitmq
+    environment:
+      RABBIT_HOST: "rabbitmq"
+      RABBIT_PORT: 5672
+      RABBIT_QUEUE_NAME: "tag_posts"
+      RABBIT_EXCHANGE: "tag_exchange"
+      RABBIT_ROUTING_KEY: "tag"
+    networks:
+      - tagging_network
+    ports:
+      - "8087:8000"
+
+  worker:
+    build: ./worker/.
+    container_name: tag_worker
+    depends_on:
+      - ollama
+      - embeddings
+      - db
+      - rabbitmq
+    environment:
+      OLLAMA_HOST: "http://ollama-tagging:11434"
+      POSTGRES_TAGGING_DB: "postgresql://app_user:app_password@tagging-db:5432/tags_db"
+      POST_TAG_DB: "postgresql://posttaguser:password@host.docker.internal:5440/posttagdb"
+      EMBEDDINGS_URL: "http://embeddings_service:8000"
+      POST_SERVICE_URL: "http://host.docker.internal:8082"
+      TRANSLATION_URL: "http://host.docker.internal:8088"
+      RABBIT_HOST: "rabbitmq"
+      RABBIT_PORT: 5672
+      RABBIT_QUEUE_NAME: "tag_posts"
+      RABBIT_EXCHANGE: "tag_exchange"
+      RABBIT_ROUTING_KEY: "tag"
+      PYTHONUNBUFFERED: "1"
+    networks:
+      - tagging_network
+
+  db:
+    image: pgvector/pgvector:pg17-trixie
+    container_name: tagging-db
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: tags_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init/postgres:/docker-entrypoint-initdb.d
+    networks:
+      - tagging_network
+    ports:
+      - 5438:5432

@@ -1,0 +1,6 @@
+CREATE USER app_user WITH PASSWORD 'app_password';
+GRANT CONNECT ON DATABASE tags_db TO app_user;
+GRANT USAGE ON SCHEMA public TO app_user;
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE tag TO app_user;
+GRANT USAGE, SELECT ON SEQUENCE tag_id_seq TO app_user;
