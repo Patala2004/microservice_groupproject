@@ -1,0 +1,68 @@
+{
+    "vhosts": [
+        {
+            "name": "/"
+        }
+    ],
+    "users": [
+        {
+            "name": "app_user",
+            "password": "supersecret",
+            "tags": "administrator"
+        }
+    ],
+    "permissions": [
+        {
+            "user": "app_user",
+            "vhost": "/",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
+        }
+    ],
+    "exchanges": [
+        {
+            "name": "tag_exchange",
+            "vhost": "/",
+            "type": "direct",
+            "durable": true
+        },
+        {
+            "name": "tag_dlx",
+            "vhost": "/",
+            "type": "fanout",
+            "durable": true
+        }
+    ],
+    "queues": [
+        {
+            "name": "tag_posts",
+            "vhost": "/",
+            "durable": true,
+            "arguments": {
+                "x-dead-letter-exchange": "tag_dlx"
+            }
+        },
+        {
+            "name": "tag_posts.dlq",
+            "vhost": "/",
+            "durable": true
+        }
+    ],
+    "bindings": [
+        {
+            "source": "tag_exchange",
+            "vhost": "/",
+            "destination": "tag_posts",
+            "destination_type": "queue",
+            "routing_key": "tag"
+        },
+        {
+            "source": "tag_dlx",
+            "vhost": "/",
+            "destination": "tag_posts.dlq",
+            "destination_type": "queue",
+            "routing_key": "#"
+        }
+    ]
+}
