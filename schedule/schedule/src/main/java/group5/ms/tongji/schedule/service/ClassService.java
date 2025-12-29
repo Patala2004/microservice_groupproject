@@ -9,7 +9,10 @@ import group5.ms.tongji.schedule.repository.ClassesRepository;
 import group5.ms.tongji.schedule.repository.UserClassesRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -24,6 +27,7 @@ public class  ClassService {
     UserClassesRepository userClassesRepository;
     ClassesRepository classesRepository;
     ClassSessionMapper classSessionMapper;
+    UserClient userClient;
 
     private final LocalDate START_DATE = LocalDate.of(2025,9,15);
     private final LocalTime[] PERIODS = new LocalTime[]{
@@ -42,23 +46,17 @@ public class  ClassService {
     private final int PERIOD_DURATION = 45;
 
     public List<ScheduleItem> getClassCoincidences(Integer userId, LocalDateTime start, LocalDateTime end) {
-        log.info("looking by user id");
         if(userClassesRepository.existsByUserClassUserId(userId)){
-            log.info("userid not found");
             getUserClasses(userId);
         }
-        log.info("proceeding to find coincidences");
         return userClassesRepository.findUserCoincidences(start, end, userId);
     }
 
     private void getUserClasses(Integer userId) {
-        List<ClassResponse> classResponses = fakeApiData.getClassResponses(userId);
-        log.info("-------------------------");
-        log.info("got class responses");
-        log.info("-------------------------");
+        Integer studentId = userClient.getUserStudentId(userId);
+        List<ClassResponse> classResponses = fakeApiData.getClassResponses(studentId);
         extractExistingClasses(classResponses, userId);
         List<ClassSession> newClasses = classSessionMapper.mapClassResponsesToScheduleItem(classResponses, START_DATE, PERIODS, PERIOD_DURATION);
-        log.info("SAVING NEW CLASSES");
         classesRepository.saveAll(newClasses);
         saveUserClasses(newClasses, userId);
     }
@@ -66,10 +64,6 @@ public class  ClassService {
     private void extractExistingClasses(List<ClassResponse> classResponses, Integer userId) {
         List<ClassSession> userExistingClasses = new ArrayList<>();
         for(ClassResponse c : classResponses) {
-            log.info("---------------------------");
-            log.info("getting class response by code");
-            log.info("---------------------------");
-
             List<ClassSession> classSession = classesRepository.findByCode(c.getClassCode());
             if(!classSession.isEmpty()){
                 classResponses.remove(c);
