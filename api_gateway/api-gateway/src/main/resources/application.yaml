@@ -38,6 +38,13 @@ spring:
                 - Path=/api/v1/schedule/**
               filters:
                 - StripPrefix=2
+              
+            - id: translation-service
+              uri: http://host.docker.internal:8088
+              predicates:
+                - Path=/api/v1/translation/**
+              filters:
+                - StripPrefix=3
 
 
 
@@ -53,6 +60,8 @@ springdoc:
         url: "api/v1/evcollector/v3/api-docs"
       - name: "Schedule Service"
         url: "api/v1/schedule/v3/api-docs"
+      - name: "Translation Service"
+        url: "api/v1/translation/openapi.json"
     doc-expansion: list
     urls-primary-name: "User Service"
   
