@@ -9,7 +9,7 @@ EXCHANGE = os.environ["RABBIT_EXCHANGE"]
 ROUTING_KEY = os.environ["RABBIT_ROUTING_KEY"]
 
 
-def publish_to_rabbit(post_id):
+def publish_to_rabbit(post_id, delete):
     connection = pika.BlockingConnection(
         pika.ConnectionParameters(
             host=RABBIT_HOST,
@@ -28,7 +28,10 @@ def publish_to_rabbit(post_id):
         passive=True
     )
 
-    message = {"post_id": post_id}
+    message = {
+        "post_id": post_id,
+        "delete": delete
+    }
 
     channel.basic_publish(
         exchange=EXCHANGE,
