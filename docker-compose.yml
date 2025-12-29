@@ -84,15 +84,15 @@ services:
       file: notif/docker-compose.yml
       service: notif
   
-  ollama:
+  ollamatag:
     extends: 
       file: tag/docker-compose.yml
-      service: ollama
+      service: ollamatag
   
-  embeddings:
+  embeddingstag:
     extends: 
       file: tag/docker-compose.yml
-      service: embeddings
+      service: embeddingstag
   
   rabbitmqtag:
     extends: 
@@ -104,15 +104,25 @@ services:
       file: tag/docker-compose.yml
       service: tag
   
-  worker:
+  workertag:
     extends: 
       file: tag/docker-compose.yml
-      service: worker
+      service: workertag
   
   dbtag:
     extends: 
       file: tag/docker-compose.yml
       service: dbtag  
+  
+  ollamatranslation:
+    extends:
+      file: translation/docker-compose.yml
+      service: ollamatranslation
+
+  translate:
+    extends:
+      file: translation/docker-compose.yml
+      service: translate
 
 
   frontend:
@@ -141,6 +151,8 @@ networks:
     driver: bridge
   tagging_network:
     driver: bridge
+  translation_network:
+    driver: bridge
 
 volumes:
   pgdata:
@@ -153,3 +165,4 @@ volumes:
   rabbitmq_data:
   models_tag:
   pgdata_tag:
+  models_translation:

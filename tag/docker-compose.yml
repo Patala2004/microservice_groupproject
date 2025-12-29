@@ -7,7 +7,7 @@ networks:
     driver: bridge
 
 services:
-  ollama:
+  ollamatag:
     image: ollama/ollama
     container_name: ollama-tagging
     volumes:
@@ -23,7 +23,7 @@ services:
     networks:
       - tagging_network
 
-  embeddings:
+  embeddingstag:
     build: ./embeddings/.
     container_name: embeddings_service
     deploy:
@@ -70,12 +70,12 @@ services:
     ports:
       - "8087:8000"
 
-  worker:
+  workertag:
     build: ./worker/.
     container_name: tag_worker
     depends_on:
-      - ollama
-      - embeddings
+      - ollamatag
+      - embeddingstag
       - dbtag
       - rabbitmqtag
     environment:

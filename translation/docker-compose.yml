@@ -1,5 +1,5 @@
 volumes:
-  models:
+  models_translation:
 
 networks:
   translation_network:
@@ -8,11 +8,11 @@ networks:
 
 
 services:
-  ollama:
+  ollamatranslation:
     image: ollama/ollama
     container_name: ollama-translate
     volumes:
-      - models:/root/.ollama
+      - models_translation:/root/.ollama
       - ./ollama-init/entrypoint.sh:/entrypoint.sh
     deploy:
       resources:
