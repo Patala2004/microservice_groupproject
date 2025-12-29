@@ -56,8 +56,12 @@ const HomePage = () => {
     const fetchRecommendations = async () => {
       if (sortView === "recommended" && user?.id) {
         if (recommendedPosts.length === 0) setPostsLoading(true);
-        const recs = await getPostRecommendations(user.id);
-        if (recs) setRecommendedPosts(recs);
+        const res = await getPostRecommendations(user.id);
+
+        if (res) {
+          const finalData = Array.isArray(res) ? res : [];
+          setRecommendedPosts(finalData);
+        }
         setPostsLoading(false);
       }
     };
@@ -69,7 +73,7 @@ const HomePage = () => {
       if (user?.id) {
         setIsSearching(true);
         const results = await searchPosts(searchQuery, user.id, filterType);
-        if (results) setSearchResults(results);
+        setSearchResults(Array.isArray(results) ? results : []);
         setIsSearching(false);
       }
     }, 400);
@@ -81,7 +85,7 @@ const HomePage = () => {
     setMoreLoading(true);
     const nextPage = currentPage + 1;
     const morePosts = await getRecentPosts(nextPage);
-    if (morePosts) {
+    if (morePosts && morePosts.length > 0) {
       setPostsToDisplay(prev => [...prev, ...morePosts]);
       setCurrentPage(nextPage);
       setHasMore(morePosts.length === 15);
@@ -126,10 +130,15 @@ const HomePage = () => {
     } else {
       baseList = sortView === "recommended" ? recommendedPosts : postsToDisplay;
     }
+
+    if (!Array.isArray(baseList)) return [];
+
     const result = baseList.filter((post) => {
       const matchesType = filterType === "all" || post.type === filterType;
       const searchLower = searchQuery.toLowerCase();
-      const matchesSearch = !searchQuery || post.title?.toLowerCase().includes(searchLower) || post.content?.toLowerCase().includes(searchLower);
+      const matchesSearch = !searchQuery ||
+          post.title?.toLowerCase().includes(searchLower) ||
+          post.content?.toLowerCase().includes(searchLower);
       return matchesType && matchesSearch;
     });
 
@@ -229,7 +238,7 @@ const HomePage = () => {
                               post={post}
                               user={user}
                               onDelete={handleConfirmDelete}
-                              canEditPost={user?.id === post?.poster}
+                              canEditPost={user?.id === post?.poster?.toString()}
                               onPostUpdated={handlePostUpdated}
                           />
                         </div>

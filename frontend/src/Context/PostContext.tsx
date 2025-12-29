@@ -51,7 +51,7 @@ interface PostContextType {
     getPostsByUserId: (userId: number) => Promise<Post[] | null>;
     getPostsByType: (type: PostType) => Promise<Post[] | null>;
     getRecentPosts: (page?: number) => Promise<Post[] | null>;
-    getPostRecommendations: (userId: number) => Promise<Post[] | null>;
+    getPostRecommendations: (userId: string | number) => Promise<Post[] | null>;
     searchPosts: (query: string, userId: string | number, type?: PostType | "all") => Promise<Post[] | null>;
     joinPost: (postId: number, userId: number) => Promise<boolean>;
     leavePost: (postId: number, userId: number) => Promise<boolean>;
@@ -114,10 +114,13 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }, []);
 
-    const getPostRecommendations = useCallback(async (userId: number): Promise<Post[] | null> => {
+    const getPostRecommendations = useCallback(async (userId: string | number): Promise<Post[] | null> => {
         try {
             const response = await postApi.get(`/post/recomendations?userId=${userId}&limit=5`);
-            return response.status === 200 ? response.data : null;
+            if (response.status === 200) {
+                return Array.isArray(response.data.content) ? response.data.content : response.data;
+            }
+            return null;
         } catch (error) {
             console.error(i18n.t("errors.generic_fetch_error"), error);
             return null;
