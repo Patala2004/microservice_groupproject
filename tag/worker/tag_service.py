@@ -7,8 +7,6 @@ import posttag_pgbd as posttag_db
 
 qwen8b = llm.Qwen3_8b()
 
-# --- endpoints ---
-
 
 def tag_post(post_id: int):
     title, content = post_info.getTitleContent(post_id)
@@ -51,3 +49,7 @@ def get_related_tags(explicit_id_list: list[int]):
         related_id_list.update(related_ids)
     final_list = list(related_id_list)
     return final_list
+
+
+def delete_post_tags(post_id: int):
+    posttag_db.delete_relations(post_id)

@@ -1,6 +1,6 @@
 import json
 import pika
-from tag_service import tag_post
+from tag_service import tag_post, delete_post_tags
 import os
 
 RABBIT_HOST = os.environ["RABBIT_HOST"]
@@ -12,9 +12,13 @@ def callback(ch, method, properties, body):
     try:
         data = json.loads(body)
         post_id = data["post_id"]
+        delete = data["delete"]
 
         print(f"Processing post_id={post_id}")
-        tag_post(post_id)
+        if (delete):
+            delete_post_tags(post_id)
+        else:
+            tag_post(post_id)
 
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
