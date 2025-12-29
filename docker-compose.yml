@@ -84,6 +84,35 @@ services:
       file: notif/docker-compose.yml
       service: notif
   
+  ollama:
+    extends: 
+      file: tag/docker-compose.yml
+      service: ollama
+  
+  embeddings:
+    extends: 
+      file: tag/docker-compose.yml
+      service: embeddings
+  
+  rabbitmqtag:
+    extends: 
+      file: tag/docker-compose.yml
+      service: rabbitmqtag
+    
+  tag:
+    extends: 
+      file: tag/docker-compose.yml
+      service: tag
+  
+  worker:
+    extends: 
+      file: tag/docker-compose.yml
+      service: worker
+  
+  dbtag:
+    extends: 
+      file: tag/docker-compose.yml
+      service: dbtag  
 
 
   frontend:
@@ -110,6 +139,8 @@ networks:
     driver: bridge
   scheduledb_network:
     driver: bridge
+  tagging_network:
+    driver: bridge
 
 volumes:
   pgdata:
@@ -120,3 +151,5 @@ volumes:
   schedulepgdata:
   posttagpgdata:
   rabbitmq_data:
+  models_tag:
+  pgdata_tag:

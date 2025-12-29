@@ -1,6 +1,6 @@
 volumes:
-  models:
-  pgdata:
+  models_tag:
+  pgdata_tag:
 
 networks:
   tagging_network:
@@ -11,7 +11,7 @@ services:
     image: ollama/ollama
     container_name: ollama-tagging
     volumes:
-      - models:/root/.ollama
+      - models_tag:/root/.ollama
       - ./init/ollama/entrypoint.sh:/entrypoint.sh
     deploy:
       resources:
@@ -38,7 +38,7 @@ services:
     ports:
       - "8091:8000"
 
-  rabbitmq:
+  rabbitmqtag:
     image: rabbitmq:3-management
     container_name: tagging-rabbitmq
     environment:
@@ -58,9 +58,9 @@ services:
     build: ./tag-api/.
     container_name: tag-service
     depends_on:
-      - rabbitmq
+      - rabbitmqtag
     environment:
-      RABBIT_HOST: "rabbitmq"
+      RABBIT_HOST: "rabbitmqtag"
       RABBIT_PORT: 5672
       RABBIT_QUEUE_NAME: "tag_posts"
       RABBIT_EXCHANGE: "tag_exchange"
@@ -76,8 +76,8 @@ services:
     depends_on:
       - ollama
       - embeddings
-      - db
-      - rabbitmq
+      - dbtag
+      - rabbitmqtag
     environment:
       OLLAMA_HOST: "http://ollama-tagging:11434"
       POSTGRES_TAGGING_DB: "postgresql://app_user:app_password@tagging-db:5432/tags_db"
@@ -85,7 +85,7 @@ services:
       EMBEDDINGS_URL: "http://embeddings_service:8000"
       POST_SERVICE_URL: "http://host.docker.internal:8082"
       TRANSLATION_URL: "http://host.docker.internal:8088"
-      RABBIT_HOST: "rabbitmq"
+      RABBIT_HOST: "rabbitmqtag"
       RABBIT_PORT: 5672
       RABBIT_QUEUE_NAME: "tag_posts"
       RABBIT_EXCHANGE: "tag_exchange"
@@ -94,7 +94,7 @@ services:
     networks:
       - tagging_network
 
-  db:
+  dbtag:
     image: pgvector/pgvector:pg17-trixie
     container_name: tagging-db
     environment:
@@ -102,7 +102,7 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: tags_db
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata_tag:/var/lib/postgresql/data
       - ./init/postgres:/docker-entrypoint-initdb.d
     networks:
       - tagging_network
