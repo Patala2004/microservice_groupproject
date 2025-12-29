@@ -1,4 +1,4 @@
-package group5.ms.tongji.recommendation.service;
+package group5.ms.tongji.recommendation.service.Mappers;
 
 import group5.ms.tongji.recommendation.dto.FrequentTag;
 import lombok.AllArgsConstructor;
