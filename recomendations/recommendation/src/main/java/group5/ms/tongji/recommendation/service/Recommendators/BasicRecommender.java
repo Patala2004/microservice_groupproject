@@ -10,7 +10,7 @@ import java.util.PriorityQueue;
 
 @AllArgsConstructor
 @Component("BasicRecommender")
-public class BasicRecommender extends AbstractRecommendator implements Recommendator {
+public class BasicRecommender extends AbstractRecommendator implements RecommendationSelector {
     @Override
     public int[] selectBestMatches(HashMap<Integer, Float> userTags, int limit, List<RecommendableItem> recommendables) {
         PriorityQueue<Recommendation> bestMatches = new PriorityQueue<>();

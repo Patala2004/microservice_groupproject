@@ -12,7 +12,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class PostService {
+public class PostClient {
     @Qualifier("postClient")
     WebClient postClient;
     ScheduleItemMapper scheduleItemMapper;

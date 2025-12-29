@@ -5,14 +5,11 @@ import group5.ms.tongji.recommendation.dto.FrequentTag;
 import group5.ms.tongji.recommendation.exceptions.NotFoundException;
 import group5.ms.tongji.recommendation.repository.posttag.PostTagRepository;
 import group5.ms.tongji.recommendation.service.Mappers.TagMapper;
-import group5.ms.tongji.recommendation.service.Recommendators.Recommendation;
-import group5.ms.tongji.recommendation.service.Recommendators.Recommendator;
+import group5.ms.tongji.recommendation.service.Recommendators.RecommendationSelector;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -27,7 +24,7 @@ public class   RecommendationService {
     private PostTagRepository postTagRepository;
     @Autowired
     @Qualifier("BasicRecommender")
-    private Recommendator recommendator;
+    private RecommendationSelector recommendator;
 
     public int[] getRecommendedItems(int userId, int limit) {
         FrequentTag[] userFrequentTagsInfo = userPrefServiceClient.getUserFrequentTags(userId);
