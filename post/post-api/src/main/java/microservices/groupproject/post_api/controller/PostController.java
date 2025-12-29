@@ -7,6 +7,7 @@ import microservices.groupproject.post_api.model.*;
 import microservices.groupproject.post_api.model.DTO.PostGlobalDTO;
 import microservices.groupproject.post_api.service.ExternalNotificationServiceClient;
 import microservices.groupproject.post_api.service.ExternalRecomendationServiceClient;
+import microservices.groupproject.post_api.service.ExternalTaggingServiceClient;
 import microservices.groupproject.post_api.service.PostService;
 
 import org.springdoc.core.annotations.ParameterObject;
@@ -44,14 +45,17 @@ public class PostController {
     // External services
     private final ExternalRecomendationServiceClient externalRecomClient;
     private final ExternalNotificationServiceClient externalNotifClient;
+    private final ExternalTaggingServiceClient externalTaggingServiceClient;
 
     public PostController(PostService service, StorageService documentStorage, 
             ExternalRecomendationServiceClient externalRecomClient,
-            ExternalNotificationServiceClient externalNotifClient, PostMapper postMapper) {
+            ExternalNotificationServiceClient externalNotifClient,
+            ExternalTaggingServiceClient externalTaggingServiceClient, PostMapper postMapper) {
         this.service = service;
         this.documentStorage = documentStorage;
         this.externalRecomClient = externalRecomClient;
         this.externalNotifClient = externalNotifClient;
+        this.externalTaggingServiceClient = externalTaggingServiceClient;
         this.postMapper = postMapper;
     }
 
@@ -106,6 +110,9 @@ public class PostController {
         Post saved = service.createPost(post);
 
         PostGlobalDTO returnDTO = postMapper.toDTO(saved);
+
+        externalTaggingServiceClient.sendPostId(saved.getId());
+
         return ResponseEntity.created(URI.create("/api/posts/" + saved.getId())).body(returnDTO);
     }
 
@@ -115,6 +122,7 @@ public class PostController {
             @Valid @RequestBody PostGlobalDTO post) {
 
         Post saved = service.updatePost(id, postMapper.toEntity(post));
+        externalTaggingServiceClient.sendPostId(saved.getId());
         return ResponseEntity.ok(postMapper.toDTO(saved));
     }
 
@@ -167,6 +175,7 @@ public class PostController {
         if(post.getImageUrl() != null){
             documentStorage.deleteFile(post.getImageUrl());
         }
+        externalTaggingServiceClient.deletePostId(id);
         service.deletePost(id);
         return ResponseEntity.noContent().build();
     }
