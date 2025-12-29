@@ -142,7 +142,11 @@ const HomePage = () => {
       return matchesType && matchesSearch;
     });
 
-    if (searchQuery.trim().length > 0 || sortView === "recommended") {
+    if (sortView === "recommended") {
+      return result;
+    }
+
+    if (searchQuery.trim().length > 0 || sortView === "recent") {
       return [...result].sort((a, b) => b.id - a.id);
     }
     return result;
