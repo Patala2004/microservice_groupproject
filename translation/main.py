@@ -1,17 +1,17 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import ollama_llm as llm
 
 app = FastAPI()
 
 
 class TranslateRequest(BaseModel):
-    texts: list[str]
-    language: str
+    texts: list[str] = Field(..., examples=[["Text to translate"]])
+    language: str = Field(..., examples=["Chinese"])
 
 
 class TranslateOut(BaseModel):
-    translation: list[str]
+    translation: list[str] = Field(..., examples=[["Translated text"]])
 
 
 tllm = llm.Qwen3_8b()
@@ -19,7 +19,12 @@ tllm = llm.Qwen3_8b()
 # --- endpoints ---
 
 
-@app.post("/translate", response_model=TranslateOut)
+@app.post(
+    "/translate",
+    summary="Translate",
+    description="Translates a list of texts to the specified language",
+    response_model=TranslateOut
+)
 def translate(req: TranslateRequest):
     try:
         translation = tllm.translate(req.texts, req.language)
