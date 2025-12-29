@@ -10,12 +10,16 @@ class TranslateRequest(BaseModel):
     language: str
 
 
+class TranslateOut(BaseModel):
+    translation: list[str]
+
+
 tllm = llm.Qwen3_8b()
 
 # --- endpoints ---
 
 
-@app.post("/translate")
+@app.post("/translate", response_model=TranslateOut)
 def translate(req: TranslateRequest):
     try:
         translation = tllm.translate(req.texts, req.language)
