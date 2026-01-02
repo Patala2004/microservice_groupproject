@@ -9,11 +9,13 @@ import SigninPage from "@/pages/LandingPage/ConnexionPage/SignInPage.tsx";
 import Home from "@/pages/Home/Home.tsx";
 import UserPage from "@/pages/User/UserPage.tsx";
 import {PostProvider} from "@/Context/PostContext.tsx";
+import {TranslationProvider} from "@/Context/TranslationContext.tsx";
 
 function App() {
   return (
     <UserProvider>
       <PostProvider>
+        <TranslationProvider>
         <Router>
           <Toaster
             richColors
@@ -43,6 +45,7 @@ function App() {
             </div>
           </div>
         </Router>
+        </TranslationProvider>
       </PostProvider>
     </UserProvider>
   );
