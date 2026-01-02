@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 const SignupForm = () => {
     const [username, setUsername] = useState<string>('');
     const [name, setName] = useState<string>('');
+    const [studentId, setStudentId] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
@@ -56,7 +57,7 @@ const SignupForm = () => {
     };
 
     const handleSignup = async () => {
-        if (!username || !name || !password || !confirmPassword || !campusId) {
+        if (!username || !name || !password || !confirmPassword || !campusId || !studentId) {
             toast.error(t('errors.all_fields_required'));
             return;
         }
@@ -91,6 +92,7 @@ const SignupForm = () => {
                 username,
                 password,
                 name,
+                student_id: studentId,
                 email,
                 phone_number: phone,
                 weixinId: weXinId,
@@ -131,6 +133,7 @@ const SignupForm = () => {
     const cleanStates = () => {
         setName('');
         setUsername('');
+        setStudentId('');
         setEmail('');
         setPassword('');
         setConfirmPassword('');
@@ -155,7 +158,11 @@ const SignupForm = () => {
                 </div>
 
                 <div className="w-full space-y-4 mt-2 mb-6">
-                    <InputTextField label={t('register.name')} setter={setName} valueToDisplay={t('register.placeholder_name')} />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <InputTextField label={t('register.name')} setter={setName} valueToDisplay={t('register.placeholder_name')} />
+                        <InputTextField label={t('register.student_id')} setter={setStudentId} valueToDisplay={t('register.placeholder_student_id')} />
+                    </div>
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <InputTextField label={t('register.username')} setter={setUsername} valueToDisplay={t('register.placeholder_username')} />
                         <InputTextField label={t('register.email')} setter={setEmail} valueToDisplay={t('register.placeholder_email')} />

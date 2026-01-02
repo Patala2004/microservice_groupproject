@@ -33,8 +33,10 @@ import { usePost, type Post } from "@/Context/PostContext.tsx";
 import { PostType } from "@/Context/PostType";
 import { useState, useEffect, useCallback } from "react";
 import { useUser } from "@/Context/UserContext";
+import { useTranslationApi } from "@/Context/TranslationContext";
 import { toast } from "sonner";
 import ContactInfoModal from "@/components/own/ContactInfoModal.tsx";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface PostDetailsModalProps {
   post: Post | null;
@@ -62,6 +64,7 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
   const { t } = useTranslation();
   const { getUserById } = useUser();
   const { updatePost } = usePost();
+  const { translate } = useTranslationApi();
 
   const [localJoinedUsersIds, setLocalJoinedUsersIds] = useState<number[]>([]);
   const [joinerDetails, setJoinerDetails] = useState<DisplayUser[]>([]);
@@ -80,6 +83,7 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
   const [isUpdating, setIsUpdating] = useState(false);
 
   const [isTranslated, setIsTranslated] = useState(false);
+  const [isTranslating, setIsTranslating] = useState(false);
   const [displayTitle, setDisplayTitle] = useState("");
   const [displayContent, setDisplayContent] = useState("");
   const [displayLocation, setDisplayLocation] = useState("");
@@ -102,14 +106,23 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
     }
   }, [post, isOpen, t]);
 
-  const handleToggleTranslation = () => {
+  const handleToggleTranslation = async () => {
     if (!post) return;
 
     if (!isTranslated) {
-      setDisplayTitle("翻译功能测试");
-      setDisplayContent("这是即将推出的 AI 翻译服务的演示。点击按钮查看中文版本。");
-      setDisplayLocation("同济大学嘉定校区嘉园广场");
-      setIsTranslated(true);
+      setIsTranslating(true);
+      const textsToTranslate = [post.title, post.content, post.location?.title || ""];
+      const translations = await translate(textsToTranslate, "Chinese");
+
+      if (translations && translations.length >= 2) {
+        setDisplayTitle(translations[0]);
+        setDisplayContent(translations[1]);
+        setDisplayLocation(translations[2] || post.location?.title || "");
+        setIsTranslated(true);
+      } else {
+        toast.error("Failed to translate post");
+      }
+      setIsTranslating(false);
     } else {
       setDisplayTitle(post.title);
       setDisplayContent(post.content);
@@ -285,8 +298,9 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
                             variant="secondary"
                             className={`h-8 rounded-full border-none text-white backdrop-blur-sm transition-all ${isTranslated ? 'bg-orange-500 hover:bg-orange-600' : 'bg-white/10 hover:bg-white/20'}`}
                             onClick={handleToggleTranslation}
+                            disabled={isTranslating}
                         >
-                          <Languages className="w-3.5 h-3.5 mr-1.5" />
+                          {isTranslating ? <RotateCw className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <Languages className="w-3.5 h-3.5 mr-1.5" />}
                           {isTranslated ? "Original" : "Translate"}
                         </Button>
                     )}
@@ -364,11 +378,17 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
                     </div>
                 ) : (
                     <>
-                      <h2 className="text-2xl font-bold text-white mb-4 leading-tight">{displayTitle}</h2>
+                      {isTranslating ? (
+                          <Skeleton className="h-8 w-3/4 mb-4 bg-slate-800" />
+                      ) : (
+                          <h2 className="text-2xl font-bold text-white mb-4 leading-tight">{displayTitle}</h2>
+                      )}
+
                       <div className="flex flex-wrap gap-3 mb-6">
                         {post.location && (
                             <div className="inline-flex items-center text-sm font-medium text-slate-300 bg-slate-800/50 px-3 py-1.5 rounded-lg border border-slate-700">
-                              <MapPin className="w-4 h-4 mr-1"/> {displayLocation}
+                              <MapPin className="w-4 h-4 mr-1"/>
+                              {isTranslating ? <Skeleton className="h-4 w-24 bg-slate-700" /> : displayLocation}
                             </div>
                         )}
                         {post.eventTime && (
@@ -377,7 +397,18 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
                             </div>
                         )}
                       </div>
-                      <div className="prose prose-invert max-w-none text-slate-300 mb-8"><p>{displayContent}</p></div>
+
+                      <div className="prose prose-invert max-w-none text-slate-300 mb-8">
+                        {isTranslating ? (
+                            <div className="space-y-2">
+                              <Skeleton className="h-4 w-full bg-slate-800" />
+                              <Skeleton className="h-4 w-full bg-slate-800" />
+                              <Skeleton className="h-4 w-2/3 bg-slate-800" />
+                            </div>
+                        ) : (
+                            <p>{displayContent}</p>
+                        )}
+                      </div>
                     </>
                 )}
 
