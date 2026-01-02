@@ -14,11 +14,14 @@ import java.util.stream.Stream;
 @Slf4j
 public class ScheduleService {
     ClassService classService;
-    PostClient postClient;
+    PostServiceClient postClient;
 
     public List<ScheduleItem> checkAvailability(Integer userId, LocalDateTime start, LocalDateTime end){
         List<ScheduleItem> coincidences = postClient.getPostCoincidences(userId, start, end);
+        log.info(coincidences.toString());
         List<ScheduleItem> classCoincidences = classService.getClassCoincidences(userId, start, end);
+        log.info("EL DE CLASE");
+        log.info(classCoincidences.toString());
         return Stream.concat(coincidences.stream(), classCoincidences.stream()).toList();
     }
 

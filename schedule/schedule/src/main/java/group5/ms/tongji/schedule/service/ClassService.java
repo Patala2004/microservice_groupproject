@@ -27,6 +27,7 @@ public class  ClassService {
     UserClassesRepository userClassesRepository;
     ClassesRepository classesRepository;
     ClassSessionMapper classSessionMapper;
+    @Qualifier("userSchedClient")
     UserClient userClient;
 
     private final LocalDate START_DATE = LocalDate.of(2025,9,15);
@@ -46,19 +47,24 @@ public class  ClassService {
     private final int PERIOD_DURATION = 45;
 
     public List<ScheduleItem> getClassCoincidences(Integer userId, LocalDateTime start, LocalDateTime end) {
-        if(userClassesRepository.existsByUserClassUserId(userId)){
+        if(!userClassesRepository.existsByUserClassUserId(userId)){
+            log.info("---------------- EXISTE EL USER "+userId);
             getUserClasses(userId);
         }
         return userClassesRepository.findUserCoincidences(start, end, userId);
     }
 
     private void getUserClasses(Integer userId) {
-        Integer studentId = userClient.getUserStudentId(userId);
-        List<ClassResponse> classResponses = fakeApiData.getClassResponses(studentId);
-        extractExistingClasses(classResponses, userId);
-        List<ClassSession> newClasses = classSessionMapper.mapClassResponsesToScheduleItem(classResponses, START_DATE, PERIODS, PERIOD_DURATION);
-        classesRepository.saveAll(newClasses);
-        saveUserClasses(newClasses, userId);
+        //Integer studentId = userClient.getUserStudentId(userId);
+        Integer studentId = 2;
+        log.info("---------------- USERAPI ME DEVUELVE EL USER "+studentId);
+        if(studentId != null){
+            List<ClassResponse> classResponses = fakeApiData.getClassResponses(studentId);
+            extractExistingClasses(classResponses, userId);
+            List<ClassSession> newClasses = classSessionMapper.mapClassResponsesToScheduleItem(classResponses, START_DATE, PERIODS, PERIOD_DURATION);
+            classesRepository.saveAll(newClasses);
+            saveUserClasses(newClasses, userId);
+        }
     }
 
     private void extractExistingClasses(List<ClassResponse> classResponses, Integer userId) {
