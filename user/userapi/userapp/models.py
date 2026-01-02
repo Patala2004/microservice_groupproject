@@ -55,7 +55,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email : str = models.EmailField(max_length=100, blank=True, default="")
     weixinId : str = models.CharField(max_length=50, blank=True, default="")
     phone_number : str = models.CharField(max_length=20, blank=True, default="")
-    student_id : str = models.CharField(max_length=20, blank=True, default="")
+    student_id : str = models.CharField(max_length=20, blank=True, default="", null = False)
     
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
