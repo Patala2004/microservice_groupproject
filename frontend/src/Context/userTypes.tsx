@@ -11,6 +11,7 @@ export interface User {
     weixinId: string;
     email: string;
     phone_number: string;
+    student_id: string;
     campus: number;
     avatarUrl: string;
     preferedLanguage: LanguageEnum;
