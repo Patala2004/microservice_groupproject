@@ -129,6 +129,7 @@ const resources = {
       post_actions: {
         hosting: "Hosting",
         join: "Join",
+        schedule_conflict_warning: "You have a scheduling conflict with another event.",
         joined: "Joined",
         leave: "Leave Event",
         contact: "Contact Seller",
@@ -331,6 +332,7 @@ const resources = {
         hosting: "我发起的",
         join: "加入",
         joined: "已加入",
+        schedule_conflict_warning: "您的日程与另一个活动冲突。",
         leave: "退出",
         contact: "联系卖家",
         joined_count: "{{count}} 人已加入",

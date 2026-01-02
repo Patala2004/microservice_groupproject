@@ -1,10 +1,5 @@
 import { createContext, useContext, useCallback } from "react";
-import postApi from "@/lib/api/postApi.ts";
-
-interface TranslationRequest {
-    texts: string[];
-    language: string;
-}
+import translationApi from "@/lib/api/translationApi.ts";
 
 interface TranslationResponse {
     translation: string[];
@@ -19,7 +14,7 @@ const TranslationContext = createContext<TranslationContextType | undefined>(und
 export const TranslationProvider = ({ children }: { children: React.ReactNode }) => {
     const translate = useCallback(async (texts: string[], language: string): Promise<string[] | null> => {
         try {
-            const response = await postApi.post<TranslationResponse>("/translate", {
+            const response = await translationApi.post<TranslationResponse>("/translate", {
                 texts,
                 language,
             });
