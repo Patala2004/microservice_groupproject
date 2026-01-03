@@ -1,18 +1,20 @@
 from ollama import Client
 import os
 
+MODEL_NAME = "qwen3:8b"
 
-class OllamaLLM:
+
+class LLM:
     _shared_client = None
 
-    def __init__(self, model_name=""):
-        if OllamaLLM._shared_client == None:
-            OllamaLLM._shared_client = Client(
+    def __init__(self):
+        if LLM._shared_client == None:
+            LLM._shared_client = Client(
                 host=os.environ['OLLAMA_HOST'],
                 headers={}
             )
-        self.client = OllamaLLM._shared_client
-        self.model_name = model_name
+        self.client = LLM._shared_client
+        self.model_name = MODEL_NAME
 
     def translate(self, texts, language):
         response = self.client.generate(
@@ -20,11 +22,6 @@ class OllamaLLM:
             model=self.model_name
         )
         return response_to_list(response.response)
-
-
-class Qwen3_8b(OllamaLLM):
-    def __init__(self):
-        super().__init__(model_name="qwen3:8b")
 
 
 def get_prompt(texts: list[str], language: str):

@@ -114,10 +114,10 @@ services:
       file: tag/docker-compose.yml
       service: dbtag  
   
-  ollamatranslation:
-    extends:
-      file: translation/docker-compose.yml
-      service: ollamatranslation
+  #ollamatranslation:
+  #  extends:
+  #    file: translation/docker-compose.yml
+  #    service: ollamatranslation
 
   translate:
     extends:
@@ -165,4 +165,4 @@ volumes:
   rabbitmq_data:
   models_tag:
   pgdata_tag:
-  models_translation:
+  #models_translation:
