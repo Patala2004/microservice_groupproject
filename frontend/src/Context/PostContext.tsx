@@ -189,6 +189,24 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
 
     const joinPost = useCallback(async (postId: number, userId: number): Promise<boolean> => {
         try {
+            const targetPost = posts.find(p => p.id === postId);
+            if (targetPost?.type === "ACTIVITY" && targetPost.eventTime) {
+                try {
+                    const start = new Date(targetPost.eventTime);
+                    // end = start + 2 hours
+                    const end = new Date(start.getTime() + 2 * 60 * 60 * 1000);
+                    const params = new URLSearchParams({ start: start.toISOString(), end: end.toISOString() });
+                    const scheduleRes = await postApi.get(`/schedule/${userId}?${params.toString()}`);
+                    if (scheduleRes.status === 200 && scheduleRes.data?.length > 0) {
+                        const proceed = window.confirm(i18n.t("post_actions.schedule_conflict_warning") || 
+                            "Schedule conflict detected. Join anyway?");
+                        if (!proceed) return false;
+                    }
+                } catch (e) {
+                    console.error("Schedule check failed, proceeding anyway", e);
+                }
+            }
+
             const response = await postApi.post(`/post/${postId}/join?userId=${userId}`);
             if (response.status === 200) {
                 setPosts(prev => prev.map(p => p.id === postId ? { ...p, ...response.data } : p));
@@ -200,7 +218,7 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
             console.error("Error joining post", error);
             return false;
         }
-    }, [collectEvent]);
+    }, [posts, collectEvent]);
 
     const updatePost = useCallback(async (id: number, data: UpdatePostPayload): Promise<Post | null> => {
         try {

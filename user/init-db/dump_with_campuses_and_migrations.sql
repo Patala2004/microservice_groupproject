@@ -2,10 +2,10 @@
 -- PostgreSQL database dump
 --
 
-\restrict Vhqh722hgblqlXA0b5nxSbbG3x2BsP9GltTCLe1aco3UujmiT1bXHqwi2NOAntK
+\restrict FNjJ0nffQgDAsDexj78vJ18Fxx3pmGMvMFv0AZJMu0klrds3yZyVr2RtIq4CSqA
 
--- Dumped from database version 15.14 (Debian 15.14-1.pgdg13+1)
--- Dumped by pg_dump version 15.14 (Debian 15.14-1.pgdg13+1)
+-- Dumped from database version 15.15 (Debian 15.15-1.pgdg13+1)
+-- Dumped by pg_dump version 15.15 (Debian 15.15-1.pgdg13+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -261,7 +261,8 @@ CREATE TABLE public.userapp_user (
     phone_number character varying(20) NOT NULL,
     is_active boolean NOT NULL,
     is_staff boolean NOT NULL,
-    campus_id bigint
+    campus_id bigint,
+    student_id character varying(20) NOT NULL
 );
 
 
@@ -467,6 +468,7 @@ COPY public.django_migrations (id, app, name, applied) FROM stdin;
 26	authtoken	0002_auto_20160226_1747	2025-11-26 05:33:26.336862+00
 27	authtoken	0003_tokenproxy	2025-11-26 05:33:26.339427+00
 28	authtoken	0004_alter_tokenproxy_options	2025-11-26 05:33:26.342573+00
+29	userapp	0007_user_student_id	2026-01-02 15:18:27.834028+00
 \.
 
 
@@ -496,9 +498,9 @@ COPY public.userapp_campus (id, en_name, cn_name) FROM stdin;
 -- Data for Name: userapp_user; Type: TABLE DATA; Schema: public; Owner: pguser
 --
 
-COPY public.userapp_user (id, password, last_login, is_superuser, username, name, "preferedLanguage", email, "weixinId", phone_number, is_active, is_staff, campus_id) FROM stdin;
-2	pbkdf2_sha256$1000000$fuvXofm2BVRnVCsuikmBZZ$aNRLVmqJNndLt3zOUV9IpRQS9BaGCPZ2tS+/6SXINlk=	\N	t	admin	admin	en				t	t	2
-1	pbkdf2_sha256$1000000$jGWZ0A7Ya1SJDlT1s54NXu$FjtuwfqzmrNvEEmUiv1F2dRM3wcDRsmn31xP1WPh95o=	2025-11-26 05:33:16.075312+00	t	Patala		en				t	t	1
+COPY public.userapp_user (id, password, last_login, is_superuser, username, name, "preferedLanguage", email, "weixinId", phone_number, is_active, is_staff, campus_id, student_id) FROM stdin;
+2	pbkdf2_sha256$1000000$fuvXofm2BVRnVCsuikmBZZ$aNRLVmqJNndLt3zOUV9IpRQS9BaGCPZ2tS+/6SXINlk=	\N	t	admin	admin	en				t	t	2	
+1	pbkdf2_sha256$1000000$jGWZ0A7Ya1SJDlT1s54NXu$FjtuwfqzmrNvEEmUiv1F2dRM3wcDRsmn31xP1WPh95o=	2025-11-26 05:33:16.075312+00	t	Patala		en				t	t	1	
 \.
 
 
@@ -557,7 +559,7 @@ SELECT pg_catalog.setval('public.django_content_type_id_seq', 9, true);
 -- Name: django_migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: pguser
 --
 
-SELECT pg_catalog.setval('public.django_migrations_id_seq', 28, true);
+SELECT pg_catalog.setval('public.django_migrations_id_seq', 29, true);
 
 
 --
@@ -975,5 +977,5 @@ ALTER TABLE ONLY public.userapp_user_user_permissions
 -- PostgreSQL database dump complete
 --
 
-\unrestrict Vhqh722hgblqlXA0b5nxSbbG3x2BsP9GltTCLe1aco3UujmiT1bXHqwi2NOAntK
+\unrestrict FNjJ0nffQgDAsDexj78vJ18Fxx3pmGMvMFv0AZJMu0klrds3yZyVr2RtIq4CSqA
 

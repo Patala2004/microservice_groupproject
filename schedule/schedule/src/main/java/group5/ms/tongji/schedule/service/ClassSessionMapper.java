@@ -6,6 +6,7 @@ import group5.ms.tongji.schedule.dto.Post;
 import group5.ms.tongji.schedule.dto.ScheduleItem;
 import group5.ms.tongji.schedule.model.ClassSession;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @Component
+@Slf4j
 public class ClassSessionMapper {
 
 
@@ -32,12 +34,13 @@ public class ClassSessionMapper {
                 int periodEnd = ct.getTimeEnd();
                 int totalDuration = (periodEnd - periodStart+1)*periodDuration;
                 for(Integer week : ct.getWeeks()){
-                    LocalDateTime dayStart = LocalDateTime.of(startDate.plusDays(7*week-1+ct.getDayOfWeek()-1),
+                    LocalDateTime dayStart = LocalDateTime.of(startDate.plusDays(7*(week-1)+ct.getDayOfWeek()-1),
                             periods[periodStart-1]);
-                    LocalDateTime dayEnd = LocalDateTime.of(startDate.plusDays(7*week-1+ct.getDayOfWeek()-1),
+                    LocalDateTime dayEnd = LocalDateTime.of(startDate.plusDays(7*(week-1)+ct.getDayOfWeek()-1),
                             periods[periodStart-1].plusMinutes(totalDuration));
                     scheduleItems.add(new ClassSession(c.getClassCode(),c.getCourseName(),dayStart, dayEnd));
                 }
+
             }
         }
         return scheduleItems;
