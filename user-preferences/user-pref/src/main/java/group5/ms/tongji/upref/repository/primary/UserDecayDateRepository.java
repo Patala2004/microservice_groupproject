@@ -18,4 +18,8 @@ public interface UserDecayDateRepository extends JpaRepository<UserDecayDate, In
     @Transactional
     @Query("UPDATE UserDecayDate u SET u.decayDate = :decayDate WHERE u.id = :id")
     void updateDecayDate(int id, Date decayDate);
+
+    @Modifying
+    @Query("DELETE FROM UserDecayDate u WHERE u.id = :userId")
+    long deleteByUserId(Integer userId);
 }

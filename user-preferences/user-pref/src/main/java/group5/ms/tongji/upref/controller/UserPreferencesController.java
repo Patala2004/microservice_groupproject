@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.http.HttpStatus;
@@ -82,6 +83,16 @@ public class UserPreferencesController {
         Date timestamp = uTags.getTimestamp();
 
         userPreferencesService.initializeRecommendations(userId, tags, timestamp);
+    }
+
+    @DeleteMapping("/user/{userId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "User succesfully removed."),
+            @ApiResponse(responseCode = "404", description = "User not found.")
+    })
+    public void deleteUserReferences(@PathVariable Integer userId){
+        userPreferencesService.deleteUser(userId);
     }
 
 
