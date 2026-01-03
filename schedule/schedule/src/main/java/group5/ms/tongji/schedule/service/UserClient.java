@@ -1,35 +1,39 @@
 package group5.ms.tongji.schedule.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import group5.ms.tongji.schedule.dto.Post;
-import group5.ms.tongji.schedule.dto.ScheduleItem;
-import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
+@Slf4j
 @Service
 public class UserClient {
-    WebClient userClient;
+    private final WebClient userClient;
 
-    public UserClient(
-            @Qualifier("userSchedClient") WebClient userClient
-    ) {
+    public UserClient(@Qualifier("userSchedClient") WebClient userClient) {
         this.userClient = userClient;
     }
 
-    public Integer getUserStudentId(Integer userId){
-        Integer response =  userClient.get()
-                .uri("/user/users/{id}", userId)
-                .retrieve()
-                .bodyToMono(JsonNode.class)
-                .map(node -> node.get("id").asInt())
-                .block();
-        if(response == null)
+    public Integer getUserStudentId(Integer userId) {
+        try {
+            JsonNode node = userClient.get()
+                    .uri("/user/users/{id}", userId)
+                    .retrieve()
+                    .bodyToMono(JsonNode.class)
+                    .block();
+            if (node == null || node.isEmpty()) {
+                return null;
+            }
+            JsonNode idNode = node.get("id");
+            if (idNode == null || idNode.isNull() || idNode.asText().isBlank()) {
+                return null;
+            }
+
+            return idNode.asInt();
+
+        } catch (Exception e) {
             return null;
-        return response;
+        }
     }
 }

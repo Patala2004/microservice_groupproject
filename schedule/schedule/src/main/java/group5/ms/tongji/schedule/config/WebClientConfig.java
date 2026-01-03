@@ -24,7 +24,7 @@ public class WebClientConfig {
     @Bean(name = "userSchedClient")
     public WebClient userClient(WebClient.Builder builder) {
         return builder
-                .baseUrl("https://host.docker.internal:8081")
+                .baseUrl("http://host.docker.internal:8081")
                 .build();
     }
 

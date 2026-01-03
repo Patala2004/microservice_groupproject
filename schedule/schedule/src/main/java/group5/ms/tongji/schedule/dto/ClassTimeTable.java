@@ -11,8 +11,8 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 public class ClassTimeTable {
-    private Integer dayOfWeek;       // 1=Monday ... 7=Sunday
-    private Integer timeStart;       // ejemplo: 5 → 5ª hora
+    private Integer dayOfWeek;
+    private Integer timeStart;
     private Integer timeEnd;
     private List<Integer> weeks;
 }
