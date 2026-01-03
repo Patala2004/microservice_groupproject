@@ -1,27 +1,34 @@
-from ollama import Client
-import os
+from mistralai import Mistral
 
-MODEL_NAME = "qwen3:8b"
+MODEL_NAME = "mistral-large-2512"
+API_KEY = "ZhrxrPAQloPtDvssR8Sac5cvEkXcY1UV"
 
 
 class LLM:
-    _shared_client = None
-
     def __init__(self):
-        if LLM._shared_client == None:
-            LLM._shared_client = Client(
-                host=os.environ['OLLAMA_HOST'],
-                headers={}
-            )
-        self.client = LLM._shared_client
+        self.key = API_KEY
         self.model_name = MODEL_NAME
 
     def generate_tags(self, input_title, input_content):
-        response = self.client.generate(
-            prompt=get_prompt(input_title, input_content),
-            model=self.model_name
-        )
-        return response_to_tagnames_list(response.response)
+        try:
+            with Mistral(
+                api_key=self.key
+            ) as mistral:
+                res = mistral.chat.complete(
+                    model=self.model_name,
+                    messages=[
+                        {
+                            "content": get_prompt(input_title=input_title, input_content=input_content),
+                            "role": "user"
+                        }
+                    ],
+                    stream=False
+                )
+            text = extract_text_from_content(res.choices[0].message.content)
+            return response_to_tagnames_list(text)
+
+        except:
+            return response_to_tagnames_list(fake_response())
 
 
 def get_prompt(input_title: str, input_content: str):
@@ -56,3 +63,20 @@ def get_prompt(input_title: str, input_content: str):
 
 def response_to_tagnames_list(response: str):
     return response.split("$")
+
+
+def extract_text_from_content(content):
+    if isinstance(content, str):
+        return content
+
+    texts = []
+    for chunk in content:
+        if hasattr(chunk, "text"):
+            texts.append(chunk.text)
+
+    return "".join(texts)
+
+
+def fake_response():
+    fr_list = "Sports"
+    return fr_list

@@ -84,10 +84,10 @@ services:
       file: notif/docker-compose.yml
       service: notif
   
-  ollamatag:
-    extends: 
-      file: tag/docker-compose.yml
-      service: ollamatag
+  #ollamatag:
+  #  extends: 
+  #    file: tag/docker-compose.yml
+  #    service: ollamatag
   
   embeddingstag:
     extends: 
@@ -163,6 +163,6 @@ volumes:
   schedulepgdata:
   posttagpgdata:
   rabbitmq_data:
-  models_tag:
+  #models_tag:
   pgdata_tag:
   #models_translation:

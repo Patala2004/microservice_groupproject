@@ -1,11 +1,11 @@
 import post_info
 import translation
-import ollama_llm as llm
+import mistral_llm as llm
 import embeddings
 import tagging_pgdb as db
 import posttag_pgbd as posttag_db
 
-qwen8b = llm.Qwen3_8b()
+tagllm = llm.LLM()
 
 
 def tag_post(post_id: int):
@@ -16,7 +16,7 @@ def tag_post(post_id: int):
         language="English"
     )
 
-    tagname_list = qwen8b.generate_tags(
+    tagname_list = tagllm.generate_tags(
         input_title=translated_title_content[0],
         input_content=translated_title_content[1]
     )
@@ -31,13 +31,13 @@ def tag_post(post_id: int):
 
 
 def store_explicit_tags(tagname_list, vectors):
-    id_list = [int]
+    id_list = []
     for i in range(len(vectors)):
         current = db.store_tag(
             name=tagname_list[i],
             embedding=vectors[i]
         )
-        id_list.append(current.id)
+        id_list.append(current)
     return id_list
 
 

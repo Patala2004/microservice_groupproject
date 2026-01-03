@@ -1,0 +1,2 @@
+class NonRequeueableError(Exception):
+    pass
