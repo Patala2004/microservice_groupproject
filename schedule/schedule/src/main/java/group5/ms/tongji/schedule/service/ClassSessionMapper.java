@@ -34,16 +34,15 @@ public class ClassSessionMapper {
                 int periodEnd = ct.getTimeEnd();
                 int totalDuration = (periodEnd - periodStart+1)*periodDuration;
                 for(Integer week : ct.getWeeks()){
-                    LocalDateTime dayStart = LocalDateTime.of(startDate.plusDays(7*week-1+ct.getDayOfWeek()-1),
+                    LocalDateTime dayStart = LocalDateTime.of(startDate.plusDays(7*(week-1)+ct.getDayOfWeek()-1),
                             periods[periodStart-1]);
-                    LocalDateTime dayEnd = LocalDateTime.of(startDate.plusDays(7*week-1+ct.getDayOfWeek()-1),
+                    LocalDateTime dayEnd = LocalDateTime.of(startDate.plusDays(7*(week-1)+ct.getDayOfWeek()-1),
                             periods[periodStart-1].plusMinutes(totalDuration));
                     scheduleItems.add(new ClassSession(c.getClassCode(),c.getCourseName(),dayStart, dayEnd));
                 }
 
             }
         }
-        log.info(scheduleItems.get(0).getStartDate().toString());
         return scheduleItems;
     }
 

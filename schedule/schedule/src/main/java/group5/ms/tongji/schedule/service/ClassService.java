@@ -48,16 +48,13 @@ public class  ClassService {
 
     public List<ScheduleItem> getClassCoincidences(Integer userId, LocalDateTime start, LocalDateTime end) {
         if(!userClassesRepository.existsByUserClassUserId(userId)){
-            log.info("---------------- EXISTE EL USER "+userId);
             getUserClasses(userId);
         }
         return userClassesRepository.findUserCoincidences(start, end, userId);
     }
 
     private void getUserClasses(Integer userId) {
-        //Integer studentId = userClient.getUserStudentId(userId);
-        Integer studentId = 2;
-        log.info("---------------- USERAPI ME DEVUELVE EL USER "+studentId);
+        Integer studentId = userClient.getUserStudentId(userId);
         if(studentId != null){
             List<ClassResponse> classResponses = fakeApiData.getClassResponses(studentId);
             extractExistingClasses(classResponses, userId);

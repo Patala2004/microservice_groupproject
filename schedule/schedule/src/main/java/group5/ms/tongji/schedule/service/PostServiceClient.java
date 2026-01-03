@@ -44,7 +44,6 @@ public class PostServiceClient {
             }
             JsonNode content = root.get("content");
             if (!content.isArray() || content.isEmpty()) {
-                // Lista vacía
                 return List.of();
             }
             List<Post> posts = new ArrayList<>();
