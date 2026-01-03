@@ -12,6 +12,8 @@ import group5.ms.tongji.upref.repository.primary.UserTagsRepository;
 import group5.ms.tongji.upref.repository.primary.UserDecayDateRepository;
 import group5.ms.tongji.upref.service.decay.DecayCalculator;
 import group5.ms.tongji.upref.service.weight.WeightCalculator;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -88,5 +90,15 @@ public class UserPreferencesService {
             userFrequentTags.add(newFrequentTag);
         }
         userTagsRepository.saveAll(userFrequentTags);
+    }
+
+    @Transactional
+    public void deleteUser(Integer userId) {
+        long deletedRows = userTagsRepository.deleteByUserTag_UserId(userId);
+        if(deletedRows == 0)
+            throw new EntityNotFoundException("User with id "+userId+" not found.");
+        deletedRows = userDecayDateRepository.deleteByUserId(userId);
+        if(deletedRows == 0)
+            throw new EntityNotFoundException("User with id "+userId+" not found.");
     }
 }

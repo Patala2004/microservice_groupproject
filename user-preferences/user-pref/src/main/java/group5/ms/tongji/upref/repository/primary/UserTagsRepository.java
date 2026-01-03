@@ -11,4 +11,6 @@ import java.util.List;
 public interface UserTagsRepository extends JpaRepository<UserFrequentTag, UserTagKey> {
 
     List<UserFrequentTag> findByUserTag_UserId(int userId);
+
+    long deleteByUserTag_UserId(Integer userId);
 }
