@@ -2,6 +2,7 @@ package group5.ms.tongji.schedule.controller;
 
 import group5.ms.tongji.schedule.dto.ErrorResponse;
 import group5.ms.tongji.schedule.dto.ScheduleItem;
+import group5.ms.tongji.schedule.service.ClassService;
 import group5.ms.tongji.schedule.service.ScheduleService;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,6 +26,7 @@ import java.util.List;
 public class ScheduleController {
 
     private ScheduleService scheduleService;
+    private ClassService classService;
 
     @GetMapping("{userId}")
     @ApiResponses(value = {
@@ -45,5 +48,18 @@ public class ScheduleController {
             @RequestParam LocalDateTime end
             ){
         return scheduleService.checkAvailability(userId,start,end);
+    }
+
+    @DeleteMapping("/user/{userId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "User references removed."),
+            @ApiResponse(responseCode = "404", description = "User not found.")
+
+    })
+    public void deleteUserReferences(
+            @PathVariable Integer userId
+    ){
+        classService.deleteUser(userId);
     }
 }

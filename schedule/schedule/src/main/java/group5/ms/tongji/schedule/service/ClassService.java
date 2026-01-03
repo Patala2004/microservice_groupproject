@@ -7,11 +7,12 @@ import group5.ms.tongji.schedule.model.UserClassId;
 import group5.ms.tongji.schedule.model.UserClassSession;
 import group5.ms.tongji.schedule.repository.ClassesRepository;
 import group5.ms.tongji.schedule.repository.UserClassesRepository;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -45,6 +46,13 @@ public class  ClassService {
             LocalTime.of(20,10)
     };
     private final int PERIOD_DURATION = 45;
+
+    @Transactional
+    public void deleteUser(Integer userId){
+        long deletedRows = userClassesRepository.deleteByUserClassUserId(userId);
+        if(deletedRows == 0)
+            throw new EntityNotFoundException("No user with id "+userId+ " found.");
+    }
 
     public List<ScheduleItem> getClassCoincidences(Integer userId, LocalDateTime start, LocalDateTime end) {
         if(!userClassesRepository.existsByUserClassUserId(userId)){
