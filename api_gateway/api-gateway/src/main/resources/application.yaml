@@ -44,7 +44,7 @@ spring:
               predicates:
                 - Path=/api/v1/translate/**
               filters:
-                - StripPrefix=2
+                - StripPrefix=3
 
 
 
