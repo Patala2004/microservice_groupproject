@@ -195,10 +195,13 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
                     const start = new Date(targetPost.eventTime);
                     const end = new Date(start.getTime() + 60 * 60 * 1000);
 
+                    const startStr = start.toISOString().replace('Z', '');
+                    const endStr = end.toISOString().replace('Z', '');
+
                     const scheduleRes = await postApi.get(`/schedule/${userId}`, {
                         params: {
-                            start: start.toISOString(),
-                            end: end.toISOString()
+                            start: startStr,
+                            end: endStr
                         }
                     });
 
