@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Sparkles, User, Mail, Phone, MessageCircle, Save } from "lucide-react";
+import { Sparkles, User, Mail, Phone, MessageCircle, Save, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import ModernInput from "@/components/own/ModernInput";
@@ -15,6 +15,8 @@ interface PersonalInfoFormProps {
     updateUser: (data: Partial<UserType>) => Promise<boolean>;
     name: string;
     setName: (value: string) => void;
+    studentId: string;
+    setStudentId: (value: string) => void;
     email: string;
     setEmail: (value: string) => void;
     phone: string;
@@ -30,6 +32,8 @@ const PersonalInfoForm = ({
                               updateUser,
                               name,
                               setName,
+                              studentId,
+                              setStudentId,
                               email,
                               setEmail,
                               phone,
@@ -48,6 +52,7 @@ const PersonalInfoForm = ({
     const hasChanges = () => {
         return (
             user.name !== name ||
+            user.student_id !== studentId ||
             user.email !== email ||
             user.phone_number !== phone ||
             user.weixinId !== weixinId ||
@@ -56,7 +61,7 @@ const PersonalInfoForm = ({
     };
 
     const handleSaveChanges = async () => {
-        if (!name || !email || !phone || !weixinId || !campus) {
+        if (!name || !studentId || !email || !phone || !weixinId || !campus) {
             toast.error(t('errors.all_fields_required'));
             return;
         }
@@ -72,6 +77,7 @@ const PersonalInfoForm = ({
         const payload: Partial<UserType> = {
             username: user.username,
             name,
+            student_id: studentId,
             email,
             phone_number: phone,
             weixinId: weixinId,
@@ -111,6 +117,12 @@ const PersonalInfoForm = ({
                         icon={<User className="w-4 h-4" />}
                     />
                     <ModernInput
+                        label={t("register.student_id")}
+                        value={studentId}
+                        onChange={setStudentId}
+                        icon={<GraduationCap className="w-4 h-4" />}
+                    />
+                    <ModernInput
                         label={t("register.email")}
                         value={email}
                         onChange={setEmail}
@@ -122,13 +134,13 @@ const PersonalInfoForm = ({
                         onChange={setPhone}
                         icon={<Phone className="w-4 h-4" />}
                     />
-                    <ModernInput
-                        label={t("register.wechat_id")}
-                        value={weixinId}
-                        onChange={setWeixinId}
-                        icon={<MessageCircle className="w-4 h-4" />}
-                    />
                     <div className="space-y-2 flex flex-col md:col-span-2">
+                        <ModernInput
+                            label={t("register.wechat_id")}
+                            value={weixinId}
+                            onChange={setWeixinId}
+                            icon={<MessageCircle className="w-4 h-4" />}
+                        />
                         <Label className="text-xs font-bold uppercase tracking-wider text-slate-500 group-focus-within:text-orange-500 transition-colors ml-1">
                             {t("create_modal.label_location")}
                         </Label>
