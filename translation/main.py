@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
-import mistral_llm as llm
+import ollama_llm as llm
 
 app = FastAPI()
 

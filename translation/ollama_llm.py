@@ -1,7 +1,7 @@
 from ollama import Client
 import os
 
-MODEL_NAME = "qwen3:8b"
+MODEL_NAME = "qwen3:4b"
 
 
 class LLM:
