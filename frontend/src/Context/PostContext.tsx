@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback } from "react";
+import { toast } from "sonner";
 import type { PostType } from "@/Context/PostType.tsx";
 import postApi from "@/lib/api/postApi.ts";
 import i18n from "i18next";
@@ -189,10 +190,14 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
 
     const joinPost = useCallback(async (postId: number, userId: number): Promise<boolean> => {
         try {
-            const targetPost = posts.find(p => p.id === postId);
+            let targetPost = posts.find(p => p.id === postId) ?? null;
+            if (!targetPost) {
+                targetPost = await getPostById(postId, userId)
+            }
             if (targetPost?.type === "ACTIVITY" && targetPost.eventTime) {
                 try {
-                    const start = new Date(targetPost.eventTime);
+                    const startOriginal = new Date(targetPost.eventTime);
+                    const start = new Date(startOriginal.getTime() - 8 * 60 * 60 * 1000);
                     const end = new Date(start.getTime() + 60 * 60 * 1000);
 
                     const startStr = start.toISOString().replace('Z', '');
@@ -206,9 +211,7 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
                     });
 
                     if (scheduleRes.status === 200 && scheduleRes.data?.length > 0) {
-                        const proceed = window.confirm(i18n.t("post_actions.schedule_conflict_warning") ||
-                            "Schedule conflict detected. Join anyway?");
-                        if (!proceed) return false;
+                        toast.warning(i18n.t("post_actions.schedule_conflict_warning") || "Schedule conflict detected.");
                     }
                 } catch (e) {
                     console.error("Schedule check failed", e);
