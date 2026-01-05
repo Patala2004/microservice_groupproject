@@ -7,7 +7,7 @@ until ollama list >/dev/null 2>&1; do
   sleep 1
 done
 
-MODEL="qwen3:4b"
+MODEL="${OLLAMA_MODEL_NAME}"
 
 if ! ollama list | grep -q "^$MODEL"; then
   echo "Downloading $MODEL"

@@ -15,6 +15,8 @@ services:
       - models_translation:/root/.ollama
       - ./ollama-init/entrypoint.sh:/entrypoint.sh
     entrypoint: ["/bin/sh", "/entrypoint.sh"]
+    environment:
+      OLLAMA_MODEL_NAME: "qwen3:4b"
     deploy:
       resources:
         reservations:
@@ -32,7 +34,9 @@ services:
       - "8088:8000"
     environment:
       OLLAMA_HOST: "http://ollama-translate:11434"
-      LLM_FLAG: "API" # "API" or "OLLAMA"
+      OLLAMA_MODEL_NAME: "qwen3:4b"
+      MISTRAL_MODEL_NAME: "magistral-medium-2509"
+      LLM_FLAG: "API" # "API" or "OLLAMA", if flag is not correctly written, application will use "OLLAMA" value
     networks:
       - translation_network
 
