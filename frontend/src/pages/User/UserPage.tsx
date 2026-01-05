@@ -28,6 +28,7 @@ const UserPage = () => {
   const initialUser = user || {
     username: t("profile.default_username"),
     name: t("profile.default_name"),
+    student_id: t("profile.default_student_id"),
     email: t("profile.default_email"),
     phone_number: t("profile.default_phone"),
     weixinId: t("profile.default_weixin"),
@@ -35,6 +36,7 @@ const UserPage = () => {
   };
 
   const [name, setName] = useState(initialUser.name);
+  const [studentId, setStudentId] = useState(initialUser.student_id);
   const [email, setEmail] = useState(initialUser.email);
   const [phone, setPhone] = useState(initialUser.phone_number);
   const [weixinId, setWeixinId] = useState(initialUser.weixinId);
@@ -49,6 +51,12 @@ const UserPage = () => {
     if (user && campuses.length > 0) {
       const userCampus = campuses.find(c => c.id === user.campus) || campuses[0];
       setCampus(userCampus);
+      // Update local states when user data is fetched or refreshed
+      setName(user.name);
+      setStudentId(user.student_id || "");
+      setEmail(user.email);
+      setPhone(user.phone_number);
+      setWeixinId(user.weixinId);
     }
   }, [user, campuses]);
 
@@ -158,6 +166,8 @@ const UserPage = () => {
                       updateUser={updateUser}
                       name={name}
                       setName={setName}
+                      studentId={studentId}
+                      setStudentId={setStudentId}
                       email={email}
                       setEmail={setEmail}
                       phone={phone}

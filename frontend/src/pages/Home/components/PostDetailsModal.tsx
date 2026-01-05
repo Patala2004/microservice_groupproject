@@ -37,6 +37,7 @@ import { useTranslationApi } from "@/Context/TranslationContext";
 import { toast } from "sonner";
 import ContactInfoModal from "@/components/own/ContactInfoModal.tsx";
 import { Skeleton } from "@/components/ui/skeleton";
+import i18next from "i18next";
 
 interface PostDetailsModalProps {
   post: Post | null;
@@ -88,6 +89,11 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
   const [displayContent, setDisplayContent] = useState("");
   const [displayLocation, setDisplayLocation] = useState("");
 
+  const currentAppLanguage = i18next.language;
+  const isPostChinese = /[\u4e00-\u9fa5]/.test(post?.title || "" + post?.content || "");
+  const postLanguage = isPostChinese ? 'cn' : 'en';
+  const shouldShowTranslate = currentAppLanguage !== postLanguage;
+
   useEffect(() => {
     if (post && isOpen) {
       setLocalJoinedUsersIds(post.joinedUsers || []);
@@ -111,8 +117,9 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
 
     if (!isTranslated) {
       setIsTranslating(true);
+      const targetLang = postLanguage === 'cn' ? "English" : "Chinese";
       const textsToTranslate = [post.title, post.content, post.location?.title || ""];
-      const translations = await translate(textsToTranslate, "Chinese");
+      const translations = await translate(textsToTranslate, targetLang);
 
       if (translations && translations.length >= 2) {
         setDisplayTitle(translations[0]);
@@ -292,7 +299,7 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
                       </div>
                   ) : <div />}
                   <div className="flex gap-2">
-                    {!isEditing && (
+                    {!isEditing && shouldShowTranslate && (
                         <Button
                             size="sm"
                             variant="secondary"
@@ -301,7 +308,7 @@ const PostDetailsModal = ({ post, isOpen, onClose, currentUser, onJoin, onPostUp
                             disabled={isTranslating}
                         >
                           {isTranslating ? <RotateCw className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <Languages className="w-3.5 h-3.5 mr-1.5" />}
-                          {isTranslated ? "Original" : "Translate"}
+                          {isTranslated ? t("post_actions.original") : t("post_actions.translate")}
                         </Button>
                     )}
                     {canEditPost && isHost && !isEditing && (
