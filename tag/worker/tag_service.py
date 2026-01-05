@@ -1,11 +1,11 @@
 import post_info
 import translation
-import mistral_llm as llm
+import llm
 import embeddings
 import tagging_pgdb as db
 import posttag_pgbd as posttag_db
 
-tagllm = llm.LLM()
+tagllm = llm.get_llm()
 
 
 def tag_post(post_id: int):

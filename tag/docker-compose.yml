@@ -1,5 +1,5 @@
 volumes:
-#  models_tag:
+  models_tag:
   pgdata_tag:
 
 networks:
@@ -7,21 +7,24 @@ networks:
     driver: bridge
 
 services:
-#  ollamatag:
-#    image: ollama/ollama
-#    container_name: ollama-tagging
-#    volumes:
-#      - models_tag:/root/.ollama
-#      - ./init/ollama/entrypoint.sh:/entrypoint.sh
-#    deploy:
-#      resources:
-#        reservations:
-#          devices:
-#            - driver: nvidia
-#              count: all
-#              capabilities: [gpu]
-#    networks:
-#      - tagging_network
+  ollamatag:
+    image: ollama/ollama
+    container_name: ollama-tagging
+    volumes:
+      - models_tag:/root/.ollama
+      - ./init/ollama/entrypoint.sh:/entrypoint.sh
+    entrypoint: ["/bin/sh", "/entrypoint.sh"]
+    environment:
+      OLLAMA_MODEL_NAME: "qwen3:8b"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    networks:
+      - tagging_network
 
   embeddingstag:
     build: ./embeddings/.
@@ -74,12 +77,13 @@ services:
     build: ./worker/.
     container_name: tag_worker
     depends_on:
-#      - ollamatag
       - embeddingstag
       - dbtag
       - rabbitmqtag
     environment:
-#      OLLAMA_HOST: "http://ollama-tagging:11434"
+      OLLAMA_HOST: "http://ollama-tagging:11434"
+      OLLAMA_MODEL_NAME: "qwen3:8b"
+      MISTRAL_MODEL_NAME: "mistral-large-2512"
       POSTGRES_TAGGING_DB: "postgresql://app_user:app_password@tagging-db:5432/tags_db"
       POST_TAG_DB: "postgresql://posttaguser:password@host.docker.internal:5440/posttagdb"
       EMBEDDINGS_URL: "http://embeddings_service:8000"
@@ -91,6 +95,7 @@ services:
       RABBIT_EXCHANGE: "tag_exchange"
       RABBIT_ROUTING_KEY: "tag"
       PYTHONUNBUFFERED: "1"
+      LLM_FLAG: "API" # "API" or "OLLAMA", if flag is not correctly written, application will use "OLLAMA" value
     networks:
       - tagging_network
 

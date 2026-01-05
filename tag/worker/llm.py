@@ -1,13 +1,51 @@
 from mistralai import Mistral
+from ollama import Client
+import os
+from abc import ABC, abstractmethod
 
-MODEL_NAME = "mistral-large-2512"
-API_KEY = "ZhrxrPAQloPtDvssR8Sac5cvEkXcY1UV"
+LLM_FLAG = os.environ["LLM_FLAG"]
+
+OLLAMA_MODEL_NAME = os.environ["OLLAMA_MODEL_NAME"]
+OLLAMA_HOST = os.environ["OLLAMA_HOST"]
+
+MISTRAL_MODEL_NAME = os.environ["MISTRAL_MODEL_NAME"]
+MISTRAL_API_KEY = "ZhrxrPAQloPtDvssR8Sac5cvEkXcY1UV"
 
 
-class LLM:
+class LLM(ABC):
+    @abstractmethod
     def __init__(self):
-        self.key = API_KEY
-        self.model_name = MODEL_NAME
+        pass
+
+    @abstractmethod
+    def generate_tags(self, input_title, input_content):
+        pass
+
+
+class Ollama_LLM(LLM):
+    _shared_client = None
+
+    def __init__(self):
+        if Ollama_LLM._shared_client == None:
+            Ollama_LLM._shared_client = Client(
+                host=OLLAMA_HOST,
+                headers={}
+            )
+        self.client = Ollama_LLM._shared_client
+        self.model_name = OLLAMA_MODEL_NAME
+
+    def generate_tags(self, input_title, input_content):
+        response = self.client.generate(
+            prompt=get_prompt(input_title, input_content),
+            model=self.model_name
+        )
+        return response_to_tagnames_list(response.response)
+
+
+class Mistral_LLM(LLM):
+    def __init__(self):
+        self.key = MISTRAL_API_KEY
+        self.model_name = MISTRAL_MODEL_NAME
 
     def generate_tags(self, input_title, input_content):
         try:
@@ -80,3 +118,10 @@ def extract_text_from_content(content):
 def fake_response():
     fr_list = "Sports"
     return fr_list
+
+
+def get_llm() -> LLM:
+    if LLM_FLAG.upper() == "API":
+        return Mistral_LLM()
+    else:  # OLLAMA
+        return Ollama_LLM()

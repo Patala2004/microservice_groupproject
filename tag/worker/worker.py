@@ -31,17 +31,19 @@ def callback(ch, method, properties, body):
 
     except NonRequeueableError as e:
         print("Error: ", e)
-        ch.basic_nack(
-            delivery_tag=method.delivery_tag,
-            requeue=False
-        )
+        if ch.is_open:
+            ch.basic_nack(
+                delivery_tag=method.delivery_tag,
+                requeue=False
+            )
 
     except Exception as e:
         print("Retryable error:", e)
-        ch.basic_nack(
-            delivery_tag=method.delivery_tag,
-            requeue=True
-        )
+        if ch.is_open:
+            ch.basic_nack(
+                delivery_tag=method.delivery_tag,
+                requeue=True
+            )
 
 
 def connect():
@@ -59,8 +61,8 @@ def connect():
                         "app_user",
                         "supersecret"
                     ),
-                    heartbeat=60,
-                    blocked_connection_timeout=300,
+                    heartbeat=900,
+                    blocked_connection_timeout=1200,
                 )
             )
 
@@ -114,9 +116,6 @@ def main():
             except Exception:
                 pass
             break
-
-    print("Waiting for messages...")
-    channel.start_consuming()
 
 
 if __name__ == "__main__":
