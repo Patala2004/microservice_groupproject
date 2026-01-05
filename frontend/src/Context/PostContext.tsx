@@ -193,23 +193,35 @@ export const PostProvider = ({ children }: { children: React.ReactNode }) => {
             if (targetPost?.type === "ACTIVITY" && targetPost.eventTime) {
                 try {
                     const start = new Date(targetPost.eventTime);
-                    // end = start + 2 hours
-                    const end = new Date(start.getTime() + 2 * 60 * 60 * 1000);
-                    const params = new URLSearchParams({ start: start.toISOString(), end: end.toISOString() });
-                    const scheduleRes = await postApi.get(`/schedule/${userId}?${params.toString()}`);
+                    const end = new Date(start.getTime() + 60 * 60 * 1000);
+
+                    const startStr = start.toISOString().replace('Z', '');
+                    const endStr = end.toISOString().replace('Z', '');
+
+                    const scheduleRes = await postApi.get(`/schedule/${userId}`, {
+                        params: {
+                            start: startStr,
+                            end: endStr
+                        }
+                    });
+
                     if (scheduleRes.status === 200 && scheduleRes.data?.length > 0) {
-                        const proceed = window.confirm(i18n.t("post_actions.schedule_conflict_warning") || 
+                        const proceed = window.confirm(i18n.t("post_actions.schedule_conflict_warning") ||
                             "Schedule conflict detected. Join anyway?");
                         if (!proceed) return false;
                     }
                 } catch (e) {
-                    console.error("Schedule check failed, proceeding anyway", e);
+                    console.error("Schedule check failed", e);
                 }
             }
 
-            const response = await postApi.post(`/post/${postId}/join?userId=${userId}`);
+            const response = await postApi.post(`/post/${postId}/join`, null, {
+                params: { userId }
+            });
+
             if (response.status === 200) {
-                setPosts(prev => prev.map(p => p.id === postId ? { ...p, ...response.data } : p));
+                const updatedPost = response.data;
+                setPosts(prev => prev.map(p => p.id === postId ? { ...p, ...updatedPost } : p));
                 collectEvent(userId, postId, "JOIN");
                 return true;
             }

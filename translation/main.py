@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
-import mistral_llm as llm
+import llm
 
 app = FastAPI()
 
@@ -14,7 +14,7 @@ class TranslateOut(BaseModel):
     translation: list[str] = Field(..., examples=[["Translated text"]])
 
 
-tllm = llm.LLM()
+tllm = llm.get_llm()
 
 # --- endpoints ---
 

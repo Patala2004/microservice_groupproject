@@ -1,16 +1,53 @@
+from ollama import Client
 from mistralai import Mistral
 import os
+from abc import ABC, abstractmethod
 
-MODEL_NAME = "magistral-medium-2509"
+
+LLM_FLAG = os.environ["LLM_FLAG"]
+
+OLLAMA_HOST = os.environ["OLLAMA_HOST"]
+OLLAMA_MODEL_NAME = os.environ["OLLAMA_MODEL_NAME"]
+
+MISTRAL_MODEL_NAME = os.environ["MISTRAL_MODEL_NAME"]
 API_KEY = "ZhrxrPAQloPtDvssR8Sac5cvEkXcY1UV"
+
 SEPARATOR = "$%$%"
 
 
-class LLM:
+class LLM(ABC):
+    @abstractmethod
+    def __init__(self):
+        pass
+
+    @abstractmethod
+    def translate(self, texts, language):
+        pass
+
+
+class Ollama_LLM(LLM):
     _shared_client = None
 
     def __init__(self):
-        self.model_name = MODEL_NAME
+        if Ollama_LLM._shared_client == None:
+            Ollama_LLM._shared_client = Client(
+                host=OLLAMA_HOST,
+                headers={}
+            )
+        self.client = Ollama_LLM._shared_client
+        self.model_name = OLLAMA_MODEL_NAME
+
+    def translate(self, texts, language):
+        response = self.client.generate(
+            prompt=get_prompt(texts=texts, language=language),
+            model=self.model_name
+        )
+        return response_to_list(response.response)
+
+
+class Mistral_LLM(LLM):
+    def __init__(self):
+        self.model_name = MISTRAL_MODEL_NAME
         self.key = API_KEY
 
     def translate(self, texts, language):
@@ -42,11 +79,11 @@ def get_prompt(texts: list[str], language: str):
         - Translate the following {n} text(s) into {language}.
         - Return ONLY the translated text(s).
         - Do NOT include numbering, labels, or explanations.
-        - If there is more than one translated text, separate them using exactly this token: $%$%
+        - If there is more than one translated text, separate them using exactly this token: {SEPARATOR}
         - Do NOT add the separator at the beginning or end.
         - Output must be a single line.
 
-        Example output for 3 texts: <translation1>{SEPARATOR}<translation2>$%$%<translation3>
+        Example output for 3 texts: <translation1>{SEPARATOR}<translation2>{SEPARATOR}<translation3>
 
         Texts to translate:
         {format_texts_for_prompt(texts)}""".strip()
@@ -60,9 +97,7 @@ def format_texts_for_prompt(texts: list[str]) -> str:
     return "\n".join(lines)
 
 
-def response_to_list(response):
-    if isinstance(response, list):
-        response = response[0]["text"]
+def response_to_list(response: str):
     return response.split(SEPARATOR)
 
 
@@ -84,3 +119,10 @@ def fake_response(texts: list[str], language: str):
     for t in texts:
         fr_list.append(fake_response)
     return SEPARATOR.join(fr_list)
+
+
+def get_llm() -> LLM:
+    if LLM_FLAG.upper() == "API":
+        return Mistral_LLM()
+    else:  # OLLAMA
+        return Ollama_LLM()

@@ -135,6 +135,8 @@ const resources = {
         joined: "Joined",
         leave: "Leave Event",
         contact: "Contact Seller",
+        original:" Original Post",
+        translate:" Translate Post",
         joined_count: "{{count}} joined",
         be_first: "Be the first to join!",
         no_joiners_yet: "No one has joined your activity yet.",
@@ -208,6 +210,7 @@ const resources = {
 
         default_name: "Your name",
         default_email: "Your email",
+        default_student_id: "Your student ID",
         default_phone: "Your phone number",
         default_weixin: "Your WeChat ID",
       },
@@ -338,6 +341,8 @@ const resources = {
         joined: "已加入",
         schedule_conflict_warning: "您的日程与另一个活动冲突。",
         leave: "退出",
+        original: " 原帖",
+        translate: " 翻译帖子",
         contact: "联系卖家",
         joined_count: "{{count}} 人已加入",
         no_joiners_yet: "还没有人加入您的活动。",
@@ -412,6 +417,7 @@ const resources = {
 
         default_name: "您的姓名",
         default_email: "您的邮箱",
+        default_student_id: "您的学号",
         default_phone: "您的电话号码",
         default_weixin: "您的微信ID",
       },

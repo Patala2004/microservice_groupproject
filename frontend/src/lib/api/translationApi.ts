@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8088";
+const BASE_URL = "http://localhost:8000/api/v1/translate";
 
 const translationApi = axios.create({
     baseURL: BASE_URL,

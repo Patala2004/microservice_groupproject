@@ -1,5 +1,5 @@
-#volumes:
-#  models_translation:
+volumes:
+  models_translation:
 
 networks:
   translation_network:
@@ -8,31 +8,35 @@ networks:
 
 
 services:
-#  ollamatranslation:
-#    image: ollama/ollama
-#    container_name: ollama-translate
-#    volumes:
-#      - models_translation:/root/.ollama
-#      - ./ollama-init/entrypoint.sh:/entrypoint.sh
-#    deploy:
-#      resources:
-#        reservations:
-#          devices:
-#            - driver: nvidia
-#              count: all
-#              capabilities: [gpu]
-#    networks:
-#      - translation_network
+  ollamatranslation:
+    image: ollama/ollama
+    container_name: ollama-translate
+    volumes:
+      - models_translation:/root/.ollama
+      - ./ollama-init/entrypoint.sh:/entrypoint.sh
+    entrypoint: ["/bin/sh", "/entrypoint.sh"]
+    environment:
+      OLLAMA_MODEL_NAME: "qwen3:4b"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    networks:
+      - translation_network
   
   translate:
     build: .
     container_name: translate
-#    depends_on:
-#      - ollamatranslation
     ports:
       - "8088:8000"
-#    environment:
-#      OLLAMA_HOST: "http://ollama-translate:11434"
+    environment:
+      OLLAMA_HOST: "http://ollama-translate:11434"
+      OLLAMA_MODEL_NAME: "qwen3:4b"
+      MISTRAL_MODEL_NAME: "magistral-medium-2509"
+      LLM_FLAG: "API" # "API" or "OLLAMA", if flag is not correctly written, application will use "OLLAMA" value
     networks:
       - translation_network
 
